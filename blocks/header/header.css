@@ -291,26 +291,35 @@ header .nav-brand a:hover {
 }
 
 /* nav links — base (mobile + desktop) */
-header nav .nav-sections ul > li > a:any-link {
+header nav .nav-sections ul > li a:any-link {
   color: var(--text-color);
   font-weight: 500;
   text-decoration: none;
-  transition: color 0.15s;
+  transition: color 0.15s, opacity 0.15s;
 }
 
-header nav .nav-sections ul > li > a:hover {
+header nav .nav-sections ul > li a:hover {
   color: var(--text-color);
   opacity: 0.72;
   text-decoration: none;
 }
 
-/* nav links — desktop: full-height with red active underline */
+/* nav links — desktop: full-height with red active underline
+   DA wraps list items as  li > p > a  so we use a descendant
+   combinator (space) instead of direct-child (>) after li.      */
 @media (width >= 900px) {
   header nav .nav-sections ul {
     gap: 2px;
   }
 
-  header nav .nav-sections ul > li > a:any-link {
+  /* make the p wrapper a flex row so the a can fill its height */
+  header nav .nav-sections ul > li > p {
+    margin: 0;
+    display: flex;
+    align-items: stretch;
+  }
+
+  header nav .nav-sections ul > li a:any-link {
     display: flex;
     align-items: center;
     height: var(--nav-height);
@@ -322,7 +331,7 @@ header nav .nav-sections ul > li > a:hover {
     box-sizing: border-box;
   }
 
-  header nav .nav-sections ul > li > a::after {
+  header nav .nav-sections ul > li a::after {
     content: '';
     position: absolute;
     bottom: 0;
@@ -334,14 +343,14 @@ header nav .nav-sections ul > li > a:hover {
     transition: opacity 0.15s;
   }
 
-  header nav .nav-sections ul > li > a[aria-current],
-  header nav .nav-sections ul > li > a.active {
+  header nav .nav-sections ul > li a[aria-current],
+  header nav .nav-sections ul > li a.active {
     color: var(--text-color);
     font-weight: 600;
   }
 
-  header nav .nav-sections ul > li > a[aria-current]::after,
-  header nav .nav-sections ul > li > a.active::after {
+  header nav .nav-sections ul > li a[aria-current]::after,
+  header nav .nav-sections ul > li a.active::after {
     opacity: 1;
   }
 }
