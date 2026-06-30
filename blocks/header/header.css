@@ -292,7 +292,7 @@ header .nav-brand a:hover {
 
 /* nav links — base (mobile + desktop) */
 header nav .nav-sections ul > li > a:any-link {
-  color: var(--color-text-secondary);
+  color: var(--text-color);
   font-weight: 500;
   text-decoration: none;
   transition: color 0.15s;
@@ -300,13 +300,14 @@ header nav .nav-sections ul > li > a:any-link {
 
 header nav .nav-sections ul > li > a:hover {
   color: var(--text-color);
+  opacity: 0.72;
   text-decoration: none;
 }
 
 /* nav links — desktop: full-height with red active underline */
 @media (width >= 900px) {
   header nav .nav-sections ul {
-    gap: 0;
+    gap: 2px;
   }
 
   header nav .nav-sections ul > li > a:any-link {
@@ -345,8 +346,11 @@ header nav .nav-sections ul > li > a:hover {
   }
 }
 
-/* Sign In button — compact size for nav */
+/* Sign In button — compact pill, matches original project */
 header nav .nav-tools .button {
-  font-size: 14px;
-  padding: 0.4em 1.1em;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 7px 18px;
+  border-radius: 100px;
+  letter-spacing: -0.01em;
 }
