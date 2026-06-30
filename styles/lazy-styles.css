@@ -1,1 +1,76 @@
 /* add global styles that can be loaded post LCP here */
+
+/* ── Focus ring (accessible, Spectrum-aligned) ── */
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+/* ── Text selection ── */
+::selection {
+  background-color: rgba(20, 115, 230, 0.15);
+  color: var(--text-color);
+}
+
+/* ── Text utilities ── */
+.text-center { text-align: center; }
+.text-left   { text-align: left; }
+.text-right  { text-align: right; }
+
+/* ── Visually hidden (accessible) ── */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ── Eyebrow label (used above headings on landing) ── */
+.eyebrow {
+  display: block;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-brand-red);
+  margin-bottom: 12px;
+}
+
+/* ── Section heading line (used on content sections) ── */
+.section-heading {
+  font-size: clamp(26px, 3vw, 36px);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+  color: var(--text-color);
+}
+
+/* ── Highlight band (dark section variant) ── */
+main .section.dark {
+  background-color: var(--color-dark-bg);
+  color: var(--color-dark-text);
+  margin: 0;
+  padding: var(--section-padding-y) 0;
+}
+
+main .section.dark h1,
+main .section.dark h2,
+main .section.dark h3 {
+  color: var(--color-dark-text);
+}
+
+main .section.dark p {
+  color: rgba(255, 255, 255, 0.78);
+}
+
+/* ── Accent surface (light tinted sections) ── */
+main .section.surface {
+  background-color: var(--color-surface);
+  margin: 0;
+  padding: var(--section-padding-y) 0;
+}
