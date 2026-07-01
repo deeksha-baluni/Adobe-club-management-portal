@@ -10,7 +10,8 @@
 }
 
 .club-detail {
-  display: contents;
+  display: block;
+  width: 100%;
 }
 
 .club-detail-root {
@@ -47,7 +48,7 @@
 .club-detail-inner {
   max-width: 1280px;
   margin: 0 auto;
-  padding: 0 var(--section-px) clamp(64px, 10vw, 100px);
+  padding: clamp(32px, 4vw, 56px) var(--section-px) clamp(64px, 10vw, 100px);
   display: flex;
   flex-direction: column;
   gap: 72px;
@@ -201,20 +202,7 @@
 /* ── Hero ── */
 .club-hero {
   position: relative;
-  isolation: isolate;
   padding-top: 0;
-  margin-inline: calc(-1 * var(--section-px));
-  padding-inline: var(--section-px);
-}
-.club-hero::before {
-  content: '';
-  position: absolute;
-  z-index: -1;
-  top: 0;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 100vw;
   background: var(--bg-hero);
 }
 

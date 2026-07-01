@@ -942,7 +942,7 @@ function renderClubDetail(root, club, events, allClubs, gallery, feed) {
   const memberCount = window.AdobeClubsAuth?.getClubMemberCount?.(club.id, club.members) ?? club.members;
 
   root.innerHTML = `
-    <article class="club-page">
+    <article class="club-page club-detail-page">
       <div class="club-detail-inner">
         <header class="club-hero reveal">
           <a class="club-back" href="/clubs">← All clubs</a>
