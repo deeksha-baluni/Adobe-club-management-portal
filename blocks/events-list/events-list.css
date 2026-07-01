@@ -153,22 +153,28 @@ main > .section:has(.events-hero) + .section:has(.events-list) .ev-section-inner
 }
 
 .ev-section-title {
-  font-size: clamp(24px, 3vw, 32px);
+  font-size: clamp(28px, 3.5vw, 42px);
   font-weight: 700;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.03em;
   color: var(--text-color);
   margin: 0;
-  line-height: 1.15;
+  line-height: 1.1;
 }
 
 .ev-section-title--muted {
-  color: var(--color-text-secondary);
+  color: var(--color-text-tertiary);
+  font-weight: 700;
+}
+
+.ev-past-header {
+  margin-top: 8px;
 }
 
 .ev-section-divider {
+  height: 1px;
+  margin: 8px 0 4px;
   border: none;
-  border-top: 1px solid var(--color-border-default);
-  margin: 8px 0;
+  background: var(--color-border-default);
 }
 
 /* ── Toolbar / search ── */
@@ -241,7 +247,18 @@ main > .section:has(.events-hero) + .section:has(.events-list) .ev-section-inner
 }
 
 .ev-poster-card--past {
-  opacity: 0.92;
+  position: relative;
+  opacity: 0.82;
+  border-color: var(--color-border-default);
+}
+
+.ev-poster-card--past:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+}
+
+.ev-poster-card--past .ev-poster-img {
+  filter: saturate(0.75);
 }
 
 .ev-poster-past-badge {
@@ -255,8 +272,9 @@ main > .section:has(.events-hero) + .section:has(.events-list) .ev-section-inner
   text-transform: uppercase;
   padding: 3px 8px;
   border-radius: 6px;
-  background: var(--dark-color);
-  color: #fff;
+  background: rgba(0, 0, 0, 0.45);
+  color: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(255, 255, 255, 0.18);
 }
 
 .ev-poster-img-wrap {
@@ -309,7 +327,12 @@ main > .section:has(.events-hero) + .section:has(.events-list) .ev-section-inner
 }
 
 .ev-poster-date--muted {
-  opacity: 0.85;
+  background: rgba(0, 0, 0, 0.55);
+  color: rgba(255, 255, 255, 0.82);
+}
+
+.ev-poster-club--muted {
+  color: var(--color-text-tertiary);
 }
 
 .ev-poster-exclusive-badge {
@@ -344,10 +367,6 @@ main > .section:has(.events-hero) + .section:has(.events-list) .ev-section-inner
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--color-brand-red);
-}
-
-.ev-poster-club--muted {
-  color: var(--color-text-tertiary);
 }
 
 .ev-poster-title {
@@ -430,26 +449,32 @@ main > .section:has(.events-hero) + .section:has(.events-list) .ev-section-inner
 }
 
 .ev-poster-recap-btn {
-  margin-top: auto;
+  margin-top: 10px;
+  align-self: flex-start;
   padding: 0;
   background: none;
   border: none;
   font-size: 13px;
   font-weight: 600;
-  color: var(--color-accent);
+  color: var(--color-text-secondary);
   cursor: pointer;
   font-family: var(--body-font-family);
   text-align: left;
 }
 
 .ev-poster-recap-btn:hover {
-  text-decoration: underline;
+  color: var(--text-color);
 }
 
 .ev-poster-recap--muted {
+  margin-top: 10px;
   font-size: 12px;
+  font-weight: 500;
   color: var(--color-text-tertiary);
-  margin-top: auto;
+}
+
+.ev-no-results--past {
+  padding-top: 24px;
 }
 
 /* States */
