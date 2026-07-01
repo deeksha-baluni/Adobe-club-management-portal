@@ -28,14 +28,20 @@ main:has(.event-hero) {
   align-items: start;
 }
 
-main:has(.event-hero) > .section:has(.event-hero),
-main:has(.event-hero) > .section:has(.event-about),
-main:has(.event-hero) > .section:has(.event-details),
-main:has(.event-hero) > .section:has(.event-recap),
-main:has(.event-hero) > .section:has(.event-organizer) {
+/* Left column: every section except the RSVP rail */
+main:has(.event-hero) > .section:not(:has(.event-rsvp)) {
   grid-column: 1;
   width: 100%;
   min-width: 0;
+}
+
+/* Recap renders inside event-details — hide the standalone da.live block section */
+main:has(.event-hero) > .section:has(.event-recap) {
+  display: none !important;
+}
+
+main:has(.event-hero) > .section:has(.cta-banner) {
+  grid-column: 1 / -1;
 }
 
 main:has(.event-hero) > .section:has(.event-hero) > div {
@@ -44,7 +50,7 @@ main:has(.event-hero) > .section:has(.event-hero) > div {
 
 main:has(.event-hero) > .section:has(.event-rsvp) {
   grid-column: 2;
-  grid-row: 1 / span 12;
+  grid-row: 1 / -1;
   align-self: start;
   /* Align rail top with hero image (below back link + topbar), not page top */
   margin-top: calc(20px + 16px + 1.3em + 20px + 28px) !important;
