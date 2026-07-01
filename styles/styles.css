@@ -329,6 +329,12 @@ main > .section > div {
   padding: 0 24px;
 }
 
+/* Sections below the hero — match hero horizontal rhythm */
+main > .section:not(:first-of-type) > div {
+  padding-left: var(--section-padding-x);
+  padding-right: var(--section-padding-x);
+}
+
 main > .section:first-of-type {
   margin-top: 0;
 }
@@ -336,6 +342,11 @@ main > .section:first-of-type {
 @media (width >= 900px) {
   main > .section > div {
     padding: 0 32px;
+  }
+
+  main > .section:not(:first-of-type) > div {
+    padding-left: var(--section-padding-x);
+    padding-right: var(--section-padding-x);
   }
 }
 
