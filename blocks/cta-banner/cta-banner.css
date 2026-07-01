@@ -1,0 +1,90 @@
+main > .section:has(.cta-banner) > div {
+  max-width: unset;
+  padding: clamp(40px, 6vw, 64px) var(--section-padding-x, 40px);
+  margin: 0;
+}
+
+.cta-banner-wrapper {
+  background: var(--light-color, #f8f8f8);
+}
+
+.cta-inner {
+  max-width: var(--max-width, 1280px);
+  margin: 0 auto;
+  padding: clamp(48px, 6vw, 72px) clamp(24px, 4vw, 48px);
+  text-align: center;
+  background: var(--text-color, #2c2c2c);
+  color: #fff;
+  border-radius: 16px;
+}
+
+.cta-title {
+  margin: 0 auto 24px;
+  max-width: 28ch;
+  font-size: clamp(22px, 3vw, 32px);
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+}
+
+.cta-perks {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px 16px;
+  margin-bottom: 28px;
+}
+
+.cta-perk {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 100px;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.cta-btn {
+  padding: 14px 32px;
+  border-radius: 4px;
+  border: none;
+  background: var(--color-accent, #1473e6);
+  color: #fff;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.15s;
+}
+
+.cta-btn:hover {
+  background: var(--color-accent-hover, #0d66d0);
+}
+
+.cta-btn.is-joined {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.cta-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+@media (max-width: 768px) {
+  .cta-inner {
+    border-radius: 0;
+    margin: 0;
+    max-width: none;
+  }
+
+  .cta-title {
+    max-width: none;
+  }
+
+  .cta-btn {
+    width: 100%;
+    max-width: 320px;
+  }
+}

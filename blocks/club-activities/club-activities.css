@@ -1,0 +1,58 @@
+@import url('../club-shared/club-section.css');
+
+main > .section:has(.club-activities) > div {
+  max-width: unset;
+  padding: 0;
+  margin: 0;
+}
+
+.club-activities-wrapper {
+  background: var(--light-color, #f8f8f8);
+}
+
+.ca-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.ca-item {
+  display: flex;
+  gap: 16px;
+  padding: 20px;
+  background: var(--background-color, #fff);
+  border: 1px solid var(--color-border-default, rgba(0, 0, 0, 0.11));
+  border-radius: 8px;
+}
+
+.ca-icon {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 8px;
+  background: rgba(20, 115, 230, 0.08);
+  color: var(--color-accent, #1473e6);
+}
+
+.ca-text h4 {
+  margin: 0 0 6px;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-color, #2c2c2c);
+}
+
+.ca-text p {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--color-text-secondary, #505050);
+}
+
+@media (max-width: 768px) {
+  .ca-grid {
+    grid-template-columns: 1fr;
+  }
+}

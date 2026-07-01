@@ -1,14 +1,8 @@
-/* club-detail.css — Club detail page (EDS) */
+/* club-detail.css — Club body sections (activities, events, recaps, team, CTA) */
+/* The hero section is in club-hero/club-hero.css */
 
-/* ── EDS wrapper reset (same pattern as clubs-list) ── */
-main > .section:has(.club-detail) > div {
-  max-width: unset;
-  padding: 0;
-  margin: 0;
-}
-
-/* ── Token aliases scoped to root ── */
-.club-detail-root {
+/* ── Token aliases ── */
+.cd-root {
   --bg-page: var(--light-color, #f8f8f8);
   --section-px: var(--section-padding-x, 40px);
   --text-1: var(--text-color, #2c2c2c);
@@ -20,29 +14,19 @@ main > .section:has(.club-detail) > div {
   --red-rgb: 235, 16, 0;
   --border-default: var(--color-border-default, rgba(0, 0, 0, 0.11));
   --border-subtle: var(--color-border-default, rgba(0, 0, 0, 0.11));
-  --bg-hero: var(--background-color, #fff);
   --bg-subtle: rgba(0, 0, 0, 0.05);
   --bg-hover: rgba(0, 0, 0, 0.08);
   --radius-sm: 4px;
-  --aspect-featured: 4 / 3;
   --shadow-100: var(--shadow-s, 0 1px 4px rgba(0, 0, 0, 0.12));
   --shadow-200: var(--shadow-m, 0 4px 16px rgba(0, 0, 0, 0.12));
   width: 100%;
 }
 
-/* ── Page shell ── */
-.club-page,
-.club-detail-page {
-  position: relative;
-  background: var(--bg-page);
-  width: 100%;
-}
-
-/* ── Inner content container (provides its own max-width + spacing) ── */
-.club-detail-inner {
+/* ── Inner container — provides spacing for all body sections ── */
+.cd-inner {
   max-width: var(--max-width, 1280px);
   margin: 0 auto;
-  padding: clamp(32px, 4vw, 56px) var(--section-px) clamp(64px, 10vw, 100px);
+  padding: clamp(48px, 6vw, 80px) var(--section-px) clamp(64px, 10vw, 100px);
   display: flex;
   flex-direction: column;
   gap: 72px;

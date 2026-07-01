@@ -920,7 +920,7 @@ function renderSimilarGrid(clubs, club) {
     `).join('');
 }
 
-function renderClubDetail(root, club, events, allClubs, gallery, feed) {
+function renderClubBody(root, club, events, allClubs, gallery, feed) {
   currentClubForRecaps = club;
   const meta = getMeta(club.id);
   const imagePool = getClubImagePool(club, gallery);
@@ -929,51 +929,14 @@ function renderClubDetail(root, club, events, allClubs, gallery, feed) {
   const joined = getAuth().isClubJoined(club.id);
   const isAdminOfClub = getAuth().getAdminOf().includes(club.id);
   const joinLabel = isAdminOfClub ? 'Admin only' : (joined ? 'Joined' : 'Join');
-  const totalMembers = allClubs.reduce((n, c) => n + (c.members || 0), 0);
   const eventsNeedingRecap = getEventsNeedingRecap(pastEvents);
   const canPostRecap = canPostRecapForClub(club.id) && pastEvents.length > 0 && eventsNeedingRecap.length > 0;
   const showRecapCta = canPostRecapForClub(club.id);
   const hasEventsToRecap = eventsNeedingRecap.length > 0;
   const hasRecaps = hasRecapHighlights(pastEvents);
-  const slack = getClubSlack(club);
-  const slackCta = slack
-    ? slackLinkHtml(slack)
-    : `<a class="btn-outline" href="#club-events">Browse events</a>`;
-  const memberCount = window.AdobeClubsAuth?.getClubMemberCount?.(club.id, club.members) ?? club.members;
 
   root.innerHTML = `
-    <article class="club-page club-detail-page">
-      <div class="club-detail-inner">
-        <header class="club-hero reveal">
-          <a class="club-back" href="/clubs">← All clubs</a>
-          <div class="club-hero-grid">
-            <div class="club-hero-copy">
-              <div class="club-hero-eyebrow">
-                <p class="club-hero-tag">${esc(club.tag)} · ${esc(club.name)}</p>
-                ${clubMemberCountHtml(memberCount)}
-              </div>
-              <h1 class="club-hero-title">${esc(meta.headline.line1)}<br>${esc(meta.headline.line2)}.</h1>
-              <p class="club-hero-desc">${esc(club.desc)} Connect with colleagues, explore nearby events, and build your ${esc(club.tag.toLowerCase())} community — all in one place.</p>
-              <div class="club-hero-actions">
-                <button type="button" class="btn-primary ${joined ? 'is-joined' : ''}" id="club-detail-join" ${isAdminOfClub ? 'disabled' : ''}>${esc(joinLabel)}</button>
-                ${slackCta}
-              </div>
-            </div>
-            <div class="club-hero-photo${clubHasHeroIllustration(club.id) ? ' club-hero-photo--illustration' : ''}">
-              <img id="club-hero-img" src="${esc(getClubHeroImageSrc(club))}" alt="${esc(club.name)}" loading="eager" decoding="async">
-              ${getSimilarClubs(allClubs, club).length ? `
-              <div class="club-hero-similar">
-                <p class="club-hero-similar-label">Similar clubs</p>
-                ${getSimilarClubs(allClubs, club).slice(0, 3).map(c => `
-                  <a class="club-hero-similar-item" href="/club?id=${esc(c.id)}">
-                    <img src="${esc(getClubImageSrc(c))}" alt="${esc(c.name)}" loading="lazy">
-                    <span>${esc(c.name)}</span>
-                  </a>`).join('')}
-              </div>` : ''}
-            </div>
-          </div>
-        </header>
-
+    <div class="cd-inner">
         <section class="club-block club-does-block reveal">
           <h2 class="club-section-title">What this club does</h2>
           ${renderCategoryGrid(meta.activities, club)}
@@ -1027,7 +990,7 @@ function renderClubDetail(root, club, events, allClubs, gallery, feed) {
           </div>
         </section>
       </div>
-    </article>
+    </div>
   `;
 
   document.title = `${club.name} — Adobe Clubs`;
@@ -1044,7 +1007,6 @@ function renderClubDetail(root, club, events, allClubs, gallery, feed) {
 
   injectRecapFormModal(club, pastEvents, canPostRecap);
   wireJoinButtons(club, isAdminOfClub, events, upcomingEvents);
-  wireHeroImage(club);
   wireDateFilters();
   wireClubEventCards(club, upcomingEvents);
   wireRecapSectionCta(pastEvents);
@@ -1072,16 +1034,6 @@ function renderClubDetail(root, club, events, allClubs, gallery, feed) {
   ]);
 }
 
-function wireHeroImage(club) {
-  if (club.heroImage || clubHasHeroIllustration(club.id)) return;
-  const img = document.getElementById('club-hero-img');
-  if (!img) return;
-  img.addEventListener('error', () => {
-    img.onerror = null;
-    img.src = getClubImageSrc(club);
-  }, { once: true });
-}
-
 function updateClubMemberCountDisplay(club) {
   const el = document.querySelector('.club-member-count-text');
   if (!el || !club) return;
@@ -1091,11 +1043,6 @@ function updateClubMemberCountDisplay(club) {
 
 function setClubJoinButtonLabels(joined, club, upcomingEvents) {
   const label = joined ? 'Joined' : 'Join';
-  const heroBtn = document.getElementById('club-detail-join');
-  if (heroBtn) {
-    heroBtn.classList.toggle('is-joined', joined);
-    heroBtn.textContent = label;
-  }
   document.querySelectorAll('#club-detail-join-footer, #club-detail-join-team').forEach(el => {
     el.classList.toggle('is-joined', joined);
     el.textContent = `${label} →`;
@@ -1120,7 +1067,6 @@ function wireJoinButtons(club, isAdminOfClub, allEvents, upcomingEvents) {
       updateClubMemberCountDisplay(ctx.club);
     });
   }
-  wireJoin(document.getElementById('club-detail-join'));
   wireJoin(document.getElementById('club-detail-join-footer'));
   wireJoin(document.getElementById('club-detail-join-team'));
 
@@ -1395,7 +1341,7 @@ async function reloadClubPage() {
     const customEvents = getAuth().mergePublishedEvents?.(data.events || [])
       || [...(getAuth().getAllCustomEvents?.() || []), ...(data.events || [])];
     window.AdobeEventSeats?.init?.(customEvents);
-    renderClubDetail(
+    renderClubBody(
       clubPageCtx.root,
       club,
       customEvents,
@@ -1408,7 +1354,7 @@ async function reloadClubPage() {
   }
 }
 
-export async function initClubDetailPage(root) {
+export async function initClubBody(root) {
   if (!root) return;
 
   const clubId = getClubIdFromUrl();
@@ -1419,11 +1365,10 @@ export async function initClubDetailPage(root) {
 
   try {
     const data = await loadData();
-    const club = (data.clubs || []).find(c => c.id === clubId);
+    const club = (data.clubs || []).find((c) => c.id === clubId);
     if (!club) {
-      const ids = (data.clubs || []).map(c => c.id).join(', ');
       // eslint-disable-next-line no-console
-      console.error(`[club-detail] No club with id="${clubId}". Available: ${ids}`);
+      console.error(`[club-detail] No club with id="${clubId}".`);
       renderNotFound(root, `No club with id "${clubId}".`);
       return;
     }
@@ -1431,7 +1376,7 @@ export async function initClubDetailPage(root) {
       || [...(getAuth().getAllCustomEvents?.() || []), ...(data.events || [])];
     window.AdobeEventSeats?.init?.(customEvents);
     clubPageCtx = { root, clubId };
-    renderClubDetail(root, club, customEvents, data.clubs || [], data.gallery || [], data.feed || []);
+    renderClubBody(root, club, customEvents, data.clubs || [], data.gallery || [], data.feed || []);
     getAuth().onPublishedContentChange?.(reloadClubPage);
   } catch (err) {
     // eslint-disable-next-line no-console
