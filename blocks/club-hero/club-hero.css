@@ -13,7 +13,7 @@ main > .section:has(.club-hero) > div {
 .ch-inner {
   max-width: var(--max-width, 1280px);
   margin: 0 auto;
-  padding: clamp(20px, 3vw, 32px) var(--section-padding-x, 40px) clamp(32px, 4vw, 56px);
+  padding: clamp(20px, 3vw, 32px) var(--section-padding-x, 40px) 0;
 }
 
 .ch-back {

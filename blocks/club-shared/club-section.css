@@ -24,13 +24,34 @@ main:has(.club-hero) {
   border-radius: 999px;
 }
 
+/* OG .club-detail-inner { gap: 72px } — each block contributes bottom spacing only */
 .club-section-inner {
   max-width: var(--max-width, 1280px);
   margin: 0 auto;
-  padding: clamp(28px, 4vw, 48px) var(--section-padding-x, 40px);
+  padding: 0 var(--section-padding-x, 40px) 72px;
 }
 
-/* Tighter gap below hero — matches original .club-hero + .club-block spacing */
+/* OG .club-hero + .club-block { margin-top: 40px } */
 main > .section:has(.club-hero) + .section:has(.club-activities) .club-section-inner {
   padding-top: 40px;
+}
+
+@media (max-width: 768px) {
+  .club-section-inner {
+    padding-bottom: 56px;
+  }
+
+  main > .section:has(.club-hero) + .section:has(.club-activities) .club-section-inner {
+    padding-top: 32px;
+  }
+}
+
+@media (max-width: 560px) {
+  .club-section-inner {
+    padding-bottom: 48px;
+  }
+
+  main > .section:has(.club-hero) + .section:has(.club-activities) .club-section-inner {
+    padding-top: 28px;
+  }
 }

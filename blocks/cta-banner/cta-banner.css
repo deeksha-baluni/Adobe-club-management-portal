@@ -2,7 +2,7 @@
 
 main > .section:has(.cta-banner) > div {
   max-width: unset;
-  padding: clamp(28px, 4vw, 48px) var(--section-padding-x, 40px);
+  padding: 0 var(--section-padding-x, 40px) clamp(64px, 10vw, 100px);
   margin: 0;
 }
 
@@ -89,12 +89,13 @@ main > .section:has(.cta-banner) > div {
 
 @media (max-width: 768px) {
   main > .section:has(.cta-banner) > div {
+    padding-bottom: 72px;
     padding-left: 0;
     padding-right: 0;
   }
 
   .cta-inner {
-    border-radius: 0;
+    border-radius: 20px;
     max-width: none;
   }
 
@@ -105,5 +106,15 @@ main > .section:has(.cta-banner) > div {
   .cta-btn {
     width: 100%;
     max-width: 320px;
+  }
+}
+
+@media (max-width: 560px) {
+  main > .section:has(.cta-banner) > div {
+    padding-bottom: 64px;
+  }
+
+  .cta-inner {
+    border-radius: 0;
   }
 }
