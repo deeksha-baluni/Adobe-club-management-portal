@@ -24,7 +24,7 @@ main > .section:has(.clubs-hero) + .section:has(.clubs-list) .cl-section-inner {
 .cl-section-inner {
   max-width: var(--max-width);
   margin: 0 auto;
-  padding: clamp(40px, 6vw, 72px) 24px clamp(60px, 8vw, 96px);
+  padding: clamp(40px, 6vw, 72px) var(--section-padding-x) clamp(60px, 8vw, 96px);
 }
 
 /* ── Two-column layout ── */

@@ -11,12 +11,14 @@
   border-top: none;
 }
 
-/* Block root — 50/50 split, text LEFT, image RIGHT */
+/* Block root — 50/50 split, text LEFT, image RIGHT (centered like landing hero) */
 .clubs-hero {
   display: grid;
   grid-template-columns: 1fr 1fr;
   min-height: 400px;
   width: 100%;
+  max-width: var(--max-width);
+  margin: 0 auto;
   align-items: stretch;
 }
 
