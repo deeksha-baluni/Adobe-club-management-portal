@@ -172,9 +172,15 @@ function getClubIdFromUrl() {
 }
 
 async function loadData() {
-  const res = await fetch('/data/data.json');
-  if (!res.ok) throw new Error('Could not load data.json');
-  return res.json();
+  // Try root-relative path first, then relative to current path root
+  const candidates = ['/data/data.json', `${window.location.origin}/data/data.json`];
+  for (const url of candidates) {
+    try {
+      const res = await fetch(url);
+      if (res.ok) return res.json();
+    } catch (_) { /* try next */ }
+  }
+  throw new Error('Could not load /data/data.json — check that the file is committed and deployed');
 }
 
 function clubMatchesEvent(club, ev) {
@@ -308,11 +314,12 @@ function getRecapForEvent(ev) {
     || null;
 }
 
-function renderNotFound(root) {
+function renderNotFound(root, reason = '') {
   root.innerHTML = `
     <div class="club-page club-not-found">
       <h1>Club not found</h1>
       <p>We couldn't find that club. It may have been renamed or removed.</p>
+      ${reason ? `<p class="club-not-found-reason" style="font-size:.8rem;color:#999;margin-top:.5rem;">${reason}</p>` : ''}
       <a class="club-back" href="/clubs">← Back to all clubs</a>
     </div>
   `;
@@ -1405,12 +1412,21 @@ export async function initClubDetailPage(root) {
   if (!root) return;
 
   const clubId = getClubIdFromUrl();
-  if (!clubId) { renderNotFound(root); return; }
+  if (!clubId) {
+    renderNotFound(root, 'No club ID in URL. Use ?id=adobe-lens');
+    return;
+  }
 
   try {
     const data = await loadData();
     const club = (data.clubs || []).find(c => c.id === clubId);
-    if (!club) { renderNotFound(root); return; }
+    if (!club) {
+      const ids = (data.clubs || []).map(c => c.id).join(', ');
+      // eslint-disable-next-line no-console
+      console.error(`[club-detail] No club with id="${clubId}". Available: ${ids}`);
+      renderNotFound(root, `No club with id "${clubId}".`);
+      return;
+    }
     const customEvents = getAuth().mergePublishedEvents?.(data.events || [])
       || [...(getAuth().getAllCustomEvents?.() || []), ...(data.events || [])];
     window.AdobeEventSeats?.init?.(customEvents);
@@ -1418,8 +1434,9 @@ export async function initClubDetailPage(root) {
     renderClubDetail(root, club, customEvents, data.clubs || [], data.gallery || [], data.feed || []);
     getAuth().onPublishedContentChange?.(reloadClubPage);
   } catch (err) {
-    console.warn('Club page failed to load:', err);
-    renderNotFound(root);
+    // eslint-disable-next-line no-console
+    console.error('[club-detail] Failed to load:', err);
+    renderNotFound(root, err.message);
   }
 }
 
