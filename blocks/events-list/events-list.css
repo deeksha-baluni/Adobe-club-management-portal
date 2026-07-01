@@ -217,7 +217,7 @@ main > .section:has(.events-hero) + .section:has(.events-list) .ev-section-inner
 .ev-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 24px;
+  gap: 28px;
   list-style: none;
   padding: 0;
   margin: 0;
@@ -262,7 +262,7 @@ main > .section:has(.events-hero) + .section:has(.events-list) .ev-section-inner
 .ev-poster-img-wrap {
   position: relative;
   width: 100%;
-  aspect-ratio: 3 / 4;
+  aspect-ratio: 16 / 10;
   overflow: hidden;
   background: var(--color-surface);
   flex-shrink: 0;
@@ -328,13 +328,13 @@ main > .section:has(.events-hero) + .section:has(.events-list) .ev-section-inner
 }
 
 .ev-poster-info {
-  padding: 16px 16px 14px;
+  padding: 16px 16px 12px;
   display: flex;
   flex-direction: column;
   gap: 6px;
   background: var(--color-surface);
   border-top: 1px solid var(--color-border-default);
-  min-height: 150px;
+  min-height: 160px;
   flex: 1;
 }
 
@@ -384,12 +384,15 @@ main > .section:has(.events-hero) + .section:has(.events-list) .ev-section-inner
 
 .ev-poster-actions {
   margin-top: auto;
-  padding-top: 8px;
+  padding-top: 10px;
+  min-height: 38px;
+  flex-shrink: 0;
 }
 
 .ev-poster-rsvp {
   width: 100%;
-  padding: 8px 16px;
+  min-height: 38px;
+  padding: 0 16px;
   border-radius: 100px;
   background: var(--color-accent);
   color: #ffffff;
@@ -488,7 +491,7 @@ main > .section:has(.events-hero) + .section:has(.events-list) .ev-section-inner
   }
 }
 
-@media (width <= 540px) {
+@media (width <= 520px) {
   .ev-grid {
     grid-template-columns: 1fr;
     gap: 16px;
