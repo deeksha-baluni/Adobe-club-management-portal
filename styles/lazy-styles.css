@@ -55,6 +55,30 @@
   line-height: 1;
 }
 
+/* ── Centered section intro (How it works, Member stories) ── */
+main > .section > .default-content-wrapper:has(+ .steps-wrapper),
+main > .section > .default-content-wrapper:has(+ .cards-wrapper) {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+main > .section > .default-content-wrapper:has(+ .steps-wrapper) h2,
+main > .section > .default-content-wrapper:has(+ .cards-wrapper) h2 {
+  font-size: clamp(26px, 3vw, 36px);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  color: var(--text-color);
+  margin: 0;
+}
+
+/* ── Section separators (matches lp-section border-top rhythm) ── */
+main > .section:not(:first-of-type):not(.dark) {
+  margin: 0;
+  border-top: 1px solid var(--color-border-default);
+  padding: clamp(32px, 4.5vw, 56px) 0;
+}
+
 /* ── Section heading line (used on content sections) ── */
 .section-heading {
   font-size: clamp(26px, 3vw, 36px);
@@ -91,17 +115,27 @@ main .section.dark p {
 /* ── Dark section: button + layout overrides ── */
 main .section.dark .default-content-wrapper {
   text-align: center;
-  max-width: 620px;
+  max-width: 1280px;
   margin: 0 auto;
-  padding: clamp(56px, 8vw, 88px) var(--section-padding-x);
+  padding: clamp(40px, 6vw, 72px) var(--section-padding-x);
 }
 
 main .section.dark h2 {
-  font-size: clamp(28px, 4vw, 42px);
+  display: inline-block;
+  font-size: clamp(26px, 3vw, 38px);
   font-weight: 700;
-  letter-spacing: -0.025em;
+  letter-spacing: -0.02em;
   line-height: 1.1;
-  margin: 0 0 16px;
+  color: var(--color-dark-text);
+  padding-bottom: 12px;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.35);
+  margin: 0 0 12px;
+}
+
+main .section.dark p {
+  font-size: 16px;
+  color: rgba(255, 255, 255, 0.78);
+  margin: 0 0 28px;
 }
 
 main .section.dark .button {
@@ -115,12 +149,9 @@ main .section.dark .button-wrapper {
   margin: 0 6px;
 }
 
-main .section.dark .default-content-wrapper > :has(.button-wrapper) {
-  display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: 12px;
-  margin-top: 8px;
+main .section.dark .default-content-wrapper p:has(.button-wrapper) {
+  display: inline-block;
+  margin: 0 6px;
 }
 
 main .section.dark .button.secondary {
