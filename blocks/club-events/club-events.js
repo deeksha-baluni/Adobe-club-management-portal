@@ -125,9 +125,9 @@ function wireRsvp(block, club, upcomingEvents) {
 function wireCards(block, club, upcomingEvents) {
   wireRsvp(block, club, upcomingEvents);
   block.querySelectorAll('.ce-card[data-event-id]').forEach((card) => {
-    const open = () => {
+      const open = () => {
       const id = card.dataset.eventId;
-      if (id) window.location.href = `/events?event=${encodeURIComponent(id)}`;
+      if (id) window.location.href = `/event?id=${encodeURIComponent(id)}`;
     };
     card.addEventListener('click', (e) => {
       if (e.target.closest('.ce-rsvp[data-event-id]')) return;

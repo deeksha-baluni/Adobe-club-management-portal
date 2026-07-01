@@ -258,7 +258,7 @@ function buildPosterCard(ev, { past = false } = {}) {
   li.setAttribute('role', 'listitem');
 
   const navigate = () => {
-    window.location.href = `/events/${ev.id}${past && hasEventRecap(ev) ? '#recap' : ''}`;
+    window.location.href = `/event?id=${encodeURIComponent(ev.id)}${past && hasEventRecap(ev) ? '#recap' : ''}`;
   };
   li.addEventListener('click', navigate);
   li.addEventListener('keydown', (e) => {
@@ -361,7 +361,7 @@ function buildPosterCard(ev, { past = false } = {}) {
     recapBtn.textContent = 'Read recap →';
     recapBtn.addEventListener('click', (e) => {
       e.stopPropagation();
-      window.location.href = `/events/${ev.id}#recap`;
+      window.location.href = `/event?id=${encodeURIComponent(ev.id)}#recap`;
     });
     info.append(recapBtn);
   } else {

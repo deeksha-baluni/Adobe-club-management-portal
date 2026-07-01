@@ -1,0 +1,151 @@
+@import url('./event-detail.css');
+
+/* Event detail page — reset EDS section chrome */
+main:has(.event-hero) {
+  background: var(--light-color, #f8f8f8);
+}
+
+main:has(.event-hero) > .section,
+main:has(.event-hero) > .section > div {
+  margin: 0 !important;
+  max-width: unset;
+}
+
+main:has(.event-hero) > .section:not(.dark) {
+  border-top: none !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+}
+
+/* Two-column grid: main content left, RSVP rail right */
+main:has(.event-hero) {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 320px;
+  column-gap: 24px;
+  max-width: var(--max-width, 1280px);
+  margin: 0 auto;
+  padding: 0 var(--section-padding-x, 40px) clamp(48px, 8vw, 72px);
+  align-items: start;
+}
+
+main:has(.event-hero) > .section:has(.event-hero),
+main:has(.event-hero) > .section:has(.event-about),
+main:has(.event-hero) > .section:has(.event-details),
+main:has(.event-hero) > .section:has(.event-recap),
+main:has(.event-hero) > .section:has(.event-organizer) {
+  grid-column: 1;
+}
+
+main:has(.event-hero) > .section:has(.event-rsvp) {
+  grid-column: 2;
+  grid-row: 1 / span 12;
+  position: sticky;
+  top: calc(var(--nav-height, 55px) + 16px);
+  align-self: start;
+}
+
+.recap-detail-summary {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.65;
+  color: #242424;
+}
+
+.recap-detail-section h3 {
+  margin: 0 0 8px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #616161;
+}
+
+.recap-highlights {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.recap-highlights li {
+  position: relative;
+  padding-left: 18px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: #242424;
+}
+
+.recap-highlights li::before {
+  content: '•';
+  position: absolute;
+  left: 0;
+  color: var(--color-accent, #1473e6);
+}
+
+
+.ev-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin: 20px 0 16px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-accent, #1473e6);
+  text-decoration: none;
+}
+
+.ev-back:hover {
+  color: var(--color-accent-hover, #0d66d0);
+}
+
+.event-hero-stack {
+  margin-bottom: 0;
+}
+
+.event-hero .event-hero-img {
+  border: 1px solid #edebe9;
+  border-bottom: none;
+}
+
+/* Connected white card across body sections */
+.ev-card-part {
+  background: #fff;
+  border-left: 1px solid #edebe9;
+  border-right: 1px solid #edebe9;
+  padding: 0 clamp(16px, 2.5vw, 28px);
+}
+
+.ev-card-part--head {
+  border-top: none;
+  border-radius: 0 0 0 0;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+.ev-card-part--mid {
+  border-top: none;
+  padding-top: 0;
+  padding-bottom: 24px;
+}
+
+.ev-card-part--tail {
+  border-bottom: 1px solid #edebe9;
+  border-radius: 0 0 8px 8px;
+  padding-bottom: 28px;
+}
+
+@media (max-width: 960px) {
+  main:has(.event-hero) {
+    display: block;
+    padding-left: var(--section-padding-x, 24px);
+    padding-right: var(--section-padding-x, 24px);
+  }
+
+  main:has(.event-hero) > .section:has(.event-rsvp) {
+    position: static;
+    grid-row: auto;
+    margin-bottom: 24px !important;
+  }
+}

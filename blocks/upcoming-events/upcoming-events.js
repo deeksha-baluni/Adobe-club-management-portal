@@ -88,7 +88,7 @@ function buildEventCard(ev) {
   const btnWrap = document.createElement('div');
   btnWrap.className = 'upcoming-event-btn';
   const btn = document.createElement('a');
-  btn.href = `/events/${ev.id}`;
+  btn.href = `/event?id=${encodeURIComponent(ev.id)}`;
   btn.textContent = 'RSVP';
   btnWrap.append(btn);
 
