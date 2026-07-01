@@ -36,6 +36,109 @@ function getRecapAttendance(recap) {
   return '';
 }
 
+function normalizeEventRecap(recap) {
+  if (!recap) return { summary: '', highlights: [], attendance: '' };
+  if (typeof recap === 'string') return { summary: recap, highlights: [], attendance: '' };
+  const highlights = Array.isArray(recap.highlights) ? recap.highlights : [];
+  const attendance = recap.attendance
+    || (Number.isFinite(Number(recap.attendanceCount)) && Number(recap.attendanceCount) > 0
+      ? `${recap.attendanceCount} members`
+      : '');
+  return {
+    summary: recap.summary || recap.body || '',
+    highlights,
+    attendance,
+  };
+}
+
+function buildRecapModalHtml(recap, ev, club) {
+  const uf = window.AdobeUserFeatures;
+  if (uf?.buildRecapHtml) {
+    return uf.buildRecapHtml(recap, ev, {
+      clubName: club?.name || ev.club,
+      dateLabel: formatEventDate(ev),
+    });
+  }
+
+  const data = normalizeEventRecap(recap);
+  const highlightsHtml = data.highlights.length
+    ? `<ul class="recap-highlights">${data.highlights.map((item) => `<li>${esc(item)}</li>`).join('')}</ul>`
+    : '';
+  const attendanceHtml = data.attendance
+    ? `<div class="recap-stat"><span class="recap-stat-label">Attended</span><strong class="recap-stat-value">${esc(data.attendance)}</strong></div>`
+    : '';
+  const dateLabel = formatEventDate(ev);
+  const clubName = club?.name || ev.club || '';
+
+  return `
+    <div class="recap-detail">
+      <div class="recap-detail-head">
+        <p class="recap-detail-eyebrow">Event recap${dateLabel ? ` · ${esc(dateLabel)}` : ''}</p>
+        ${clubName ? `<span class="recap-detail-club">${esc(clubName)}</span>` : ''}
+      </div>
+      <h2 class="recap-detail-title" id="club-recap-modal-title">${esc(ev?.title || 'Event recap')}</h2>
+      <section class="recap-detail-section">
+        <h3>What happened</h3>
+        <p class="recap-detail-summary">${esc(data.summary)}</p>
+      </section>
+      ${data.highlights.length ? `
+        <section class="recap-detail-section">
+          <h3>Highlights</h3>
+          ${highlightsHtml}
+        </section>` : ''}
+      ${attendanceHtml ? `<div class="recap-detail-stats">${attendanceHtml}</div>` : ''}
+    </div>`;
+}
+
+function injectRecapReadModal() {
+  if (document.getElementById('club-recap-modal')) return;
+  const el = document.createElement('div');
+  el.innerHTML = `
+    <div class="club-recap-modal" id="club-recap-modal" role="dialog" aria-modal="true" aria-labelledby="club-recap-modal-title" hidden>
+      <div class="club-recap-modal-backdrop" data-close-recap></div>
+      <div class="club-recap-modal-panel club-recap-modal-panel--rich">
+        <button type="button" class="club-recap-modal-close" data-close-recap aria-label="Close recap">✕</button>
+        <div id="club-recap-modal-content"></div>
+      </div>
+    </div>`;
+  document.body.appendChild(el.firstElementChild);
+
+  const modal = document.getElementById('club-recap-modal');
+  modal?.addEventListener('click', (e) => {
+    if (e.target.closest('[data-close-recap]')) closeRecapReadModal();
+  });
+  if (!window.__clubRecapModalEscWired) {
+    window.__clubRecapModalEscWired = true;
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeRecapReadModal();
+    });
+  }
+}
+
+function openRecapReadModal(ev, recap, club) {
+  injectRecapReadModal();
+  const modal = document.getElementById('club-recap-modal');
+  const content = document.getElementById('club-recap-modal-content');
+  if (!modal || !content) return;
+
+  content.innerHTML = buildRecapModalHtml(recap, ev, club);
+  modal.hidden = false;
+  document.documentElement.classList.add('club-recap-modal-open');
+  document.body.classList.add('club-recap-modal-open');
+  modal.querySelector('.club-recap-modal-close')?.focus();
+}
+
+function closeRecapReadModal() {
+  const modal = document.getElementById('club-recap-modal');
+  if (!modal || modal.hidden) return;
+  modal.hidden = true;
+  document.documentElement.classList.remove('club-recap-modal-open');
+  document.body.classList.remove('club-recap-modal-open');
+  if (!document.getElementById('club-recap-form-modal')?.classList.contains('open')) {
+    document.body.style.overflow = '';
+  }
+}
+
 function hasRecaps(pastEvents) {
   return pastEvents.some((ev) => getRecapBody(getRecapForEvent(ev)));
 }
@@ -130,6 +233,8 @@ function openForm() {
   if (!modal) return;
   modal.classList.add('open');
   modal.setAttribute('aria-hidden', 'false');
+  document.documentElement.classList.add('club-recap-form-open');
+  document.body.classList.add('club-recap-form-open');
   document.body.style.overflow = 'hidden';
 }
 
@@ -138,7 +243,11 @@ function closeForm() {
   if (!modal) return;
   modal.classList.remove('open');
   modal.setAttribute('aria-hidden', 'true');
-  document.body.style.overflow = '';
+  document.documentElement.classList.remove('club-recap-form-open');
+  document.body.classList.remove('club-recap-form-open');
+  if (!document.getElementById('club-recap-modal') || document.getElementById('club-recap-modal').hidden) {
+    document.body.style.overflow = '';
+  }
   document.getElementById('club-recap-form')?.reset();
 }
 
@@ -158,15 +267,14 @@ function refreshGrid(block, pastEvents, club) {
 }
 
 function wireReadCards(block, pastEvents, club) {
+  injectRecapReadModal();
   block.querySelectorAll('[data-recap-event]').forEach((btn) => {
     btn.addEventListener('click', () => {
       const ev = pastEvents.find((item) => item.id === btn.dataset.recapEvent);
       if (!ev) return;
       const recap = getRecapForEvent(ev);
-      const body = getRecapBody(recap);
-      if (!body) return;
-      // eslint-disable-next-line no-alert
-      window.alert(`${ev.title}\n\n${body}`);
+      if (!getRecapBody(recap)) return;
+      openRecapReadModal(ev, recap, club);
     });
   });
 }

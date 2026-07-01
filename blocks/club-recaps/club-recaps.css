@@ -252,6 +252,205 @@ main > .section:has(.club-recaps) > div {
 .cr-form-msg--ok { color: #1b5e20; }
 .cr-form-msg--err { color: #d7373f; }
 
+/* ── Recap read modal (OG club-recap-modal) ── */
+html.club-recap-modal-open,
+html.club-recap-form-open,
+body.club-recap-modal-open,
+body.club-recap-form-open {
+  overflow: hidden;
+}
+
+.club-recap-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  overscroll-behavior: contain;
+}
+
+.club-recap-modal[hidden] {
+  display: none;
+}
+
+.club-recap-modal-backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  border: none;
+  padding: 0;
+  margin: 0;
+  background: transparent;
+  cursor: default;
+}
+
+.club-recap-modal-panel {
+  position: relative;
+  z-index: 1;
+  width: min(560px, 100%);
+  max-height: min(80vh, 640px);
+  overflow: auto;
+  padding: 32px 36px;
+  border-radius: 16px;
+  border: 1px solid var(--color-border-default, rgba(0, 0, 0, 0.11));
+  background: var(--background-color, #fff);
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.16);
+}
+
+.club-recap-modal-panel--rich {
+  width: min(680px, 100%);
+  max-height: min(85vh, 760px);
+  padding: 36px 40px 40px;
+}
+
+.club-recap-modal-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 36px;
+  height: 36px;
+  border: 1px solid var(--color-border-default, rgba(0, 0, 0, 0.11));
+  border-radius: 999px;
+  background: var(--light-color, #f8f8f8);
+  color: var(--color-text-secondary, #505050);
+  cursor: pointer;
+  font-size: 16px;
+  line-height: 1;
+}
+
+.club-recap-modal-close:hover {
+  background: rgba(0, 0, 0, 0.06);
+}
+
+/* Recap detail content (modal body) */
+.recap-detail {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.recap-detail-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.recap-detail-eyebrow {
+  margin: 0;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-text-tertiary, rgba(0, 0, 0, 0.38));
+}
+
+.recap-detail-club {
+  flex-shrink: 0;
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--color-border-default, rgba(0, 0, 0, 0.11));
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--color-text-secondary, #505050);
+  white-space: nowrap;
+}
+
+.recap-detail-title {
+  margin: 0;
+  font-size: clamp(22px, 3vw, 28px);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.2;
+  color: var(--text-color, #2c2c2c);
+}
+
+.recap-detail-section h3 {
+  margin: 0 0 8px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-text-tertiary, rgba(0, 0, 0, 0.38));
+}
+
+.recap-detail-summary {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.65;
+  color: var(--color-text-secondary, #505050);
+}
+
+.recap-highlights {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.recap-highlights li {
+  position: relative;
+  padding-left: 18px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--color-text-secondary, #505050);
+}
+
+.recap-highlights li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.55em;
+  width: 7px;
+  height: 7px;
+  border: 1.5px solid var(--color-text-tertiary, rgba(0, 0, 0, 0.38));
+  border-radius: 1px;
+}
+
+.recap-detail-stats {
+  display: flex;
+  gap: 12px;
+}
+
+.recap-stat {
+  flex: 1;
+  min-width: 0;
+  max-width: 220px;
+  padding: 16px 18px;
+  border-radius: 8px;
+  background: var(--light-color, #f8f8f8);
+  border: 1px solid var(--color-border-default, rgba(0, 0, 0, 0.11));
+}
+
+.recap-stat-label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-text-tertiary, rgba(0, 0, 0, 0.38));
+}
+
+.recap-stat-value {
+  display: block;
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--text-color, #2c2c2c);
+}
+
+#club-recap-form-modal {
+  z-index: 1250;
+}
+
 @media (max-width: 768px) {
   .cr-grid {
     grid-template-columns: 1fr;
