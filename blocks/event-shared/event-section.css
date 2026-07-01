@@ -17,7 +17,10 @@ main:has(.event-hero) > .section:not(.dark) {
   padding-bottom: 0 !important;
 }
 
-/* Two-column grid: main content left, RSVP rail right */
+/*
+ * Two-column grid on main — topbar spans full width;
+ * RSVP rail aligns with hero image row (not navbar / back link).
+ */
 main:has(.event-hero) {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 320px;
@@ -28,20 +31,39 @@ main:has(.event-hero) {
   align-items: start;
 }
 
-main:has(.event-hero) > .section:has(.event-hero),
+/* Flatten hero + RSVP wrappers so children join the main grid */
+main:has(.event-hero) > .section:has(.event-hero) > div,
+main:has(.event-hero) > .section:has(.event-hero) .event-hero,
+main:has(.event-hero) .ev-inner,
+main:has(.event-hero) > .section:has(.event-rsvp) > div,
+main:has(.event-hero) > .section:has(.event-rsvp) .event-rsvp {
+  display: contents;
+}
+
+.ev-page-head {
+  grid-column: 1 / -1;
+  grid-row: 1;
+}
+
+.ev-body-start {
+  grid-column: 1;
+  grid-row: 2;
+  min-width: 0;
+}
+
+.event-page-right-rail {
+  grid-column: 2;
+  grid-row: 2 / -1;
+  position: sticky;
+  top: calc(var(--nav-height, 55px) + 16px);
+  align-self: start;
+}
+
 main:has(.event-hero) > .section:has(.event-about),
 main:has(.event-hero) > .section:has(.event-details),
 main:has(.event-hero) > .section:has(.event-recap),
 main:has(.event-hero) > .section:has(.event-organizer) {
   grid-column: 1;
-}
-
-main:has(.event-hero) > .section:has(.event-rsvp) {
-  grid-column: 2;
-  grid-row: 1 / span 12;
-  position: sticky;
-  top: calc(var(--nav-height, 55px) + 16px);
-  align-self: start;
 }
 
 .recap-detail-summary {
@@ -84,7 +106,6 @@ main:has(.event-hero) > .section:has(.event-rsvp) {
   color: var(--color-accent, #1473e6);
 }
 
-
 .ev-back {
   display: inline-flex;
   align-items: center;
@@ -109,19 +130,21 @@ main:has(.event-hero) > .section:has(.event-rsvp) {
   border-bottom: none;
 }
 
+.event-hero .event-page-container {
+  padding-bottom: 32px;
+}
+
+/* Gap between intro heading and About this event */
+main:has(.event-hero) > .section:has(.event-about) .ev-card-part--mid {
+  padding-top: 24px;
+}
+
 /* Connected white card across body sections */
 .ev-card-part {
   background: #fff;
   border-left: 1px solid #edebe9;
   border-right: 1px solid #edebe9;
   padding: 0 clamp(16px, 2.5vw, 28px);
-}
-
-.ev-card-part--head {
-  border-top: none;
-  border-radius: 0 0 0 0;
-  padding-top: 0;
-  padding-bottom: 0;
 }
 
 .ev-card-part--mid {
@@ -143,9 +166,17 @@ main:has(.event-hero) > .section:has(.event-rsvp) {
     padding-right: var(--section-padding-x, 24px);
   }
 
-  main:has(.event-hero) > .section:has(.event-rsvp) {
+  main:has(.event-hero) > .section:has(.event-hero) > div,
+  main:has(.event-hero) > .section:has(.event-hero) .event-hero,
+  main:has(.event-hero) .ev-inner,
+  main:has(.event-hero) > .section:has(.event-rsvp) > div,
+  main:has(.event-hero) > .section:has(.event-rsvp) .event-rsvp {
+    display: block;
+  }
+
+  .event-page-right-rail {
     position: static;
     grid-row: auto;
-    margin-bottom: 24px !important;
+    margin-bottom: 24px;
   }
 }

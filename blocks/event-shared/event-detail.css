@@ -22,10 +22,10 @@
 /* ── Top title + share ── */
 
 .event-page-topbar {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 16px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 320px;
+  column-gap: 24px;
+  align-items: center;
   margin-bottom: 20px;
 }
 
@@ -35,7 +35,7 @@
   font-weight: 600;
   line-height: 28px;
   color: #242424;
-  flex: 1;
+  grid-column: 1;
   min-width: 0;
 }
 
@@ -53,6 +53,8 @@
   font-weight: 400;
   line-height: 20px;
   cursor: pointer;
+  grid-column: 2;
+  justify-self: end;
   flex-shrink: 0;
   transition: background 0.15s ease, border-color 0.15s ease;
 }
@@ -118,6 +120,7 @@
   align-items: flex-start;
   gap: 12px;
   margin-bottom: 0;
+  padding-bottom: 4px;
 }
 
 .event-club-thumb-wrap {
@@ -332,15 +335,24 @@
   display: inline-block;
   padding: 9px 22px;
   border-radius: 100px;
-  background: var(--accent, #1473e6);
+  background: var(--color-accent, #1473e6);
   color: #fff;
   font-size: 14px;
   font-weight: 600;
   text-decoration: none;
 }
 
-.event-organizer-signin:hover {
-  background: var(--accent-hover, #0d66d0);
+a.event-organizer-signin:any-link,
+a.event-organizer-signin:any-link:hover,
+a.event-organizer-signin:any-link:focus-visible,
+a.event-organizer-signin:any-link:visited {
+  color: #fff;
+}
+
+.event-organizer-signin:hover,
+a.event-organizer-signin:any-link:hover {
+  background: var(--color-accent-hover, #0d66d0);
+  color: #fff;
 }
 
 [data-theme="dark"] .event-detail-grid,
@@ -394,10 +406,8 @@
 /* ── Right rail ── */
 
 .event-page-right-rail {
-  flex: 0 0 320px;
-  width: 320px;
-  position: sticky;
-  top: 88px;
+  width: 100%;
+  max-width: 320px;
 }
 
 .event-rail-card {
@@ -602,6 +612,25 @@
   }
 }
 
+@media (max-width: 960px) {
+  .event-page-topbar {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+  }
+
+  .event-page-top-title {
+    flex: 1;
+    grid-column: unset;
+  }
+
+  .event-share-btn {
+    grid-column: unset;
+    justify-self: unset;
+  }
+}
+
 @media (max-width: 600px) {
   .event-page-topbar {
     flex-direction: column;
@@ -609,7 +638,7 @@
   }
 
   .event-share-btn {
-    align-self: flex-start;
+    align-self: flex-end;
   }
 
   .event-page-intro {
