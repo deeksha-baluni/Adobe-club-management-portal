@@ -1,4 +1,4 @@
-/* ── Clubs Hero — split layout (text left, image right) ── */
+/* ── Clubs Hero — marquee split (text left, image right) ── */
 
 .section:has(.clubs-hero) {
   margin: 0;
@@ -6,48 +6,62 @@
   border-top: none;
 }
 
+/* Full-bleed — strip EDS section inner constraints */
+.section:has(.clubs-hero) > div {
+  max-width: unset;
+  padding: 0;
+}
+
 .clubs-hero-wrapper {
   max-width: unset;
   padding: 0;
 }
 
-/* Block root — two-column split */
+/* Block root — 50 / 50 split, full viewport width */
 .clubs-hero {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  min-height: 360px;
+  min-height: 400px;
+  width: 100%;
+  align-items: stretch;
 }
 
-/* ── Content side (left) ── */
+/* ── Left: white text panel ── */
 .clubs-hero-content {
   display: flex;
-  flex-direction: column;
-  justify-content: center;
-  padding: clamp(40px, 6vw, 80px) clamp(24px, 4vw, 56px) clamp(40px, 6vw, 80px) var(--section-padding-x);
+  align-items: center;
+  padding: clamp(32px, 5vw, 56px) var(--section-padding-x);
   background: var(--background-color);
-  max-width: 640px;
+  border-right: 1px solid var(--color-border-default);
 }
 
-.clubs-hero-content h1 {
-  font-size: clamp(28px, 4vw, 48px);
+.clubs-hero-text {
+  max-width: 540px;
+  width: 100%;
+  padding-right: clamp(16px, 4vw, 56px);
+}
+
+.clubs-hero-text h1 {
+  font-size: clamp(32px, 4.2vw, 50px);
   font-weight: 700;
-  letter-spacing: -0.025em;
-  line-height: 1.1;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
   color: var(--text-color);
   margin: 0 0 16px;
 }
 
-.clubs-hero-content p:not(.clubs-hero-banner-msg):not(.clubs-hero-banner-eyebrow) {
-  font-size: clamp(14px, 1.3vw, 16px);
+.clubs-hero-text > p {
+  font-size: clamp(15px, 1.8vw, 18px);
   color: var(--color-text-secondary);
   line-height: 1.6;
-  margin: 0 0 24px;
-  max-width: 420px;
+  margin: 0 0 16px;
 }
 
-/* ── Media side (right) ── */
+/* ── Right: full-bleed image ── */
 .clubs-hero-media {
   position: relative;
+  min-height: 400px;
+  height: 100%;
   overflow: hidden;
   background: var(--color-surface);
 }
@@ -58,69 +72,73 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: center;
+  display: block;
 }
 
-/* ── Guest / Member banner ── */
+/* ── CTA banners ── */
+.clubs-hero-cta {
+  margin-top: 4px;
+}
+
+/* Guest — black pill box, horizontal layout */
 .clubs-hero-banner {
   display: flex;
-  flex-direction: column;
-  gap: 12px;
-  padding: 16px 18px;
-  border-radius: var(--border-radius-m);
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-top: 20px;
+  padding: 16px 20px;
   background: var(--color-dark-bg);
-  max-width: 400px;
+  border-radius: var(--border-radius-l);
+  color: #ffffff;
 }
 
-.clubs-hero-banner-eyebrow {
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.55);
-  margin: 0;
+.clubs-hero-banner[hidden] {
+  display: none;
 }
 
 .clubs-hero-banner-msg {
-  font-size: 13px;
-  color: rgba(255, 255, 255, 0.88);
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.82);
   line-height: 1.45;
   margin: 0;
+  flex: 1;
+  min-width: 200px;
 }
 
 .clubs-hero-banner-msg strong {
   color: #ffffff;
-}
-
-.clubs-hero-banner-msg span {
-  color: #ffffff;
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .clubs-hero-banner-actions {
   display: flex;
   gap: 10px;
+  flex-shrink: 0;
   flex-wrap: wrap;
 }
 
 .clubs-hero-banner-btn {
   display: inline-block;
-  padding: 7px 18px;
+  padding: 8px 18px;
   border-radius: 100px;
   font-size: 13px;
   font-weight: 600;
   text-decoration: none;
   cursor: pointer;
-  border: 1px solid rgba(255, 255, 255, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.45);
   background: transparent;
   color: #ffffff;
   font-family: var(--body-font-family);
+  white-space: nowrap;
   transition: background 0.15s, border-color 0.15s;
 }
 
 .clubs-hero-banner-btn--primary {
   background: var(--color-accent);
   border-color: var(--color-accent);
-  color: #ffffff;
 }
 
 .clubs-hero-banner-btn--primary:hover {
@@ -129,25 +147,60 @@
 }
 
 .clubs-hero-banner-btn:not(.clubs-hero-banner-btn--primary):hover {
-  background: rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.65);
 }
 
-/* ── Mobile: stack vertically, hide image ── */
-@media (width <= 860px) {
+/* Member — accent left border, no box */
+.clubs-hero-banner--member {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 16px;
+  margin-top: 28px;
+  padding: 0 0 0 14px;
+  background: none;
+  border: none;
+  border-left: 3px solid var(--color-accent);
+  border-radius: 0;
+  color: var(--text-color);
+}
+
+.clubs-hero-banner--member .clubs-hero-banner-msg {
+  color: var(--color-text-secondary);
+}
+
+.clubs-hero-banner--member .clubs-hero-banner-msg span {
+  color: var(--text-color);
+  font-weight: 600;
+}
+
+.clubs-hero-banner-eyebrow {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-text-tertiary);
+  margin: 0 0 4px;
+}
+
+/* ── Mobile: image on top, then text ── */
+@media (width <= 900px) {
   .clubs-hero {
     grid-template-columns: 1fr;
+    min-height: auto;
   }
 
   .clubs-hero-media {
-    display: none;
+    order: -1;
+    min-height: 240px;
   }
 
   .clubs-hero-content {
-    padding: 40px 24px;
-    max-width: unset;
+    border-right: none;
+    padding: 28px var(--section-padding-x) 36px;
   }
 
-  .clubs-hero-banner {
-    max-width: unset;
+  .clubs-hero-text {
+    padding-right: 0;
   }
 }

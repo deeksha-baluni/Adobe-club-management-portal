@@ -1,13 +1,11 @@
 /**
  * Clubs Hero block — split layout (text left, image right).
  *
- * da.live table shape (2 columns):
- *   | Clubs Hero |                                      |
- *   | (empty)    | H1: Find your community at Adobe.    |
- *   |            | P:  Browse communities across Adobe… |
+ * da.live — either layout works:
+ *   2-col: empty | H1 + P        OR        H1 + P | empty
+ *   1-col: H1 + P only
  *
- * Left cell is empty — JS injects repo image on the right.
- * Content cell (right) is moved to the left side on render.
+ * JS always renders: content left, repo image right.
  */
 
 const HERO_IMG_SRC = '/assets/images/events/evt-hero2.avif';
@@ -16,12 +14,19 @@ function getAuth() {
   return window.AdobeClubsAuth || { isAuthenticated: () => false };
 }
 
+/** Pick whichever table cell actually holds the authored text. */
+function findContentCell(row) {
+  const cells = [...row.children];
+  if (!cells.length) return null;
+  return cells.find((c) => c.querySelector('h1, h2, h3, p')) || cells[0];
+}
+
 function buildGuestBanner() {
   const banner = document.createElement('div');
   banner.className = 'clubs-hero-banner';
   banner.id = 'clubs-guest-banner';
 
-  const msg = document.createElement('p');
+  const msg = document.createElement('span');
   msg.className = 'clubs-hero-banner-msg';
   msg.innerHTML = "You're browsing as a guest. <strong>Sign in</strong> to join clubs and get personalised recommendations.";
 
@@ -48,6 +53,9 @@ function buildMemberBanner() {
   banner.className = 'clubs-hero-banner clubs-hero-banner--member';
   banner.id = 'clubs-member-cta';
 
+  const copy = document.createElement('div');
+  copy.className = 'clubs-hero-banner-copy';
+
   const eyebrow = document.createElement('p');
   eyebrow.className = 'clubs-hero-banner-eyebrow';
   eyebrow.textContent = 'Start something new';
@@ -55,6 +63,8 @@ function buildMemberBanner() {
   const msg = document.createElement('p');
   msg.className = 'clubs-hero-banner-msg';
   msg.innerHTML = "Don't see your community? <span>Request a new club</span> and we'll review it.";
+
+  copy.append(eyebrow, msg);
 
   const actions = document.createElement('div');
   actions.className = 'clubs-hero-banner-actions';
@@ -69,7 +79,7 @@ function buildMemberBanner() {
   });
 
   actions.append(createBtn);
-  banner.append(eyebrow, msg, actions);
+  banner.append(copy, actions);
   return banner;
 }
 
@@ -77,27 +87,33 @@ export default function decorate(block) {
   const row = block.firstElementChild;
   if (!row) return;
 
-  const [leftCell, rightCell] = [...row.children];
-  // Convention mirrors landing-hero: da.live col 1 = empty, col 2 = text
-  const contentCell = rightCell || leftCell;
+  const contentCell = findContentCell(row);
 
-  // ── Content (left on desktop) ─────────────────────────────────────────────
+  // ── Content (left) ──────────────────────────────────────────────────────────
   const content = document.createElement('div');
   content.className = 'clubs-hero-content';
 
+  const text = document.createElement('div');
+  text.className = 'clubs-hero-text';
+
   if (contentCell) {
-    while (contentCell.firstElementChild) content.append(contentCell.firstElementChild);
+    while (contentCell.firstElementChild) text.append(contentCell.firstElementChild);
   }
 
-  // Auth-aware banner below the text
+  const cta = document.createElement('div');
+  cta.className = 'clubs-hero-cta';
+
   const loggedIn = getAuth().isAuthenticated();
   const guestBanner = buildGuestBanner();
   const memberBanner = buildMemberBanner();
   guestBanner.hidden = loggedIn;
   memberBanner.hidden = !loggedIn;
-  content.append(guestBanner, memberBanner);
+  cta.append(guestBanner, memberBanner);
 
-  // ── Media (right on desktop) ──────────────────────────────────────────────
+  text.append(cta);
+  content.append(text);
+
+  // ── Media (right) ───────────────────────────────────────────────────────────
   const media = document.createElement('div');
   media.className = 'clubs-hero-media';
 
