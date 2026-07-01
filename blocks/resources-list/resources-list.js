@@ -373,6 +373,11 @@ function toggleClubChip(value, btn, allChip, container, grid, noResults) {
 export default async function decorate(block) {
   block.textContent = '';
 
+  const rsSection = document.createElement('section');
+  rsSection.className = 'rs-section';
+  rsSection.id = 'rs-section';
+  rsSection.setAttribute('aria-label', 'Articles');
+
   const inner = document.createElement('div');
   inner.className = 'rs-section-inner';
 
@@ -380,7 +385,8 @@ export default async function decorate(block) {
   loading.className = 'rs-loading';
   loading.textContent = 'Loading resources…';
   inner.append(loading);
-  block.append(inner);
+  rsSection.append(inner);
+  block.append(rsSection);
 
   const data = await fetchData();
   loading.remove();

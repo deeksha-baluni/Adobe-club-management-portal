@@ -4,6 +4,11 @@
  * da.live table shape:
  *   | Resources Hero |
  *   | H1 + paragraph in one cell |
+ *
+ * Outputs:
+ *   <section class="rs-hero">
+ *     <div class="rs-hero-content">…</div>
+ *   </section>
  */
 
 function findContentCell(row) {
@@ -38,8 +43,12 @@ export default function decorate(block) {
   const row = block.firstElementChild;
   const contentEl = row ? findContentCell(row) : null;
 
-  const section = document.createElement('div');
-  section.className = 'rs-hero-content';
+  const hero = document.createElement('section');
+  hero.className = 'rs-hero';
+  hero.setAttribute('aria-label', 'Resources hero');
+
+  const content = document.createElement('div');
+  content.className = 'rs-hero-content';
 
   const eyebrow = document.createElement('p');
   eyebrow.className = 'rs-hero-eyebrow';
@@ -48,25 +57,19 @@ export default function decorate(block) {
   const sub = document.createElement('p');
   sub.className = 'rs-hero-sub';
 
-  if (contentEl) {
-    const h = contentEl.querySelector('h1, h2');
-    const firstP = contentEl.querySelector('p');
-    const heading = buildHeading(h);
+  const h = contentEl?.querySelector('h1, h2');
+  const firstP = contentEl?.querySelector('p');
+  const heading = buildHeading(h);
 
-    if (firstP) {
-      sub.innerHTML = firstP.innerHTML;
-    } else {
-      sub.innerHTML = 'Articles for <strong>club leads and members</strong> — policies, tips, and stories from across the community.';
-    }
-
-    section.append(eyebrow, heading, sub);
+  if (firstP) {
+    sub.innerHTML = firstP.innerHTML;
   } else {
-    const heading = buildHeading(null);
     sub.innerHTML = 'Articles for <strong>club leads and members</strong> — policies, tips, and stories from across the community.';
-    section.append(eyebrow, heading, sub);
   }
 
-  section.append(eyebrow, heading, sub);
+  content.append(eyebrow, heading, sub);
+  hero.append(content);
+
   block.textContent = '';
-  block.append(section);
+  block.append(hero);
 }

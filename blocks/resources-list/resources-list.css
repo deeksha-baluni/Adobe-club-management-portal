@@ -1,20 +1,47 @@
-/* ── Resources List block ── */
+/* ── Resources List block — matches original rs-section layout ── */
 
-.section:has(.resources-list) {
-  margin: 0;
-  border-top: none;
+.section:has(.resources-list),
+.section:has(.resources-list) > div,
+.resources-list-container,
+.resources-list-wrapper,
+main > .section:has(.resources-list) > div {
+  margin: 0 !important;
+  padding: 0 !important;
+  max-width: unset !important;
 }
 
 main > .section:has(.resources-hero) + .section:has(.resources-list) {
   padding: 0;
+  margin-top: 0;
 }
 
-main > .section:has(.resources-list) > div {
-  max-width: unset;
-  padding: 0;
+.resources-list {
+  display: contents;
+}
+
+.rs-section {
+  background: var(--light-color);
+  position: relative;
+  z-index: 1;
+  margin-top: -2px;
+  padding-top: 2px;
+}
+
+.rs-section::before {
+  content: '';
+  position: absolute;
+  z-index: 0;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100vw;
+  background: var(--light-color);
 }
 
 .rs-section-inner {
+  position: relative;
+  z-index: 1;
   max-width: var(--max-width);
   margin: 0 auto;
   padding: 0 var(--section-padding-x) clamp(48px, 8vw, 100px);
@@ -50,7 +77,7 @@ main > .section:has(.resources-list) > div {
 .rs-search-input {
   width: 100%;
   padding: 13px 16px 13px 42px;
-  background: var(--light-color);
+  background: var(--background-color);
   border: 1px solid var(--color-border-default);
   border-radius: 12px;
   color: var(--text-color);
@@ -167,10 +194,8 @@ main > .section:has(.resources-list) > div {
   display: flex;
   flex-direction: column;
   border-radius: var(--border-radius-s);
-  overflow: hidden;
   background: var(--background-color);
   border: 1px solid #eaeaea;
-  padding-bottom: 7px;
   cursor: pointer;
   text-align: left;
   transition: transform 0.22s ease, box-shadow 0.22s ease;
@@ -186,8 +211,9 @@ main > .section:has(.resources-list) > div {
   overflow: hidden;
   width: 100%;
   height: 213px;
-  background-color: var(--color-surface);
+  background-color: #eaeaea;
   flex-shrink: 0;
+  border-radius: var(--border-radius-s) var(--border-radius-s) 0 0;
 }
 
 .rs-card-visual img {
@@ -205,11 +231,12 @@ main > .section:has(.resources-list) > div {
 
 .rs-card-body {
   width: 100%;
-  padding: 16px 16px 8px;
+  padding: 16px 16px 16px;
   display: flex;
   flex-direction: column;
   gap: 8px;
   flex: 1;
+  min-height: 0;
 }
 
 .rs-card-publisher {
@@ -254,12 +281,15 @@ main > .section:has(.resources-list) > div {
   margin-top: auto;
   font-size: 12px;
   color: var(--color-text-tertiary);
+  flex-shrink: 0;
 }
 
 .rs-card-read {
   font-weight: 600;
   color: var(--color-accent);
   white-space: nowrap;
+  flex-shrink: 0;
+  padding-right: 2px;
 }
 
 /* ── Read modal ── */
