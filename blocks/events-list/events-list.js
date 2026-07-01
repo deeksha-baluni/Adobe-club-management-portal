@@ -438,7 +438,8 @@ function buildFilterGroup(title, items, type, inputType = 'radio') {
 
 function syncFilterInputs(sidebar) {
   sidebar.querySelectorAll('[data-filter-type]').forEach((input) => {
-    const { filterType, value } = input.dataset;
+    const { filterType } = input.dataset;
+    const { value } = input;
     if (filterType === 'date') input.checked = FILTER_STATE.dateWhen === value;
     else if (filterType === 'rsvp') input.checked = FILTER_STATE.rsvp === value;
     else if (filterType === 'eligible') input.checked = FILTER_STATE.eligible === value;
@@ -561,7 +562,8 @@ function buildSidebar(events, grids) {
 
   sidebar.querySelectorAll('[data-filter-type]').forEach((input) => {
     input.addEventListener('change', () => {
-      const { filterType, value } = input.dataset;
+      const { filterType } = input.dataset;
+      const { value } = input;
       if (filterType === 'date') FILTER_STATE.dateWhen = value;
       else if (filterType === 'rsvp') FILTER_STATE.rsvp = value;
       else if (filterType === 'eligible') FILTER_STATE.eligible = value;
