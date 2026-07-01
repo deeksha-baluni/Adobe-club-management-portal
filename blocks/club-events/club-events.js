@@ -44,9 +44,28 @@ function getClubEventActionState(ev, club) {
 function renderAction(ev, club) {
   const state = getClubEventActionState(ev, club);
   if (state.membersOnly) {
-    return `<span class="ce-rsvp ce-rsvp--locked">${esc(state.label)}</span>`;
+    return `<span class="ce-rsvp ce-rsvp--members-only" aria-label="Members only event">${esc(state.label)}</span>`;
   }
   return `<button type="button" class="ce-rsvp${state.joined ? ' is-joined' : ''}" data-event-id="${esc(ev.id)}">${esc(state.label)}</button>`;
+}
+
+function renderCardMeta(ev) {
+  const title = ev.title || 'Club event';
+  const venue = ev.location || '';
+  const date = formatEventDate(ev);
+  if (venue) {
+    return `
+    <div class="ce-card-copy">
+      <p class="ce-card-title">${esc(title)}</p>
+      <p class="ce-card-venue">${esc(venue)}</p>
+      <p class="ce-card-date">${esc(date)}</p>
+    </div>`;
+  }
+  return `
+    <div class="ce-card-copy">
+      <p class="ce-card-title">${esc(title)}</p>
+      <p class="ce-card-date">${esc(date)}</p>
+    </div>`;
 }
 
 function renderEmpty(message, visible) {
@@ -65,7 +84,7 @@ function renderCards(events, club, imagePool) {
           <img src="${esc(imgSrc)}" alt="" loading="lazy" decoding="async">
         </div>
         <div class="ce-card-foot">
-          <p class="ce-card-label">${esc(ev.title || 'Club event')} · ${esc(formatEventDate(ev))}</p>
+          ${renderCardMeta(ev)}
           <div class="ce-card-action">${renderAction(ev, club)}</div>
         </div>
       </article>`;

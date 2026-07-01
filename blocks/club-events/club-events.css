@@ -72,7 +72,7 @@ main > .section:has(.club-events) > div {
 }
 
 .ce-card-img {
-  aspect-ratio: 4 / 3;
+  aspect-ratio: 16 / 10;
   overflow: hidden;
   background: var(--light-color, #f8f8f8);
 }
@@ -91,22 +91,48 @@ main > .section:has(.club-events) > div {
 
 .ce-card-foot {
   display: flex;
-  align-items: flex-end;
+  align-items: center;
   justify-content: space-between;
   gap: 12px;
   padding: 14px 16px 16px;
   border-top: 1px solid var(--color-border-default, rgba(0, 0, 0, 0.11));
+  background: var(--light-color, #f8f8f8);
 }
 
-.ce-card-label {
-  margin: 0;
+.ce-card-copy {
   flex: 1;
   min-width: 0;
+}
+
+.ce-card-title {
+  margin: 0;
   font-size: 13px;
   font-weight: 600;
-  line-height: 1.45;
+  line-height: 1.35;
   letter-spacing: -0.01em;
   color: var(--text-color, #2c2c2c);
+}
+
+.ce-card-venue {
+  margin: 2px 0 0;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.35;
+  letter-spacing: -0.01em;
+  color: var(--text-color, #2c2c2c);
+}
+
+.ce-card-date {
+  margin: 2px 0 0;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.35;
+  letter-spacing: -0.01em;
+  color: var(--text-color, #2c2c2c);
+}
+
+.ce-card-action {
+  flex-shrink: 0;
 }
 
 .ce-rsvp {
@@ -134,15 +160,12 @@ main > .section:has(.club-events) > div {
   border-color: var(--color-border-default, rgba(0, 0, 0, 0.11));
 }
 
-.ce-rsvp--locked {
-  border: none;
-  background: transparent;
-  color: var(--color-text-tertiary, rgba(0, 0, 0, 0.38));
+.ce-rsvp--members-only {
+  background: var(--color-brand-red, #eb1000);
+  border-color: var(--color-brand-red, #eb1000);
+  color: #fff;
   cursor: default;
-  min-width: 0;
-  padding: 0;
-  font-size: 12px;
-  font-weight: 600;
+  box-shadow: none;
 }
 
 .ce-empty {
