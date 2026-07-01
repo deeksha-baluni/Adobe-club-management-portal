@@ -23,12 +23,21 @@ function findContentCell(row) {
 
 function buildGuestBanner() {
   const banner = document.createElement('div');
-  banner.className = 'clubs-hero-banner';
+  banner.className = 'clubs-hero-banner clubs-hero-banner--guest';
   banner.id = 'clubs-guest-banner';
 
-  const msg = document.createElement('span');
+  const copy = document.createElement('div');
+  copy.className = 'clubs-hero-banner-copy';
+
+  const eyebrow = document.createElement('p');
+  eyebrow.className = 'clubs-hero-banner-eyebrow';
+  eyebrow.textContent = 'Join the community';
+
+  const msg = document.createElement('p');
   msg.className = 'clubs-hero-banner-msg';
   msg.innerHTML = "You're browsing as a guest. <strong>Sign in</strong> to join clubs and get personalised recommendations.";
+
+  copy.append(eyebrow, msg);
 
   const actions = document.createElement('div');
   actions.className = 'clubs-hero-banner-actions';
@@ -40,11 +49,11 @@ function buildGuestBanner() {
 
   const create = document.createElement('a');
   create.href = '/login#signup';
-  create.className = 'clubs-hero-banner-btn';
+  create.className = 'clubs-hero-banner-btn clubs-hero-banner-btn--outline';
   create.textContent = 'Create account';
 
   actions.append(signIn, create);
-  banner.append(msg, actions);
+  banner.append(copy, actions);
   return banner;
 }
 

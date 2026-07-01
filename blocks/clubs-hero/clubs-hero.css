@@ -1,23 +1,17 @@
 /* ── Clubs Hero — marquee split (text left, image right) ── */
 
-.section:has(.clubs-hero) {
-  margin: 0;
-  padding: 0;
+/* Strip every EDS wrapper so the hero fills the full viewport width */
+.section:has(.clubs-hero),
+.section:has(.clubs-hero) > div,
+.clubs-hero-container,
+.clubs-hero-wrapper {
+  margin: 0 !important;
+  padding: 0 !important;
+  max-width: unset !important;
   border-top: none;
 }
 
-/* Full-bleed — strip EDS section inner constraints */
-.section:has(.clubs-hero) > div {
-  max-width: unset;
-  padding: 0;
-}
-
-.clubs-hero-wrapper {
-  max-width: unset;
-  padding: 0;
-}
-
-/* Block root — 50 / 50 split, full viewport width */
+/* Block root — 50/50 split, text LEFT, image RIGHT */
 .clubs-hero {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -81,78 +75,9 @@
   margin-top: 4px;
 }
 
-/* Guest — black pill box, horizontal layout */
+/* Shared base — both banners use the same blue-border style */
 .clubs-hero-banner {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  flex-wrap: wrap;
-  margin-top: 20px;
-  padding: 16px 20px;
-  background: var(--color-dark-bg);
-  border-radius: var(--border-radius-l);
-  color: #ffffff;
-}
-
-.clubs-hero-banner[hidden] {
-  display: none;
-}
-
-.clubs-hero-banner-msg {
-  font-size: 14px;
-  color: rgba(255, 255, 255, 0.82);
-  line-height: 1.45;
-  margin: 0;
-  flex: 1;
-  min-width: 200px;
-}
-
-.clubs-hero-banner-msg strong {
-  color: #ffffff;
-  font-weight: 700;
-}
-
-.clubs-hero-banner-actions {
-  display: flex;
-  gap: 10px;
-  flex-shrink: 0;
-  flex-wrap: wrap;
-}
-
-.clubs-hero-banner-btn {
-  display: inline-block;
-  padding: 8px 18px;
-  border-radius: 100px;
-  font-size: 13px;
-  font-weight: 600;
-  text-decoration: none;
-  cursor: pointer;
-  border: 1px solid rgba(255, 255, 255, 0.45);
-  background: transparent;
-  color: #ffffff;
-  font-family: var(--body-font-family);
-  white-space: nowrap;
-  transition: background 0.15s, border-color 0.15s;
-}
-
-.clubs-hero-banner-btn--primary {
-  background: var(--color-accent);
-  border-color: var(--color-accent);
-}
-
-.clubs-hero-banner-btn--primary:hover {
-  background: var(--color-accent-hover);
-  border-color: var(--color-accent-hover);
-}
-
-.clubs-hero-banner-btn:not(.clubs-hero-banner-btn--primary):hover {
-  background: rgba(255, 255, 255, 0.1);
-  border-color: rgba(255, 255, 255, 0.65);
-}
-
-/* Member — accent left border, no box */
-.clubs-hero-banner--member {
   flex-direction: column;
   align-items: flex-start;
   gap: 16px;
@@ -162,16 +87,16 @@
   border: none;
   border-left: 3px solid var(--color-accent);
   border-radius: 0;
-  color: var(--text-color);
 }
 
-.clubs-hero-banner--member .clubs-hero-banner-msg {
-  color: var(--color-text-secondary);
+.clubs-hero-banner[hidden] {
+  display: none;
 }
 
-.clubs-hero-banner--member .clubs-hero-banner-msg span {
-  color: var(--text-color);
-  font-weight: 600;
+.clubs-hero-banner-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 
 .clubs-hero-banner-eyebrow {
@@ -179,8 +104,75 @@
   font-weight: 700;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--color-text-tertiary);
-  margin: 0 0 4px;
+  color: var(--color-accent);
+  margin: 0;
+}
+
+.clubs-hero-banner-msg {
+  font-size: 14px;
+  color: var(--color-text-secondary);
+  line-height: 1.5;
+  margin: 0;
+}
+
+.clubs-hero-banner-msg strong {
+  color: var(--text-color);
+  font-weight: 700;
+}
+
+.clubs-hero-banner-msg span {
+  color: var(--text-color);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.clubs-hero-banner-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+/* Primary pill button — blue fill */
+.clubs-hero-banner-btn--primary {
+  display: inline-block;
+  padding: 9px 22px;
+  border-radius: 100px;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  background: var(--color-accent);
+  border: 1px solid var(--color-accent);
+  color: #ffffff;
+  font-family: var(--body-font-family);
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.clubs-hero-banner-btn--primary:hover {
+  background: var(--color-accent-hover);
+  border-color: var(--color-accent-hover);
+}
+
+/* Outline pill button — dark border */
+.clubs-hero-banner-btn--outline {
+  display: inline-block;
+  padding: 9px 22px;
+  border-radius: 100px;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  background: transparent;
+  border: 1px solid var(--color-border-default);
+  color: var(--text-color);
+  font-family: var(--body-font-family);
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.clubs-hero-banner-btn--outline:hover {
+  background: var(--color-surface);
+  border-color: var(--dark-color);
 }
 
 /* ── Mobile: image on top, then text ── */
