@@ -34,6 +34,12 @@ main:has(.event-hero) > .section:has(.event-details),
 main:has(.event-hero) > .section:has(.event-recap),
 main:has(.event-hero) > .section:has(.event-organizer) {
   grid-column: 1;
+  width: 100%;
+  min-width: 0;
+}
+
+main:has(.event-hero) > .section:has(.event-hero) > div {
+  width: 100%;
 }
 
 main:has(.event-hero) > .section:has(.event-rsvp) {
@@ -103,19 +109,15 @@ main:has(.event-hero) > .section:has(.event-rsvp) {
 }
 
 .event-hero .ev-inner {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) 320px;
-  column-gap: 24px;
-}
-
-.event-hero .ev-back,
-.event-hero .event-page-topbar {
-  grid-column: 1 / -1;
+  width: 100%;
+  max-width: 100%;
 }
 
 .event-hero .event-hero-stack,
 .event-hero .event-page-container {
-  grid-column: 1;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 .event-hero-stack {
@@ -175,9 +177,5 @@ main:has(.event-hero) > .section:has(.event-rsvp) {
     grid-row: auto;
     margin-top: 0 !important;
     margin-bottom: 24px !important;
-  }
-
-  .event-hero .ev-inner {
-    display: block;
   }
 }
