@@ -12,6 +12,20 @@
  * Col 2 = answer content (can contain paragraphs, links).
  */
 export default function decorate(block) {
+  // ── Section header (eyebrow + heading) ────────────────────────────────────
+  const header = document.createElement('div');
+  header.className = 'accordion-header';
+
+  const eyebrow = document.createElement('p');
+  eyebrow.className = 'accordion-eyebrow';
+  eyebrow.textContent = 'Support';
+
+  const heading = document.createElement('h2');
+  heading.className = 'accordion-heading';
+  heading.textContent = 'Frequently asked questions';
+
+  header.append(eyebrow, heading);
+
   const items = [...block.children].map((row) => {
     const [questionCell, answerCell] = [...row.children];
 
@@ -59,5 +73,6 @@ export default function decorate(block) {
   });
 
   block.textContent = '';
+  block.append(header);
   items.forEach((item) => block.append(item));
 }

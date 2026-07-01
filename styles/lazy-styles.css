@@ -41,6 +41,20 @@
   margin-bottom: 12px;
 }
 
+/* ── Auto-eyebrow: any plain <p> immediately before an <h2> or <h3>
+      inside an EDS default-content-wrapper (authored in da.live above
+      a block table) inherits the same red eyebrow treatment.         ── */
+.default-content-wrapper p:has(+ h2),
+.default-content-wrapper p:has(+ h3) {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-brand-red);
+  margin: 0 0 10px;
+  line-height: 1;
+}
+
 /* ── Section heading line (used on content sections) ── */
 .section-heading {
   font-size: clamp(26px, 3vw, 36px);
@@ -55,7 +69,13 @@ main .section.dark {
   background-color: var(--color-dark-bg);
   color: var(--color-dark-text);
   margin: 0;
-  padding: var(--section-padding-y) 0;
+  padding: 0;
+}
+
+/* Strip the base section inner-div constraints so the dark bg fills full width */
+main .section.dark > div {
+  max-width: unset;
+  padding: 0;
 }
 
 main .section.dark h1,
@@ -71,9 +91,17 @@ main .section.dark p {
 /* ── Dark section: button + layout overrides ── */
 main .section.dark .default-content-wrapper {
   text-align: center;
-  max-width: 680px;
+  max-width: 620px;
   margin: 0 auto;
-  padding: clamp(40px, 6vw, 72px) var(--section-padding-x);
+  padding: clamp(56px, 8vw, 88px) var(--section-padding-x);
+}
+
+main .section.dark h2 {
+  font-size: clamp(28px, 4vw, 42px);
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  line-height: 1.1;
+  margin: 0 0 16px;
 }
 
 main .section.dark .button {

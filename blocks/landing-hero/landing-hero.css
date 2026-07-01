@@ -18,7 +18,7 @@
   gap: 32px;
   max-width: var(--max-width);
   margin: 0 auto;
-  padding: clamp(48px, 7vw, 88px) var(--section-padding-x) clamp(24px, 4vw, 40px);
+  padding: clamp(24px, 3.5vw, 44px) var(--section-padding-x) clamp(16px, 2vw, 28px);
 }
 
 /* ── Content side ──────────────────────────────────────────────────── */

@@ -62,7 +62,14 @@ function buildClubCard(club) {
   desc.className = 'featured-club-desc';
   desc.textContent = club.desc || '';
 
-  body.append(tag, name, members, desc);
+  const btnWrap = document.createElement('div');
+  btnWrap.className = 'featured-club-btn';
+  const btn = document.createElement('a');
+  btn.href = `/clubs/${club.id}`;
+  btn.textContent = 'Join';
+  btnWrap.append(btn);
+
+  body.append(tag, name, members, desc, btnWrap);
   card.append(thumb, body);
   return card;
 }

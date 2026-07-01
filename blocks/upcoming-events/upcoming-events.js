@@ -84,7 +84,15 @@ function buildEventCard(ev) {
   meta.textContent = [ev.type, ev.time].filter(Boolean).join(' · ');
 
   body.append(club, title, meta);
-  card.append(thumb, body);
+
+  const btnWrap = document.createElement('div');
+  btnWrap.className = 'upcoming-event-btn';
+  const btn = document.createElement('a');
+  btn.href = `/events/${ev.id}`;
+  btn.textContent = 'RSVP';
+  btnWrap.append(btn);
+
+  card.append(thumb, body, btnWrap);
   return card;
 }
 

@@ -3,6 +3,35 @@
 .accordion {
   max-width: 900px;
   margin: 0 auto;
+}
+
+/* Section header */
+.accordion-header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.accordion-eyebrow {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-brand-red);
+  margin: 0 0 10px;
+  line-height: 1;
+}
+
+.accordion-heading {
+  font-size: clamp(26px, 3vw, 36px);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--text-color);
+  margin: 0;
+  line-height: 1.1;
+}
+
+/* FAQ items */
+.accordion-item:first-of-type {
   border-top: 1px solid var(--color-border-default);
 }
 

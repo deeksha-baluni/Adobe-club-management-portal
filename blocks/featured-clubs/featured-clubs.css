@@ -14,7 +14,7 @@
   font-weight: 700;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--color-text-tertiary);
+  color: var(--color-brand-red);
   margin: 0;
 }
 
@@ -64,6 +64,7 @@
 .featured-club-card:hover {
   box-shadow: var(--shadow-m);
   transform: translateY(-4px);
+  text-decoration: none;
 }
 
 .featured-club-thumb {
@@ -131,6 +132,31 @@
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
+}
+
+/* Join button */
+.featured-club-btn {
+  display: block;
+  margin-top: auto;
+  padding-top: 14px;
+  text-align: right;
+}
+
+.featured-club-btn a {
+  display: inline-block;
+  padding: 8px 22px;
+  border-radius: 100px;
+  background-color: var(--color-accent);
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background-color 0.15s;
+}
+
+.featured-club-btn a:hover {
+  background-color: var(--color-accent-hover);
+  text-decoration: none;
 }
 
 .featured-clubs-empty {
