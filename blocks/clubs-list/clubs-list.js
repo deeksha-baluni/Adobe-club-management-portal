@@ -236,7 +236,8 @@ function buildSidebar(clubs, grid, noResults) {
 
   sidebar.querySelectorAll('[data-filter-type]').forEach((input) => {
     input.addEventListener('change', () => {
-      const { filterType, value } = input.dataset;
+      const { filterType } = input.dataset;
+      const { value } = input;
       if (filterType === 'membership') FILTER_STATE.membership = value;
       if (filterType === 'categories') {
         if (input.checked) ACTIVE_TAGS.add(value);
