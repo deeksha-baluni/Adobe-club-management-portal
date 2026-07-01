@@ -16,21 +16,6 @@ main > .section:has(.club-hero) > div {
   padding: clamp(20px, 3vw, 32px) var(--section-padding-x, 40px) 0;
 }
 
-.ch-back {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  margin: 0 0 20px;
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--color-accent, #1473e6);
-  text-decoration: none;
-}
-
-.ch-back:hover {
-  color: var(--color-accent-hover, #0d66d0);
-}
-
 .ch-grid {
   display: grid;
   grid-template-columns: minmax(0, 0.88fr) minmax(0, 1.12fr);

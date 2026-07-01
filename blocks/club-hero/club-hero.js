@@ -84,7 +84,6 @@ export default async function decorate(block) {
 
   block.innerHTML = `
     <div class="ch-inner">
-      <a class="ch-back" href="/clubs">← All clubs</a>
       <div class="ch-grid">
         <div class="ch-copy">
           <div class="ch-eyebrow">

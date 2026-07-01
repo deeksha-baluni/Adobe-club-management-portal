@@ -6,10 +6,6 @@ main > .section:has(.club-recaps) > div {
   margin: 0;
 }
 
-.club-recaps-wrapper {
-  background: var(--background-color, #fff);
-}
-
 .cr-panel {
   position: relative;
 }
@@ -43,20 +39,39 @@ main > .section:has(.club-recaps) > div {
 }
 
 .cr-card:hover {
-  border-color: var(--color-accent, #1473e6);
+  border-color: var(--color-border-default, rgba(0, 0, 0, 0.22));
   transform: translateY(-2px);
 }
 
-.cr-card-title {
-  margin: 0 0 8px;
+.cr-detail {
+  display: flex;
+  flex-direction: column;
+}
+
+.cr-detail--card {
+  gap: 8px;
+}
+
+.cr-eyebrow {
+  margin: 0;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-text-tertiary, rgba(0, 0, 0, 0.38));
+}
+
+.cr-title {
+  margin: 0;
   font-size: 15px;
   font-weight: 700;
   line-height: 1.3;
+  letter-spacing: -0.01em;
   color: var(--text-color, #2c2c2c);
 }
 
-.cr-card-body {
-  margin: 0 0 12px;
+.cr-summary {
+  margin: 0;
   font-size: 13px;
   line-height: 1.5;
   color: var(--color-text-secondary, #505050);
@@ -66,8 +81,25 @@ main > .section:has(.club-recaps) > div {
   overflow: hidden;
 }
 
-.cr-read {
-  font-size: 13px;
+.cr-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 4px;
+  padding-top: 10px;
+  border-top: 1px solid var(--color-border-default, rgba(0, 0, 0, 0.11));
+}
+
+.cr-attendance {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-text-tertiary, rgba(0, 0, 0, 0.38));
+}
+
+.cr-read-link {
+  flex-shrink: 0;
+  font-size: 12px;
   font-weight: 600;
   color: var(--color-accent, #1473e6);
 }

@@ -22,7 +22,18 @@ function getRecapBody(recap) {
 function getRecapForEvent(ev) {
   return window.AdobeUserFeatures?.getEventRecap?.(ev.id, ev)
     || getAuth().getEventRecap?.(ev.id, ev)
+    || ev.recap
     || null;
+}
+
+function getRecapAttendance(recap) {
+  if (!recap || typeof recap !== 'object') return '';
+  if (recap.attendance) return recap.attendance;
+  const count = Number(recap.attendanceCount);
+  if (Number.isFinite(count) && count > 0) {
+    return `${count} member${count === 1 ? '' : 's'}`;
+  }
+  return '';
 }
 
 function hasRecaps(pastEvents) {
@@ -37,12 +48,24 @@ function renderRecapCard(ev, club) {
   const recap = getRecapForEvent(ev);
   const body = getRecapBody(recap);
   if (!body) return '';
+  const summaryLimit = 100;
+  const summaryText = body.length > summaryLimit
+    ? `${body.slice(0, summaryLimit).trim()}…`
+    : body;
+  const dateLabel = formatEventDate(ev);
+  const attendance = getRecapAttendance(recap);
   return `
     <div class="cr-card-wrap">
       <button type="button" class="cr-card" data-recap-event="${esc(ev.id)}">
-        <p class="cr-card-title">${esc(ev.title)}</p>
-        <p class="cr-card-body">${esc(body.slice(0, 180))}${body.length > 180 ? '…' : ''}</p>
-        <span class="cr-read">Read recap →</span>
+        <div class="cr-detail cr-detail--card">
+          <p class="cr-eyebrow">Event recap${dateLabel ? ` · ${esc(dateLabel)}` : ''}</p>
+          <h3 class="cr-title">${esc(ev.title)}</h3>
+          <p class="cr-summary">${esc(summaryText)}</p>
+          <div class="cr-footer">
+            ${attendance ? `<span class="cr-attendance">${esc(attendance)}</span>` : '<span></span>'}
+            <span class="cr-read-link">Read recap →</span>
+          </div>
+        </div>
       </button>
     </div>`;
 }

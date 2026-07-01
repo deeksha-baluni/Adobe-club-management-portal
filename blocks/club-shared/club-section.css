@@ -4,6 +4,20 @@ main:has(.club-hero) {
   background: var(--light-color, #f8f8f8);
 }
 
+/* OG uses gap spacing only — no lazy-styles section border lines */
+main:has(.club-hero) > .section {
+  margin: 0;
+  border-top: none;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+/* Hide unused breadcrumb placeholder section above hero (da.live) */
+main:has(.club-hero) > .section:has(.page-breadcrumb),
+main:has(.club-hero) > .section:has(.breadcrumb) {
+  display: none;
+}
+
 .club-section-title {
   margin: 0 0 32px;
   text-align: center;
