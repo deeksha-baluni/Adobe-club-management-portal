@@ -4,18 +4,28 @@ main:has(.club-hero) {
   background: var(--light-color, #f8f8f8);
 }
 
-/* OG uses gap spacing only — no lazy-styles section border lines */
-main:has(.club-hero) > .section {
-  margin: 0;
-  border-top: none;
-  padding-top: 0;
-  padding-bottom: 0;
+/*
+ * Reset global EDS section chrome on club detail page:
+ * - styles.css gives main > div { margin: 40px 16px } (grey gap under nav)
+ * - lazy-styles.css adds border-top + padding on non-first sections
+ */
+main:has(.club-hero) > .section,
+main:has(.club-hero) > .section > div {
+  margin: 0 !important;
+  max-width: unset;
 }
 
-/* Hide unused breadcrumb placeholder section above hero (da.live) */
+main:has(.club-hero) > .section:not(.dark) {
+  border-top: none !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+}
+
+/* Collapse empty breadcrumb / placeholder section above hero (da.live) */
 main:has(.club-hero) > .section:has(.page-breadcrumb),
-main:has(.club-hero) > .section:has(.breadcrumb) {
-  display: none;
+main:has(.club-hero) > .section:has(.breadcrumb),
+main:has(.club-hero) > .section:first-of-type:not(:has(.club-hero)):not(:has(.cta-banner)) {
+  display: none !important;
 }
 
 .club-section-title {

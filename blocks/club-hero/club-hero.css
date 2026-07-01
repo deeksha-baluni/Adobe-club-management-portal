@@ -1,19 +1,56 @@
 @import url('../club-shared/club-buttons.css');
 
-main > .section:has(.club-hero) > div {
-  max-width: unset;
-  padding: 0;
-  margin: 0;
+/* Strip EDS wrappers — hero sits flush under nav (no grey breadcrumb gap) */
+.section:has(.club-hero),
+.section:has(.club-hero) > div,
+.club-hero-wrapper {
+  margin: 0 !important;
+  padding: 0 !important;
+  max-width: unset !important;
+  border-top: none !important;
 }
 
 .club-hero-wrapper {
   background: var(--background-color, #fff);
 }
 
+.club-hero {
+  position: relative;
+  isolation: isolate;
+}
+
+/* Full-bleed white hero band (matches OG .club-hero::before) */
+.club-hero::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100vw;
+  background: var(--background-color, #fff);
+}
+
 .ch-inner {
   max-width: var(--max-width, 1280px);
   margin: 0 auto;
-  padding: clamp(20px, 3vw, 32px) var(--section-padding-x, 40px) 0;
+  padding: 0 var(--section-padding-x, 40px) 0;
+}
+
+.ch-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin: 20px 0 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-accent, #1473e6);
+  text-decoration: none;
+}
+
+.ch-back:hover {
+  color: var(--color-accent-hover, #0d66d0);
 }
 
 .ch-grid {
@@ -21,6 +58,7 @@ main > .section:has(.club-hero) > div {
   grid-template-columns: minmax(0, 0.88fr) minmax(0, 1.12fr);
   gap: clamp(28px, 4vw, 48px);
   align-items: center;
+  padding-bottom: clamp(20px, 3vw, 32px);
 }
 
 .ch-copy {
