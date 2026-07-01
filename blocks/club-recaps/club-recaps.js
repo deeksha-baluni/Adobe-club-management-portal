@@ -5,8 +5,7 @@
 import {
   esc,
   getAuth,
-  loadClubScripts,
-  resolveClubContext,
+  initClubPage,
   getPastClubEvents,
   formatEventDate,
   canPostRecapForClub,
@@ -14,7 +13,7 @@ import {
 import {
   buildRecapHtml,
   getRecapBody,
-} from '../event-shared/event-page.js';
+} from '../club-shared/recap-html.js';
 
 function getRecapForEvent(ev) {
   return window.AdobeUserFeatures?.getEventRecap?.(ev.id, ev)
@@ -265,11 +264,9 @@ function wireForm(block, club, pastEvents) {
 
 export default async function decorate(block) {
   block.innerHTML = '';
-  await loadClubScripts();
-
   let ctx;
   try {
-    ctx = await resolveClubContext();
+    ctx = await initClubPage();
   } catch (err) {
     // eslint-disable-next-line no-console
     console.error('[club-recaps]', err);

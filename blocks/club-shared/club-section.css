@@ -60,6 +60,15 @@ main > .section:has(.club-hero) + .section:has(.club-activities) .club-section-i
   padding-top: 40px;
 }
 
+/* Below-fold sections: skip layout/paint until near viewport */
+main:has(.club-hero) > .section:has(.club-events),
+main:has(.club-hero) > .section:has(.club-recaps),
+main:has(.club-hero) > .section:has(.club-team),
+main:has(.club-hero) > .section:has(.cta-banner) {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 480px;
+}
+
 @media (max-width: 768px) {
   .club-section-inner {
     padding-bottom: 56px;

@@ -5,8 +5,7 @@
 import {
   esc,
   getAuth,
-  loadClubScripts,
-  resolveClubContext,
+  initClubPage,
   wireClubJoinButton,
   bindClubJoinSync,
   getJoinLabel,
@@ -14,6 +13,7 @@ import {
   getClubHeroImageSrc,
   getSimilarClubs,
   slackLinkHtml,
+  preloadHeroImage,
 } from '../club-shared/club-page.js';
 
 function getHeroHeadline(clubId) {
@@ -56,11 +56,10 @@ function renderNotFound(block) {
 export default async function decorate(block) {
   block.innerHTML = '';
   block.classList.add('club-hero');
-  await loadClubScripts();
 
   let ctx;
   try {
-    ctx = await resolveClubContext();
+    ctx = await initClubPage();
   } catch (err) {
     console.error('[club-hero]', err);
     renderNotFound(block);
@@ -79,6 +78,7 @@ export default async function decorate(block) {
   const headline = getHeroHeadline(club.id);
   const memberCount = window.AdobeClubsAuth?.getClubMemberCount?.(club.id, club.members) ?? club.members;
   const heroSrc = getClubHeroImageSrc(club);
+  preloadHeroImage(heroSrc);
 
   document.title = `${club.name} — Adobe Clubs`;
 
@@ -99,7 +99,7 @@ export default async function decorate(block) {
           </div>
         </div>
         <div class="ch-photo">
-          <img src="${esc(heroSrc)}" alt="${esc(club.name)}" loading="eager" decoding="async">
+          <img src="${esc(heroSrc)}" alt="${esc(club.name)}" width="640" height="480" loading="eager" fetchpriority="high" decoding="async">
           ${similarOverlay(allClubs, club)}
         </div>
       </div>

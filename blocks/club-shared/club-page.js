@@ -4,6 +4,8 @@
 
 let dataCache = null;
 let dataPending = null;
+let clubPageInit = null;
+let clubCtxCache = null;
 
 export function esc(str) {
   return String(str ?? '')
@@ -78,10 +80,8 @@ export async function loadClubScripts() {
   ]);
 }
 
-export async function resolveClubContext() {
-  const clubId = getClubIdFromUrl();
+function buildClubContext(data, clubId) {
   if (!clubId) return { error: 'missing-id' };
-  const data = await getClubData();
   const club = (data.clubs || []).find((c) => c.id === clubId);
   if (!club) return { error: 'not-found', clubId };
   const events = getAuth().mergePublishedEvents?.(data.events || [])
@@ -94,6 +94,52 @@ export async function resolveClubContext() {
     gallery: data.gallery || [],
     allClubs: data.clubs || [],
   };
+}
+
+/** Start fetching club data as early as possible (call from loadEager on club pages). */
+export function prefetchClubData() {
+  if (!document.querySelector('link[data-club-data-preload]')) {
+    const link = document.createElement('link');
+    link.rel = 'preload';
+    link.as = 'fetch';
+    link.href = '/data/data.json';
+    link.crossOrigin = 'anonymous';
+    link.dataset.clubDataPreload = '1';
+    document.head.append(link);
+  }
+  return getClubData();
+}
+
+/** Single shared init: fetch data in parallel with auth scripts. */
+export async function initClubPage() {
+  if (clubPageInit) return clubPageInit;
+  clubPageInit = (async () => {
+    const dataPromise = prefetchClubData();
+    await loadClubScripts();
+    const data = await dataPromise;
+    const ctx = buildClubContext(data, getClubIdFromUrl());
+    clubCtxCache = ctx;
+    return ctx;
+  })();
+  return clubPageInit;
+}
+
+export function getClubContext() {
+  return clubCtxCache;
+}
+
+export async function resolveClubContext() {
+  return initClubPage();
+}
+
+export function preloadHeroImage(src) {
+  if (!src || document.querySelector(`link[data-club-hero-preload="${src}"]`)) return;
+  const link = document.createElement('link');
+  link.rel = 'preload';
+  link.as = 'image';
+  link.href = src;
+  link.dataset.clubHeroPreload = src;
+  document.head.append(link);
 }
 
 export function getJoinLabel(club) {

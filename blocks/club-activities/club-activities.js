@@ -8,8 +8,7 @@
 
 import {
   esc,
-  loadClubScripts,
-  resolveClubContext,
+  initClubPage,
   getMeta,
   getActivityDesc,
 } from '../club-shared/club-page.js';
@@ -37,11 +36,9 @@ function renderGrid(activities, club) {
 
 export default async function decorate(block) {
   block.innerHTML = '';
-  await loadClubScripts();
-
   let ctx;
   try {
-    ctx = await resolveClubContext();
+    ctx = await initClubPage();
   } catch (err) {
     // eslint-disable-next-line no-console
     console.error('[club-activities]', err);

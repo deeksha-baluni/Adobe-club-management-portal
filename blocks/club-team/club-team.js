@@ -4,8 +4,7 @@
 
 import {
   esc,
-  loadClubScripts,
-  resolveClubContext,
+  initClubPage,
   getJoinLabel,
   wireClubJoinButton,
   bindClubJoinSync,
@@ -75,11 +74,9 @@ function renderJoinCard(club, joinLabel, isAdmin) {
 
 export default async function decorate(block) {
   block.innerHTML = '';
-  await loadClubScripts();
-
   let ctx;
   try {
-    ctx = await resolveClubContext();
+    ctx = await initClubPage();
   } catch (err) {
     // eslint-disable-next-line no-console
     console.error('[club-team]', err);

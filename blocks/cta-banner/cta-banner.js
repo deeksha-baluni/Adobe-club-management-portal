@@ -10,8 +10,7 @@
 import {
   esc,
   getAuth,
-  loadClubScripts,
-  resolveClubContext,
+  initClubPage,
   getJoinLabel,
   wireClubJoinButton,
   bindClubJoinSync,
@@ -41,22 +40,24 @@ function renderPerks() {
 
 export default async function decorate(block) {
   block.innerHTML = '';
-  await loadClubScripts();
 
   let title = 'Start participating, meet new people, and join your first club event today';
   let joinLabel = 'Join';
   let club = null;
 
-  try {
-    const ctx = await resolveClubContext();
-    if (!ctx.error && ctx.club) {
-      club = ctx.club;
-      title = `Start participating, meet new people, and join your first ${club.tag.toLowerCase()} event today`;
-      joinLabel = getJoinLabel(club);
-      document.title = `${club.name} — Adobe Clubs`;
+  const clubId = new URLSearchParams(window.location.search).get('id')
+    || window.location.pathname.match(/\/clubs\/([^/]+)/)?.[1];
+  if (clubId) {
+    try {
+      const ctx = await initClubPage();
+      if (!ctx.error && ctx.club) {
+        club = ctx.club;
+        title = `Start participating, meet new people, and join your first ${club.tag.toLowerCase()} event today`;
+        joinLabel = getJoinLabel(club);
+      }
+    } catch (_) {
+      /* static fallback */
     }
-  } catch (_) {
-    /* static fallback */
   }
 
   const joined = club ? getAuth().isClubJoined(club.id) : false;

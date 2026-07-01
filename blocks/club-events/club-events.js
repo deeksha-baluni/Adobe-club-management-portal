@@ -5,8 +5,7 @@
 import {
   esc,
   getAuth,
-  loadClubScripts,
-  resolveClubContext,
+  initClubPage,
   getUpcomingClubEvents,
   getClubImagePool,
   getEventImageSrc,
@@ -81,7 +80,7 @@ function renderCards(events, club, imagePool) {
     return `
       <article class="ce-card" data-date-filter="${esc(getEventDateFilter(ev))}" data-event-id="${esc(ev.id)}" tabindex="0" role="button">
         <div class="ce-card-img">
-          <img src="${esc(imgSrc)}" alt="" loading="lazy" decoding="async">
+          <img src="${esc(imgSrc)}" alt="" width="320" height="200" loading="lazy" decoding="async">
         </div>
         <div class="ce-card-foot">
           ${renderCardMeta(ev)}
@@ -184,11 +183,9 @@ function wireFilters(block) {
 
 export default async function decorate(block) {
   block.innerHTML = '';
-  await loadClubScripts();
-
   let ctx;
   try {
-    ctx = await resolveClubContext();
+    ctx = await initClubPage();
   } catch (err) {
     // eslint-disable-next-line no-console
     console.error('[club-events]', err);

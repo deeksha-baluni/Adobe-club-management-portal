@@ -642,13 +642,13 @@ async function loadSection(section, loadCallback) {
 
 async function loadSections(element) {
   const sections = [...element.querySelectorAll('div.section')];
-  for (let i = 0; i < sections.length; i += 1) {
-    // eslint-disable-next-line no-await-in-loop
-    await loadSection(sections[i]);
-    if (i === 0 && sampleRUM.enhance) {
-      sampleRUM.enhance();
-    }
-  }
+  const pending = sections.filter((section) => {
+    const { sectionStatus: status } = section.dataset;
+    return !status || status === 'initialized';
+  });
+  if (!pending.length) return;
+  await Promise.all(pending.map((section) => loadSection(section)));
+  if (sampleRUM.enhance) sampleRUM.enhance();
 }
 
 init();
