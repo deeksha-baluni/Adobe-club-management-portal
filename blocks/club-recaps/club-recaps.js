@@ -1,5 +1,5 @@
 /**
- * Club Recaps block — past session highlights + admin recap form.
+ * Club Recaps block — original highlights section.
  */
 
 import {
@@ -25,38 +25,42 @@ function getRecapForEvent(ev) {
     || null;
 }
 
-function hasRecaps(pastEvents) {
-  return pastEvents.some((ev) => getRecapBody(getRecapForEvent(ev)));
+function hasRecapHighlights(pastEvents) {
+  return (pastEvents || []).some((ev) => getRecapBody(getRecapForEvent(ev)));
 }
 
 function getEventsNeedingRecap(pastEvents) {
-  return pastEvents.filter((ev) => !getRecapBody(getRecapForEvent(ev)));
+  return (pastEvents || []).filter((ev) => !getRecapBody(getRecapForEvent(ev)));
 }
 
-function renderRecapCard(ev, club) {
-  const recap = getRecapForEvent(ev);
-  const body = getRecapBody(recap);
-  if (!body) return '';
-  return `
-    <div class="cr-card-wrap">
-      <button type="button" class="cr-card" data-recap-event="${esc(ev.id)}">
-        <p class="cr-card-title">${esc(ev.title)}</p>
-        <p class="cr-card-body">${esc(body.slice(0, 180))}${body.length > 180 ? '…' : ''}</p>
-        <span class="cr-read">Read recap →</span>
-      </button>
-    </div>`;
+function renderRecapCards(pastEvents) {
+  const items = pastEvents
+    .map((ev) => ({ ev, recap: getRecapForEvent(ev) }))
+    .filter((x) => getRecapBody(x.recap));
+  if (!items.length) return '';
+  return items.slice(0, 6).map(({ ev, recap }) => {
+    const body = getRecapBody(recap);
+    return `
+      <div class="club-recap-card-wrap">
+        <button type="button" class="club-recap-card" data-recap-event="${esc(ev.id)}" aria-label="Read recap for ${esc(ev.title)}">
+          <p class="club-recap-card-title">${esc(ev.title)}</p>
+          <p>${esc(body)}</p>
+          <span class="club-recap-read">Read recap →</span>
+        </button>
+      </div>`;
+  }).join('');
 }
 
-function renderEmpty(hidden) {
+function renderRecapEmptyState(hidden = false) {
   return `
-    <p class="cr-empty"${hidden ? ' hidden' : ''}>
-      <img src="/assets/images/club_details/icons/forbidden.png" alt="" width="56" height="56" decoding="async">
+    <p class="club-recap-empty-state" id="club-recap-empty"${hidden ? ' hidden' : ''}>
+      <img src="/assets/images/club_details/icons/forbidden.png" alt="" class="club-recap-empty-icon" width="56" height="56" decoding="async">
       <span>No recaps listed for past events.</span>
     </p>`;
 }
 
-function renderOptions(pastEvents) {
-  const available = getEventsNeedingRecap(pastEvents);
+function renderRecapFormOptions(pastEvents) {
+  const available = pastEvents.filter((ev) => !getRecapBody(getRecapForEvent(ev)));
   if (!available.length) {
     return '<option value="">No past events available for a new recap</option>';
   }
@@ -65,41 +69,43 @@ function renderOptions(pastEvents) {
   `).join('');
 }
 
-function injectFormModal(club, pastEvents, canPost) {
+function injectRecapFormModal(club, pastEvents, canPostRecap) {
   if (document.getElementById('club-recap-form-modal')) return;
-  const disabled = canPost ? '' : 'disabled';
+  const disabled = canPostRecap ? '' : 'disabled';
   const el = document.createElement('div');
   el.innerHTML = `
-    <div class="cr-modal" id="club-recap-form-modal" aria-hidden="true">
-      <div class="cr-modal-card" role="dialog" aria-modal="true" aria-labelledby="club-recap-form-title">
-        <div class="cr-modal-head">
-          <h3 id="club-recap-form-title">Post Event Recap</h3>
-          <button type="button" class="cr-modal-close" data-close-recap-form aria-label="Close">✕</button>
+    <div class="ev-admin-modal" id="club-recap-form-modal" aria-hidden="true">
+      <div class="ev-admin-modal-card" id="club-recap-form-modal-card" role="dialog" aria-modal="true" aria-labelledby="club-recap-form-title">
+        <div class="ev-admin-head">
+          <h3 class="ev-admin-title" id="club-recap-form-title">Post Event Recap</h3>
+          <button type="button" class="ev-admin-close" data-close-recap-form aria-label="Close">✕</button>
         </div>
-        <form class="cr-form" id="club-recap-form" novalidate>
-          <p class="cr-form-msg" id="club-recap-msg" hidden role="alert"></p>
-          <label><span>Past event *</span>
-            <select id="club-recap-event" required ${disabled}>${renderOptions(pastEvents)}</select>
-          </label>
-          <label><span>Attendance *</span>
-            <input type="number" id="club-recap-attendance" required min="1" max="999" placeholder="12" ${disabled}>
-          </label>
+        <form class="ev-admin-form" id="club-recap-form" novalidate>
+          <p class="ev-admin-form-error" id="club-recap-msg" hidden role="alert"></p>
+          <p class="club-recap-form-note">Select a past ${esc(club.name)} event that still needs a recap.</p>
+          <div class="ev-admin-grid">
+            <label><span>Past event *</span>
+              <select id="club-recap-event" required ${disabled}>${renderRecapFormOptions(pastEvents)}</select>
+            </label>
+            <label><span>Attendance *</span>
+              <input type="number" id="club-recap-attendance" required min="1" max="999" placeholder="12" ${disabled}>
+            </label>
+          </div>
           <label><span>What happened *</span>
             <textarea id="club-recap-summary" required minlength="20" rows="4" placeholder="Describe the session." ${disabled}></textarea>
           </label>
           <label><span>Highlights *</span>
             <textarea id="club-recap-highlights" required minlength="10" rows="3" placeholder="One highlight per line" ${disabled}></textarea>
           </label>
-          <button type="submit" class="cr-submit" id="club-recap-submit" ${disabled}>Post recap</button>
+          <button type="submit" class="ev-admin-submit" id="club-recap-submit" ${disabled}>Post recap</button>
         </form>
       </div>
     </div>`;
   document.body.appendChild(el.firstElementChild);
-  const modal = document.getElementById('club-recap-form-modal');
-  modal?.addEventListener('click', (e) => {
-    if (e.target === modal) closeForm();
+  document.getElementById('club-recap-form-modal')?.addEventListener('click', (e) => {
+    if (e.target.id === 'club-recap-form-modal') closeForm();
   });
-  modal?.querySelector('[data-close-recap-form]')?.addEventListener('click', closeForm);
+  document.querySelector('[data-close-recap-form]')?.addEventListener('click', closeForm);
 }
 
 function openForm() {
@@ -119,35 +125,6 @@ function closeForm() {
   document.getElementById('club-recap-form')?.reset();
 }
 
-function refreshGrid(block, pastEvents, club) {
-  const grid = block.querySelector('#cr-grid');
-  if (!grid) return;
-  const cards = pastEvents.map((ev) => renderRecapCard(ev, club)).filter(Boolean).join('');
-  const empty = grid.querySelector('.cr-empty');
-  grid.querySelectorAll('.cr-card-wrap').forEach((n) => n.remove());
-  if (cards) {
-    empty?.insertAdjacentHTML('beforebegin', cards);
-    if (empty) empty.hidden = true;
-  } else if (empty) {
-    empty.hidden = false;
-  }
-  wireReadCards(block, pastEvents, club);
-}
-
-function wireReadCards(block, pastEvents, club) {
-  block.querySelectorAll('[data-recap-event]').forEach((btn) => {
-    btn.addEventListener('click', () => {
-      const ev = pastEvents.find((item) => item.id === btn.dataset.recapEvent);
-      if (!ev) return;
-      const recap = getRecapForEvent(ev);
-      const body = getRecapBody(recap);
-      if (!body) return;
-      // eslint-disable-next-line no-alert
-      window.alert(`${ev.title}\n\n${body}`);
-    });
-  });
-}
-
 function wireForm(block, club, pastEvents) {
   const form = document.getElementById('club-recap-form');
   if (!form) return;
@@ -158,12 +135,8 @@ function wireForm(block, club, pastEvents) {
       if (!msg) return;
       msg.hidden = !text;
       msg.textContent = text || '';
-      msg.className = ok ? 'cr-form-msg cr-form-msg--ok' : 'cr-form-msg cr-form-msg--err';
+      msg.className = ok ? 'ev-admin-form-success' : 'ev-admin-form-error';
     };
-    if (!getAuth().isAuthenticated()) {
-      window.location.href = getAuth().loginUrlWithNext?.() || '/login';
-      return;
-    }
     if (!canPostRecapForClub(club.id)) {
       showMsg('Only club admins can post recaps.', false);
       return;
@@ -173,12 +146,12 @@ function wireForm(block, club, pastEvents) {
     const highlightsRaw = document.getElementById('club-recap-highlights')?.value?.trim();
     const attendanceCount = parseInt(document.getElementById('club-recap-attendance')?.value, 10);
     const ev = pastEvents.find((item) => item.id === eventId);
-    if (!ev || !isEventPast(ev)) {
-      showMsg('Please select a valid past event.', false);
+    if (!ev || !isEventPast(ev) || !summary || summary.length < 20) {
+      showMsg('Fill in all required fields.', false);
       return;
     }
     const highlights = (highlightsRaw || '').split('\n').map((l) => l.trim()).filter(Boolean);
-    if (!summary || summary.length < 20 || !highlights.length || !Number.isFinite(attendanceCount)) {
+    if (!highlights.length || !Number.isFinite(attendanceCount)) {
       showMsg('Fill in all required fields.', false);
       return;
     }
@@ -188,14 +161,6 @@ function wireForm(block, club, pastEvents) {
       attendanceCount,
       attendance: `${attendanceCount} members`,
     }, { title: ev.title, clubId: club.id, clubName: club.name });
-    refreshGrid(block, pastEvents, club);
-    const select = document.getElementById('club-recap-event');
-    if (select) select.innerHTML = renderOptions(pastEvents);
-    const cta = block.querySelector('#cr-cta');
-    if (cta) {
-      const hasWork = getEventsNeedingRecap(pastEvents).length > 0;
-      cta.disabled = !hasWork;
-    }
     showMsg('Recap posted — thanks for sharing!', true);
     form.reset();
     window.setTimeout(closeForm, 1000);
@@ -218,32 +183,42 @@ export default async function decorate(block) {
 
   const { club, events } = ctx;
   const pastEvents = getPastClubEvents(club, events);
-  const hasAnyRecaps = hasRecaps(pastEvents);
-  const showCta = canPostRecapForClub(club.id);
-  const hasWork = getEventsNeedingRecap(pastEvents).length > 0;
-  const canPost = showCta && pastEvents.length > 0 && hasWork;
+  const hasRecaps = hasRecapHighlights(pastEvents);
+  const showRecapCta = canPostRecapForClub(club.id);
+  const hasEventsToRecap = getEventsNeedingRecap(pastEvents).length > 0;
+  const canPostRecap = showRecapCta && pastEvents.length > 0 && hasEventsToRecap;
 
   block.innerHTML = `
-    <div class="club-section-inner" id="club-recaps">
-      <h2 class="club-section-title">Highlights from recent sessions</h2>
-      <div class="cr-panel">
-        <div class="cr-grid" id="cr-grid">
-          ${pastEvents.map((ev) => renderRecapCard(ev, club)).filter(Boolean).join('')}
-          ${renderEmpty(hasAnyRecaps)}
+    <div class="club-detail-page">
+      <section class="club-block" id="club-recaps">
+        <h2 class="club-section-title">Highlights from recent sessions</h2>
+        <div class="club-recap-panel">
+          <div class="club-recap-grid${hasRecaps ? '' : ' is-recap-empty'}" id="club-recap-grid">
+            ${renderRecapCards(pastEvents)}
+            ${renderRecapEmptyState(hasRecaps)}
+          </div>
+          ${showRecapCta ? `
+            <div class="club-recap-foot">
+              <button type="button" class="club-recap-cta${hasEventsToRecap ? ' club-recap-cta--active' : ''}" id="club-recap-cta"${hasEventsToRecap ? '' : ' disabled'} aria-disabled="${hasEventsToRecap ? 'false' : 'true'}">Post a recap</button>
+            </div>` : ''}
         </div>
-        ${showCta ? `
-          <div class="cr-foot">
-            <button type="button" class="cr-cta${hasWork ? ' cr-cta--active' : ''}" id="cr-cta"${hasWork ? '' : ' disabled'}>Post a recap</button>
-          </div>` : ''}
-      </div>
+      </section>
     </div>`;
 
-  injectFormModal(club, pastEvents, canPost);
-  wireReadCards(block, pastEvents, club);
+  injectRecapFormModal(club, pastEvents, canPostRecap);
   wireForm(block, club, pastEvents);
-  block.querySelector('#cr-cta')?.addEventListener('click', () => {
-    if (block.querySelector('#cr-cta')?.disabled) return;
+  block.querySelector('#club-recap-cta')?.addEventListener('click', () => {
+    if (block.querySelector('#club-recap-cta')?.disabled) return;
     openForm();
+  });
+
+  block.querySelector('#club-recap-grid')?.addEventListener('click', (e) => {
+    const card = e.target.closest('[data-recap-event]');
+    if (!card) return;
+    const ev = pastEvents.find((item) => item.id === card.dataset.recapEvent);
+    const recap = ev ? getRecapForEvent(ev) : null;
+    const body = getRecapBody(recap);
+    if (body) window.alert(`${ev.title}\n\n${body}`);
   });
 
   if (window.location.hash === '#club-recaps') {

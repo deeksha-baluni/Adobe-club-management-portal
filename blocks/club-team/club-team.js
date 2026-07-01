@@ -1,5 +1,5 @@
 /**
- * Club Team block — team member cards with join card.
+ * Club Team block — original team section.
  */
 
 import {
@@ -9,6 +9,7 @@ import {
   getJoinLabel,
   wireClubJoinButton,
   bindClubJoinSync,
+  getAuth,
 } from '../club-shared/club-page.js';
 
 const TEAM_IMAGE_BASE = '/assets/images/club_details/team_images/';
@@ -54,22 +55,22 @@ function getTeamMembers(clubId) {
   }));
 }
 
-function renderMember(member) {
+function renderTeamCard(member) {
   return `
-    <article class="ct-card">
+    <article class="club-team-card">
       <img src="${esc(member.image)}" alt="${esc(member.name)}" loading="lazy" decoding="async">
-      <div class="ct-overlay">
+      <div class="club-team-card-overlay">
         <strong>${esc(member.name)}</strong>
         <span>${esc(member.role)}</span>
       </div>
     </article>`;
 }
 
-function renderJoinCard(club, joinLabel, isAdmin) {
+function renderTeamJoinCard(club, joined, joinLabel, isAdminOfClub) {
   return `
-    <article class="ct-card ct-card--join">
-      <p>Join our community at ${esc(club.name)}.</p>
-      <button type="button" class="ct-join-btn${joinLabel.startsWith('Joined') ? ' is-joined' : ''}" data-club-join data-join-suffix="→"${isAdmin ? ' disabled' : ''}>${esc(joinLabel)} →</button>
+    <article class="club-team-card club-team-card--join">
+      <p class="club-team-join-copy">Join our community at ${esc(club.name)}.</p>
+      <button type="button" class="club-team-join-btn ${joined ? 'is-joined' : ''}" id="club-detail-join-team"${isAdminOfClub ? ' disabled' : ''}>${esc(joinLabel)} →</button>
     </article>`;
 }
 
@@ -88,26 +89,21 @@ export default async function decorate(block) {
   if (ctx.error) return;
 
   const { club } = ctx;
+  const joined = getAuth().isClubJoined(club.id);
+  const isAdminOfClub = getAuth().getAdminOf().includes(club.id);
   const joinLabel = getJoinLabel(club);
-  const isAdmin = joinLabel === 'Admin only';
   const members = getTeamMembers(club.id);
-  const cards = members.map(renderMember);
-  cards.splice(Math.min(2, cards.length), 0, renderJoinCard(club, joinLabel, isAdmin));
+  const cards = members.map(renderTeamCard);
+  cards.splice(Math.min(2, cards.length), 0, renderTeamJoinCard(club, joined, joinLabel, isAdminOfClub));
 
   block.innerHTML = `
-    <div class="club-section-inner" id="club-team">
-      <h2 class="club-section-title">Meet the dedicated team</h2>
-      <div class="ct-grid">${cards.join('')}</div>
+    <div class="club-detail-page">
+      <section class="club-block club-team-block" id="club-team">
+        <h2 class="club-section-title">Meet the dedicated team</h2>
+        <div class="club-team-grid">${cards.join('')}</div>
+      </section>
     </div>`;
 
   bindClubJoinSync(club);
-  wireClubJoinButton(block.querySelector('[data-club-join]'), club);
-  window.addEventListener('adobe-club-join-changed', (e) => {
-    if (e.detail?.clubId !== club.id) return;
-    const btn = block.querySelector('[data-club-join]');
-    if (btn) {
-      btn.classList.toggle('is-joined', e.detail.joined);
-      btn.textContent = `${e.detail.joined ? 'Joined' : 'Join'} →`;
-    }
-  });
+  wireClubJoinButton(block.querySelector('#club-detail-join-team'), club);
 }
