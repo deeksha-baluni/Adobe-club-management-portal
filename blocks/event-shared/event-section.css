@@ -55,7 +55,7 @@ main:has(.event-hero) > .section:has(.event-rsvp) {
 .recap-detail {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 20px;
 }
 
 .recap-detail--card {
@@ -153,10 +153,14 @@ main:has(.event-hero) > .section:has(.event-rsvp) {
 }
 
 .recap-highlights li::before {
-  content: '•';
+  content: '';
   position: absolute;
   left: 0;
-  color: var(--color-accent, #1473e6);
+  top: 0.55em;
+  width: 7px;
+  height: 7px;
+  border: 1.5px solid #8a8886;
+  border-radius: 1px;
 }
 
 .recap-detail-stats {

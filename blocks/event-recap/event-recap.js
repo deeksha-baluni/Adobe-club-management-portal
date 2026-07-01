@@ -2,13 +2,7 @@
  * Event Recap block — past event recap section (#recap).
  */
 
-import {
-  initEventPage,
-  isPast,
-  getEventRecap,
-  getRecapBody,
-  buildRecapHtml,
-} from '../event-shared/event-page.js';
+import { initEventPage, buildEventRecapSectionHtml } from '../event-shared/event-page.js';
 
 export default async function decorate(block) {
   block.innerHTML = '';
@@ -17,20 +11,16 @@ export default async function decorate(block) {
   const ctx = await initEventPage();
   if (ctx.error) return;
 
-  const { event: ev, club } = ctx;
-  if (!isPast(ev)) return;
+  // Recap is rendered in event-details when that block is on the page.
+  if (document.getElementById('recap')) return;
 
-  const recap = getEventRecap(ev);
-  if (!getRecapBody(recap)) return;
+  const { event: ev, club } = ctx;
+  const recapHtml = buildEventRecapSectionHtml(ev, club);
+  if (!recapHtml) return;
 
   block.innerHTML = `
     <div class="ev-card-part ev-card-part--mid">
-      <section class="event-recap-section" id="recap" aria-label="Event recap">
-        <h3 class="event-recap-heading">Event recap</h3>
-        <div class="event-recap-body">
-          ${buildRecapHtml(recap, ev, club)}
-        </div>
-      </section>
+      ${recapHtml}
     </div>`;
 
   if (window.location.hash === '#recap') {
