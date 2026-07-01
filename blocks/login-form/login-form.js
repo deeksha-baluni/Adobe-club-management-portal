@@ -497,6 +497,7 @@ export default async function decorate(block) {
   shell.append(visual, formPanel);
   block.textContent = '';
   block.append(shell);
+  document.body.classList.add('auth-page');
 
   // Wire up mode tabs
   document.getElementById('auth-tab-login')?.addEventListener('click', () => setAuthMode('login'));

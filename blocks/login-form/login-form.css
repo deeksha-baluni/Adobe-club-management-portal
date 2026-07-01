@@ -1,8 +1,25 @@
-/* ── Login Form block — full-viewport two-panel auth ── */
+/* ── Login Form block — full-viewport two-panel auth (no nav/footer) ── */
+
+body.auth-page {
+  overflow: hidden;
+  height: 100dvh;
+}
+
+body.auth-page header,
+body.auth-page footer {
+  display: none !important;
+}
+
+body.auth-page main {
+  height: 100dvh;
+  overflow: hidden;
+  margin: 0;
+  padding: 0;
+}
 
 /* Strip all EDS section/wrapper padding for this page */
-.section:has(.login-form),
-.section:has(.login-form) > div,
+body.auth-page .section:has(.login-form),
+body.auth-page .section:has(.login-form) > div,
 .login-form-container,
 .login-form-wrapper,
 .login-form {
@@ -10,16 +27,11 @@
   padding: 0 !important;
   max-width: unset !important;
   width: 100% !important;
+  height: 100% !important;
 }
 
 .login-form {
   display: contents;
-}
-
-/* Force full-viewport height on this page */
-main:has(.login-form) {
-  height: 100dvh;
-  overflow: hidden;
 }
 
 /* ── Shell ── */
@@ -341,7 +353,12 @@ main:has(.login-form) {
 
 /* ── Responsive ── */
 @media (width <= 920px) {
-  main:has(.login-form) {
+  body.auth-page {
+    overflow: auto;
+    height: auto;
+  }
+
+  body.auth-page main {
     height: auto;
     overflow: visible;
   }
