@@ -68,6 +68,45 @@ main .section.dark p {
   color: rgba(255, 255, 255, 0.78);
 }
 
+/* ── Dark section: button + layout overrides ── */
+main .section.dark .default-content-wrapper {
+  text-align: center;
+  max-width: 680px;
+  margin: 0 auto;
+  padding: clamp(40px, 6vw, 72px) var(--section-padding-x);
+}
+
+main .section.dark .button {
+  border-radius: 100px;
+  padding: 11px 28px;
+  font-size: 15px;
+}
+
+main .section.dark .button-wrapper {
+  display: inline-block;
+  margin: 0 6px;
+}
+
+main .section.dark .default-content-wrapper > :has(.button-wrapper) {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+main .section.dark .button.secondary {
+  border-color: rgba(255, 255, 255, 0.45);
+  color: #ffffff;
+  background: transparent;
+}
+
+main .section.dark .button.secondary:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.65);
+  color: #ffffff;
+}
+
 /* ── Accent surface (light tinted sections) ── */
 main .section.surface {
   background-color: var(--color-surface);

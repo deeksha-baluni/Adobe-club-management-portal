@@ -1,0 +1,158 @@
+/* ── Upcoming Events block ── */
+
+.upcoming-events-head {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 8px;
+  margin-bottom: 32px;
+}
+
+.upcoming-events-eyebrow {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-text-tertiary);
+  margin: 0;
+}
+
+.upcoming-events-heading {
+  font-size: clamp(26px, 3vw, 36px);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--text-color);
+  margin: 0;
+  line-height: 1.1;
+}
+
+.upcoming-events-link {
+  font-size: 14px;
+  color: var(--color-accent);
+  text-decoration: underline;
+  text-decoration-color: var(--color-accent);
+  text-underline-offset: 3px;
+  margin-top: 4px;
+}
+
+.upcoming-events-link:hover {
+  color: var(--color-accent-hover);
+  text-decoration-color: var(--color-accent-hover);
+}
+
+/* Grid */
+.upcoming-events-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 36px;
+}
+
+/* Card */
+.upcoming-event-card {
+  display: flex;
+  flex-direction: column;
+  border-radius: var(--border-radius-m);
+  overflow: hidden;
+  background: var(--color-surface);
+  box-shadow: var(--shadow-s);
+  transition: box-shadow 0.2s, transform 0.2s;
+}
+
+.upcoming-event-card:hover {
+  box-shadow: var(--shadow-m);
+  transform: translateY(-2px);
+}
+
+.upcoming-event-thumb {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  background: var(--light-color);
+}
+
+.upcoming-event-thumb img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Date badge */
+.upcoming-event-date {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background: var(--background-color);
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--border-radius-s);
+  padding: 5px 9px;
+  text-align: center;
+  line-height: 1.05;
+}
+
+.upcoming-event-month {
+  display: block;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--color-text-tertiary);
+  text-transform: uppercase;
+}
+
+.upcoming-event-day {
+  display: block;
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--text-color);
+}
+
+/* Card body */
+.upcoming-event-body {
+  padding: 16px 18px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.upcoming-event-club {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-brand-red);
+  margin: 0;
+}
+
+.upcoming-event-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-color);
+  letter-spacing: -0.01em;
+  line-height: 1.3;
+  margin: 0;
+}
+
+.upcoming-event-meta {
+  font-size: 12.5px;
+  color: var(--color-text-secondary);
+  margin: 0;
+}
+
+.upcoming-events-empty {
+  text-align: center;
+  color: var(--color-text-tertiary);
+  grid-column: 1 / -1;
+}
+
+/* ── Responsive ── */
+@media (width <= 900px) {
+  .upcoming-events-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (width <= 560px) {
+  .upcoming-events-grid {
+    grid-template-columns: 1fr;
+  }
+}

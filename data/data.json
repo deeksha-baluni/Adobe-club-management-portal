@@ -1,0 +1,653 @@
+{
+  "auth": {
+    "admins": [
+      {
+        "username": "admin",
+        "email": "admin@adobe.com",
+        "password": "Admin@123",
+        "displayName": "Clubs Admin",
+        "company": "Adobe Inc.",
+        "role": "admin"
+      },
+      {
+        "username": "lens.admin",
+        "email": "lens.admin@adobe.com",
+        "password": "LensAdmin@1",
+        "displayName": "Lens & Creatives Lead",
+        "company": "Adobe Inc.",
+        "role": "clubAdmin",
+        "manages": ["adobe-lens", "adobe-creatives"]
+      },
+      {
+        "username": "tech.admin",
+        "email": "tech.admin@adobe.com",
+        "password": "TechAdmin@1",
+        "displayName": "Dev & Games Lead",
+        "company": "Adobe Inc.",
+        "role": "clubAdmin",
+        "manages": ["dev-guild", "board-games"]
+      },
+      {
+        "username": "sport.admin",
+        "email": "sport.admin@adobe.com",
+        "password": "SportAdmin@1",
+        "displayName": "Sports & Green Lead",
+        "company": "Adobe Inc.",
+        "role": "clubAdmin",
+        "manages": ["sportzone", "green-adobe"]
+      },
+      {
+        "username": "social.admin",
+        "email": "social.admin@adobe.com",
+        "password": "SocialAdmin@1",
+        "displayName": "Community Clubs Lead",
+        "company": "Adobe Inc.",
+        "role": "clubAdmin",
+        "manages": ["food-brew", "book-club", "volunteering-club"]
+      },
+      {
+        "username": "wellness.admin",
+        "email": "wellness.admin@adobe.com",
+        "password": "WellAdmin@1",
+        "displayName": "Wellbeing Lead",
+        "company": "Adobe Inc.",
+        "role": "clubAdmin",
+        "manages": ["mental-health"]
+      }
+    ]
+  },
+  "user": {
+    "initials": "AJ",
+    "name": "Arjun J.",
+    "role": "member",
+    "joinedClubs": ["adobe-lens", "dev-guild"]
+  },
+  "stats": {
+    "clubs": 10,
+    "members": "540+",
+    "events": 13
+  },
+  "events": [
+    {
+      "id": "evt-1",
+      "clubId": "adobe-lens",
+      "membersOnly": true,
+      "month": "JUN",
+      "day": "4",
+      "title": "Photography Walk — MG Road",
+      "club": "Adobe Lens Club",
+      "time": "9:00 AM",
+      "type": "In-person",
+      "location": "MG Road, Bengaluru",
+      "spotsLeft": 12,
+      "desc": "Join fellow photographers for a 2-hour street photography walk along MG Road. All skill levels welcome — bring your camera or phone. We'll review shots together over chai at the end.",
+      "recap": {
+        "summary": "Eighteen members met at Trinity Circle for a two-hour street photography walk along MG Road. We split into pairs for candid portraits, practiced framing in harsh midday light, and regrouped at a café for a relaxed critique session over chai. Several members tried long-exposure experiments at the metro crossing for the first time.",
+        "highlights": [
+          "Candid street portraits near Trinity Circle",
+          "Mini critique session over chai at the end",
+          "Top shots featured in the club gallery this week"
+        ],
+        "attendanceCount": 18,
+        "attendance": "18 members"
+      }
+    },
+    {
+      "id": "evt-2",
+      "clubId": "adobe-creatives",
+      "membersOnly": true,
+      "month": "JUN",
+      "day": "7",
+      "title": "GenAI Design Sprint",
+      "club": "Adobe Creatives",
+      "time": "2:00 PM",
+      "type": "Virtual",
+      "location": "Zoom · Link on Slack",
+      "spotsLeft": 14,
+      "desc": "A fast-paced 90-minute design sprint using generative AI tools. Teams of 3 will tackle a real Adobe brief, present concepts live, and get feedback from senior designers.",
+      "recap": {
+        "summary": "Six teams tackled a real Adobe onboarding brief in a fast 90-minute GenAI design sprint. Each group used generative tools for mood boards, micro-copy, and a clickable prototype, then pitched live to senior designers. The winning concept focused on a friendlier first-day checklist for new hires.",
+        "highlights": [
+          "Six teams presented GenAI-assisted concepts live",
+          "Winning pitch: onboarding micro-flow for new hires",
+          "Slides and prompt templates pinned in the club Slack channel"
+        ],
+        "attendanceCount": 24,
+        "attendance": "24 members"
+      }
+    },
+    {
+      "id": "evt-3",
+      "clubId": "dev-guild",
+      "month": "JUN",
+      "day": "12",
+      "title": "Hackathon Kickoff 2025",
+      "club": "Dev Guild",
+      "time": "10:00 AM",
+      "type": "In-person",
+      "location": "Tower B · Floor 4",
+      "spotsLeft": 30,
+      "desc": "The Dev Guild's annual hackathon kicks off with team formation, problem-statement reveals, and a kick-off talk from a guest engineer. 48 hours of building, mentorship, and snacks ahead."
+    },
+    {
+      "id": "evt-4",
+      "clubId": "sportzone",
+      "month": "JUN",
+      "day": "18",
+      "title": "Cricket League — Round 2",
+      "club": "SportZone",
+      "time": "5:30 PM",
+      "type": "In-person",
+      "location": "Adobe Sports Ground",
+      "spotsLeft": 2,
+      "desc": "Round 2 of the inter-department cricket league. Come cheer for your team or fill an open spot on the roster. Light refreshments provided after the match."
+    },
+    {
+      "id": "evt-5",
+      "clubId": "adobe-creatives",
+      "membersOnly": true,
+      "month": "JUN",
+      "day": "22",
+      "title": "Portfolio Showcase Night",
+      "club": "Adobe Creatives",
+      "time": "6:00 PM",
+      "type": "In-person",
+      "location": "Amphitheatre · Ground Floor",
+      "spotsLeft": 50,
+      "desc": "Designers and illustrators from across the office share their personal projects, side hustles, and experimental work. An open evening of inspiration, critique, and conversation."
+    },
+    {
+      "id": "evt-6",
+      "clubId": "food-brew",
+      "month": "JUN",
+      "day": "25",
+      "title": "Cuisine of the Month — Kerala Special",
+      "club": "Food & Brew Club",
+      "time": "12:30 PM",
+      "type": "In-person",
+      "location": "Cafeteria · Level 2",
+      "spotsLeft": 24,
+      "desc": "This month we're exploring Kerala cuisine. Members bring home-cooked dishes, share recipes, and vote on their favourite. A fun, flavourful lunch break that celebrates our diversity."
+    },
+    {
+      "id": "evt-7",
+      "clubId": "book-club",
+      "month": "JUN",
+      "day": "28",
+      "title": "June Read — Atomic Habits Discussion",
+      "club": "Book Club",
+      "time": "5:00 PM",
+      "type": "In-person",
+      "location": "Library Pod · Floor 3",
+      "spotsLeft": 18,
+      "desc": "Our June pick is Atomic Habits by James Clear. Come ready to discuss your key takeaways, habits you've tried, and which idea challenged you most. No prep required — drop in and listen."
+    },
+    {
+      "id": "evt-8",
+      "clubId": "board-games",
+      "membersOnly": true,
+      "month": "JUL",
+      "day": "3",
+      "title": "Strategy Tournament — Settlers of Catan",
+      "club": "Board Games & Tabletop",
+      "time": "6:00 PM",
+      "type": "In-person",
+      "location": "Recreation Room · B1",
+      "spotsLeft": 16,
+      "desc": "Our most competitive night of the quarter — a Settlers of Catan tournament with a rolling bracket. Beginner tables available. Winner takes the Guild Trophy for July."
+    },
+    {
+      "id": "evt-9",
+      "clubId": "green-adobe",
+      "month": "JUL",
+      "day": "6",
+      "title": "Campus Clean-up Drive",
+      "club": "Green Adobe",
+      "time": "8:30 AM",
+      "type": "In-person",
+      "location": "Adobe Campus · Main Gate",
+      "spotsLeft": 40,
+      "desc": "A 90-minute campus clean-up to kick off our zero-waste July challenge. Gloves and bags provided. We'll also do a quick audit of single-use plastics in the office and share findings."
+    },
+    {
+      "id": "evt-10",
+      "clubId": "mental-health",
+      "month": "JUL",
+      "day": "10",
+      "title": "Burnout & Balance — Open Circle",
+      "club": "Mental Health & Peer Support",
+      "time": "1:00 PM",
+      "type": "Virtual",
+      "location": "Google Meet · Link on Slack",
+      "spotsLeft": 35,
+      "desc": "A safe, informal conversation circle about work stress and burnout. Facilitated by a trained peer supporter. You can share, listen, or just be present — no pressure either way."
+    },
+    {
+      "id": "evt-11",
+      "clubId": "sportzone",
+      "month": "JUN",
+      "day": "8",
+      "title": "Wellness Run — Campus Loop",
+      "club": "SportZone",
+      "time": "7:00 AM",
+      "type": "In-person",
+      "location": "Adobe Campus · Main Loop",
+      "spotsLeft": 0,
+      "desc": "A relaxed 5K loop around campus with stretch breaks. All paces welcome — walk, jog, or sprint with colleagues before the day starts.",
+      "recap": {
+        "summary": "Forty-two members joined the morning campus loop at three pace groups — walk, jog, and sprint. Hydration stations were set up at the halfway mark, and the wellness team led a short stretch cooldown on the lawn afterward. Average finish time came in under 35 minutes across the faster group.",
+        "highlights": [
+          "Three pace groups from relaxed walk to sprint",
+          "Hydration stations at the halfway mark",
+          "Post-run stretches led by the wellness team"
+        ],
+        "attendanceCount": 42,
+        "attendance": "42 members"
+      }
+    },
+    {
+      "id": "evt-12",
+      "clubId": "dev-guild",
+      "month": "JUN",
+      "day": "9",
+      "title": "Lightning Talks — June Edition",
+      "club": "Dev Guild",
+      "time": "4:00 PM",
+      "type": "In-person",
+      "location": "Tower A · Huddle Room 2",
+      "spotsLeft": 0,
+      "desc": "Five-minute talks on side projects, tooling tips, and lessons learned. Sign up at the door or just listen in."
+    },
+    {
+      "id": "evt-13",
+      "clubId": "food-brew",
+      "month": "JUN",
+      "day": "5",
+      "title": "South Indian Breakfast Potluck",
+      "club": "Food & Brew Club",
+      "time": "9:30 AM",
+      "type": "In-person",
+      "location": "Cafeteria · Level 2",
+      "spotsLeft": 0,
+      "desc": "Members brought idli, dosa, filter coffee, and chutney. Recipe cards swapped and a blind taste test crowned the best sambar.",
+      "recap": {
+        "summary": "More than thirty home-cooked dishes filled the cafeteria tables for our South Indian breakfast potluck. Members swapped recipe cards, shared family variations for filter coffee and chutney, and ran a blind taste test to crown the best sambar of the morning.",
+        "highlights": [
+          "Standout entries included neer dosa and Mysore pak",
+          "Recipe cards swapped at every table",
+          "Blind sambar taste test with a tie-breaker round"
+        ],
+        "attendanceCount": 34,
+        "attendance": "34 members"
+      }
+    }
+  ],
+  "clubs": [
+    {
+      "id": "adobe-lens",
+      "name": "Adobe Lens",
+      "icon": "📷",
+      "iconBg": "#fff0ef",
+      "accent": "#FA0F00",
+      "members": 88,
+      "tag": "Photography",
+      "image": "adobe-lens.avif",
+      "slackChannel": "#adobe-lens",
+      "slackUrl": "https://adobe.enterprise.slack.com/channels/adobe-lens",
+      "similar": ["adobe-creatives", "green-adobe"],
+      "desc": "Capture Bengaluru through a lens. Weekly shoots, editing tips, and photo walks for all skill levels.",
+      "tags": ["photography", "picture", "image", "photo", "camera", "lens", "shoot", "creative"]
+    },
+    {
+      "id": "dev-guild",
+      "name": "Dev Guild",
+      "icon": "💻",
+      "iconBg": "#e3f2fd",
+      "accent": "#0070d1",
+      "members": 112,
+      "tag": "Engineering",
+      "image": "dev-guild.avif",
+      "slackChannel": "#dev-guild",
+      "slackUrl": "https://adobe.enterprise.slack.com/channels/dev-guild",
+      "similar": ["adobe-creatives", "board-games"],
+      "desc": "Hackathons, side projects, and engineering culture for builders at Adobe.",
+      "tags": ["code", "engineering", "hackathon", "tech", "developer", "programming", "software", "build"]
+    },
+    {
+      "id": "sportzone",
+      "name": "SportZone",
+      "icon": "⚽",
+      "iconBg": "#e8f5e9",
+      "accent": "#2e7d32",
+      "members": 54,
+      "tag": "Sports",
+      "image": "sportzone.avif",
+      "slackChannel": "#sportzone",
+      "slackUrl": "https://adobe.enterprise.slack.com/channels/sportzone",
+      "similar": ["mental-health", "green-adobe"],
+      "desc": "Cricket, football, badminton leagues and wellness activities across floors.",
+      "tags": ["sports", "cricket", "football", "badminton", "fitness", "wellness", "athletics", "team"]
+    },
+    {
+      "id": "adobe-creatives",
+      "name": "Adobe Creatives",
+      "icon": "🎨",
+      "iconBg": "#f3e5f5",
+      "accent": "#7b1fa2",
+      "members": 79,
+      "tag": "Design",
+      "image": "adobe-creatives.avif",
+      "slackChannel": "#adobe-creatives",
+      "slackUrl": "https://adobe.enterprise.slack.com/channels/adobe-creatives",
+      "similar": ["adobe-lens", "dev-guild"],
+      "desc": "Design jams, portfolio showcases, and creative experiments for designers.",
+      "tags": ["design", "creative", "ui", "figma", "portfolio", "art", "visual", "genai"]
+    },
+    {
+      "id": "food-brew",
+      "name": "Food & Brew Club",
+      "icon": "🍜",
+      "iconBg": "#fff8e1",
+      "accent": "#e65100",
+      "members": 67,
+      "tag": "Food",
+      "image": "food.avif",
+      "slackChannel": "#food-and-brew",
+      "slackUrl": "https://adobe.enterprise.slack.com/channels/food-and-brew",
+      "similar": ["book-club", "volunteering-club"],
+      "desc": "Lunch potlucks, cuisine-of-the-month tastings, blind taste tests, cooking challenges, and restaurant discovery walks.",
+      "tags": ["food", "cuisine", "cooking", "lunch", "tasting", "brew", "restaurant", "potluck"]
+    },
+    {
+      "id": "book-club",
+      "name": "Book Club",
+      "icon": "📚",
+      "iconBg": "#e8eaf6",
+      "accent": "#3949ab",
+      "members": 43,
+      "tag": "Reading",
+      "image": "readers.avif",
+      "slackChannel": "#book-club",
+      "slackUrl": "https://adobe.enterprise.slack.com/channels/book-club",
+      "similar": ["board-games", "food-brew"],
+      "desc": "Monthly reads, author spotlights, genre rotations across fiction, non-fiction, and tech, plus writing workshops.",
+      "tags": ["books", "reading", "literature", "writing", "author", "fiction", "nonfiction"]
+    },
+    {
+      "id": "board-games",
+      "name": "Board Games & Tabletop",
+      "icon": "🎲",
+      "iconBg": "#fce4ec",
+      "accent": "#c2185b",
+      "members": 38,
+      "tag": "Games",
+      "image": "games.avif",
+      "slackChannel": "#board-games",
+      "slackUrl": "https://adobe.enterprise.slack.com/channels/board-games",
+      "similar": ["dev-guild", "book-club"],
+      "desc": "Weekly game nights, strategy tournaments, D&D campaigns, game design workshops, and a community game library swap.",
+      "tags": ["games", "tabletop", "dnd", "strategy", "board", "tournament", "unplugged"]
+    },
+    {
+      "id": "green-adobe",
+      "name": "Green Adobe",
+      "icon": "🌱",
+      "iconBg": "#e8f5e9",
+      "accent": "#388e3c",
+      "members": 51,
+      "tag": "Sustainability",
+      "image": "green-adobe.avif",
+      "slackChannel": "#green-adobe",
+      "slackUrl": "https://adobe.enterprise.slack.com/channels/green-adobe",
+      "similar": ["volunteering-club", "sportzone"],
+      "desc": "Campus clean-ups, sustainability audits, zero-waste challenges, tree planting drives, and eco-product swaps.",
+      "tags": ["sustainability", "eco", "green", "environment", "zero-waste", "climate", "volunteer"]
+    },
+    {
+      "id": "volunteering-club",
+      "name": "Volunteering Club",
+      "icon": "🤝",
+      "iconBg": "#fff3e0",
+      "accent": "#f57c00",
+      "members": 60,
+      "tag": "Community",
+      "image": "volunteer.avif",
+      "slackChannel": "#volunteering",
+      "slackUrl": "https://adobe.enterprise.slack.com/channels/volunteering",
+      "similar": ["green-adobe", "food-brew"],
+      "desc": "NGO partnership events, skills-based volunteering, fundraiser runs, teaching visits, and community coding camps.",
+      "tags": ["volunteer", "community", "charity", "giving", "ngo", "impact", "service"]
+    },
+    {
+      "id": "mental-health",
+      "name": "Mental Health & Peer Support",
+      "icon": "🧠",
+      "iconBg": "#e0f7fa",
+      "accent": "#00838f",
+      "members": 34,
+      "tag": "Wellbeing",
+      "image": "wellbeing.avif",
+      "slackChannel": "#peer-support",
+      "slackUrl": "https://adobe.enterprise.slack.com/channels/peer-support",
+      "similar": ["sportzone", "volunteering-club"],
+      "desc": "Conversation circles, burnout awareness sessions, journalling workshops, and stress management talks.",
+      "tags": ["wellbeing", "mental health", "wellness", "burnout", "support", "peer", "balance"]
+    }
+  ],
+  "feed": [
+    {
+      "id": "feed-1",
+      "initials": "RK",
+      "avatarColor": "#c62800",
+      "text": "<strong>Rohan K.</strong> posted new photos in <strong>Adobe Lens</strong> — \"Sunset shoot from Nandi Hills 🌄\"",
+      "meta": "Adobe Lens · 2h ago"
+    },
+    {
+      "id": "feed-2",
+      "initials": "PP",
+      "avatarColor": "#0070d1",
+      "text": "<strong>Priya P.</strong> registered for <strong>GenAI Design Sprint</strong> — 14 spots left",
+      "meta": "Adobe Creatives · 4h ago"
+    },
+    {
+      "id": "feed-3",
+      "initials": "SM",
+      "avatarColor": "#2e7d32",
+      "text": "<strong>SportZone</strong> posted the cricket league schedule for June. Sign-ups open!",
+      "meta": "SportZone · 6h ago"
+    },
+    {
+      "id": "feed-4",
+      "initials": "JD",
+      "avatarColor": "#7b1fa2",
+      "text": "<strong>Dev Guild</strong> shared recording from last week's AI tools demo session",
+      "meta": "Dev Guild · 1d ago"
+    }
+  ],
+  "announcements": [
+    {
+      "id": "ann-1",
+      "dot": "#FA0F00",
+      "title": "Summer club fair — Jun 15",
+      "meta": "Admin · Today"
+    },
+    {
+      "id": "ann-2",
+      "dot": "#0070d1",
+      "title": "New resource hub section live",
+      "meta": "Admin · 2 days ago"
+    },
+    {
+      "id": "ann-3",
+      "dot": "#2e7d32",
+      "title": "Summer interns onboarding to clubs",
+      "meta": "HR · 3 days ago"
+    },
+    {
+      "id": "ann-4",
+      "dot": "#7b1fa2",
+      "title": "Quarterly newsletter published",
+      "meta": "Comms · 1 week ago"
+    }
+  ],
+  "articles": [
+    {
+      "id": "art-1",
+      "category": "Club Guides",
+      "title": "How to start a club at Adobe Bengaluru",
+      "excerpt": "Everything you need to know about proposing a new club — from finding a sponsor to your first event.",
+      "body": "Starting a club at Adobe Bengaluru is easier than you think. Begin by identifying a clear purpose and a group of at least five interested colleagues. Draft a one-page proposal covering the club's mission, planned activities, and meeting cadence.\n\nNext, find an executive sponsor — any director-level leader who can champion your idea. Submit your proposal through the internal Clubs portal; reviews happen every two weeks.\n\nOnce approved, you'll receive a Slack channel, a budget line for events, and a spot on the clubs page. Plan your launch event within 30 days to keep momentum high. The Clubs admin team is always available on #adobe-clubs-help for questions.",
+      "author": "Clubs Admin",
+      "date": "May 28, 2025",
+      "readTime": "6 min read",
+      "featured": false,
+      "accent": "#eb1000",
+      "clubId": "organisation",
+      "base": "clubs",
+      "image": "clubs-hero1.avif"
+    },
+    {
+      "id": "art-2",
+      "category": "How-to",
+      "title": "Running your first club event: a checklist",
+      "excerpt": "Room bookings, Slack announcements, swag, and follow-ups — the complete pre-event playbook.",
+      "body": "A great club event starts two weeks out. Book your room through the internal portal and add it to the shared clubs calendar. Create a Slack post in #adobe-clubs with a clear title, date, time, location, and a one-line hook.\n\nOne week before, send a reminder and confirm catering if needed. Prepare a simple sign-in sheet (or use the QR check-in link from the admin team). During the event, take photos — they fuel the gallery page and future recruitment.\n\nWithin 48 hours, post a recap with highlights and photos. Tag attendees and thank your volunteers. Log attendance in the clubs dashboard so your club's activity score stays current.",
+      "author": "Events Team",
+      "date": "May 22, 2025",
+      "readTime": "4 min read",
+      "featured": false,
+      "accent": "#0070d1",
+      "clubId": "dev-guild",
+      "clubName": "Dev Guild",
+      "base": "events",
+      "image": "evt-hero5.avif"
+    },
+    {
+      "id": "art-3",
+      "category": "Policy",
+      "title": "Club budget guidelines for FY25",
+      "excerpt": "Annual allocations, reimbursement rules, and what expenses are covered for club leads.",
+      "body": "Each approved club receives an annual budget based on member count and activity level. Base allocation is ₹15,000 per year; active clubs with 30+ members may qualify for up to ₹35,000.\n\nEligible expenses include event catering, workshop materials, guest speaker honorariums (up to ₹5,000), and club event supplies. Personal equipment, alcohol, and off-site travel are not reimbursable.\n\nSubmit expenses within 30 days with receipts via the internal expense tool, tagged to your club cost centre. Club leads must approve all submissions before finance review. Unused budget does not roll over — plan events across the year.",
+      "author": "Finance · Clubs",
+      "date": "May 15, 2025",
+      "readTime": "5 min read",
+      "featured": false,
+      "accent": "#2e7d32",
+      "clubId": "organisation",
+      "base": "clubs",
+      "image": "finance.avif"
+    },
+    {
+      "id": "art-4",
+      "category": "Culture",
+      "title": "Why clubs matter: stories from Bengaluru",
+      "excerpt": "Members share how Dev Guild, Adobe Lens, and Food & Brew changed their daily work life.",
+      "body": "Clubs aren't just extracurricular — they're where cross-team relationships form. Priya from Product Design met her co-founder for a side project at a Dev Guild hackathon. Raj from Engineering discovered portrait photography through Adobe Lens and now shoots every campus event.\n\nFood & Brew's monthly potlucks have become the unofficial onboarding ritual for new hires in Tower B. These connections translate directly into smoother collaboration: people who share hobbies communicate faster on projects.\n\nIf you've been on the fence about joining, pick one event this month. Every club welcomes drop-ins — no long-term commitment required.",
+      "author": "Internal Comms",
+      "date": "May 10, 2025",
+      "readTime": "7 min read",
+      "featured": false,
+      "accent": "#7b1fa2",
+      "clubId": "organisation",
+      "base": "index",
+      "image": "dev-grp.avif"
+    },
+    {
+      "id": "art-5",
+      "category": "Tech",
+      "title": "Setting up your club Slack channel the right way",
+      "excerpt": "Naming conventions, pinned resources, bots, and integrations every club lead should configure.",
+      "body": "Your club Slack channel is the hub of community life. Use the naming format #club-[short-name] (e.g. #club-dev-guild). Pin three things on day one: the club charter, the events calendar link, and the code of conduct.\n\nEnable the Google Calendar app so members see upcoming events in-channel. Add the Clubs bot — it posts weekly digests and lets members opt into notifications without spamming the whole office.\n\nCreate thread norms: event discussions in threads, announcements as top-level posts. Archive inactive channels after six months of no posts — the admin team can always restore them if the club relaunches.",
+      "author": "Dev Guild",
+      "date": "May 5, 2025",
+      "readTime": "3 min read",
+      "featured": false,
+      "accent": "#00838f",
+      "clubId": "dev-guild",
+      "clubName": "Dev Guild",
+      "base": "clubs",
+      "image": "dev-guild.avif"
+    },
+    {
+      "id": "art-6",
+      "category": "Club Guides",
+      "title": "Recruiting members without being annoying",
+      "excerpt": "Ethical outreach tactics that grow your club sustainably — no spam, no pressure.",
+      "body": "The best recruitment is passive visibility. Keep your club page updated with photos from recent events. Ask members to add the club to their internal profile — it shows up in people search.\n\nFor active outreach, target new hires in their first 30 days with a personal invite, not a mass CC. Partner with other clubs for joint events — you'll each inherit a slice of the other's audience.\n\nAvoid posting in #general more than once a quarter. Instead, contribute to existing threads where your club's expertise is relevant. Quality over quantity: ten engaged members beat a hundred silent ones.",
+      "author": "Clubs Admin",
+      "date": "Apr 28, 2025",
+      "readTime": "4 min read",
+      "featured": false,
+      "accent": "#eb1000",
+      "clubId": "organisation",
+      "base": "clubs",
+      "image": "clubs-hero3.avif"
+    },
+    {
+      "id": "art-7",
+      "category": "How-to",
+      "title": "Photography tips for club event coverage",
+      "excerpt": "Shot lists, lighting basics, and how to get your photos on the gallery page faster.",
+      "body": "Every club event deserves a visual record. Bring a wide-angle lens (or use your phone's 0.5×) for group shots, and get close-ups of hands-on activities — those feel more authentic than posed smiles.\n\nShoot during golden hour for outdoor events; indoors, stand near windows and avoid overhead fluorescent-only lighting. Capture at least three types: one group, one detail, one candid moment.\n\nUpload to the gallery within a week using the #club-gallery Slack workflow. Add club name, event title, and photographer credit. The comms team features the best shots in the monthly newsletter.",
+      "author": "Adobe Lens Club",
+      "date": "Apr 20, 2025",
+      "readTime": "5 min read",
+      "featured": false,
+      "accent": "#0070d1",
+      "clubId": "adobe-lens",
+      "clubName": "Adobe Lens",
+      "base": "clubs",
+      "image": "adobe-lens.avif"
+    },
+    {
+      "id": "art-8",
+      "category": "Policy",
+      "title": "Code of conduct for club events",
+      "excerpt": "Expectations for inclusive, safe gatherings — applies to all clubs and attendees.",
+      "body": "All Adobe club events must uphold our workplace standards of respect and inclusion. Harassment, discrimination, and exclusionary behaviour are never tolerated — report incidents to your club lead or HR immediately.\n\nEvents with alcohol require prior approval and must include non-alcoholic options. Virtual events should use Adobe-approved platforms only; do not record sessions without explicit consent from all participants.\n\nClub leads are responsible for enforcing these guidelines at every gathering. When in doubt, refer to the full Employee Conduct Policy on the intranet or contact the Clubs admin team.",
+      "author": "People Team",
+      "date": "Apr 12, 2025",
+      "readTime": "4 min read",
+      "featured": false,
+      "accent": "#2e7d32",
+      "clubId": "organisation",
+      "base": "clubs",
+      "image": "wellbeing.avif"
+    },
+    {
+      "id": "art-9",
+      "category": "Culture",
+      "title": "Intern onboarding through clubs",
+      "excerpt": "How summer interns find community fast — and how club leads can welcome them.",
+      "body": "Interns often cite clubs as the fastest way to feel at home in a 3,000-person office. The Volunteering Club and Board Games club see the highest intern turnout because events are low-commitment and social-first.\n\nClub leads: schedule at least one intern-friendly event per quarter — something drop-in, no prep required. Pair interns with a buddy from your club for their first event.\n\nInterns: browse the clubs page in your first week and RSVP to two events outside your team. You'll meet people you'd never encounter in stand-ups — and those connections last beyond the internship.",
+      "author": "HR · Early Career",
+      "date": "Apr 5, 2025",
+      "readTime": "5 min read",
+      "featured": false,
+      "accent": "#7b1fa2",
+      "clubId": "organisation",
+      "base": "clubs",
+      "image": "volunteer.avif"
+    }
+  ],
+  "gallery": [
+    { "id": "gal-1",  "base": "clubs",  "image": "adobe-lens.avif",      "ratio": "tall",   "title": "Golden hour on MG Road",           "club": "Adobe Lens Club",              "photographer": "Priya M.",   "date": "Jun 2025" },
+    { "id": "gal-2",  "base": "events", "image": "evt-hero7.avif",       "ratio": "short",  "title": "Hackathon whiteboard session",     "club": "Dev Guild",                    "photographer": "Arjun K.",   "date": "Jun 2025" },
+    { "id": "gal-3",  "base": "clubs",  "image": "dev-guild.avif",       "ratio": "medium", "title": "Late-night coding sprint",         "club": "Dev Guild",                    "photographer": "Rahul S.",   "date": "May 2025" },
+    { "id": "gal-4",  "base": "events", "image": "evt-hero3.avif",       "ratio": "tall",   "title": "Portfolio showcase crowd",         "club": "Adobe Creatives",              "photographer": "Meera T.",   "date": "May 2025" },
+    { "id": "gal-5",  "base": "clubs",  "image": "sportzone.avif",       "ratio": "square", "title": "Cricket league finals",            "club": "SportZone",                    "photographer": "Vikram P.",  "date": "May 2025" },
+    { "id": "gal-6",  "base": "events", "image": "evt-hero1.avif",       "ratio": "medium", "title": "Street photography walk",          "club": "Adobe Lens Club",              "photographer": "Anita R.",   "date": "Jun 2025" },
+    { "id": "gal-7",  "base": "clubs",  "image": "adobe-creatives.avif", "ratio": "tall",   "title": "Design jam sketches",              "club": "Adobe Creatives",              "photographer": "Kavya N.",   "date": "Apr 2025" },
+    { "id": "gal-8",  "base": "events", "image": "evt-hero5.avif",       "ratio": "short",  "title": "Potluck table spread",             "club": "Food & Brew Club",             "photographer": "Deepak L.",  "date": "May 2025" },
+    { "id": "gal-9",  "base": "clubs",  "image": "food.avif",            "ratio": "medium", "title": "Blind taste test reactions",       "club": "Food & Brew Club",             "photographer": "Sneha G.",   "date": "Apr 2025" },
+    { "id": "gal-10", "base": "events", "image": "evt-hero9.avif",       "ratio": "tall",   "title": "Board game tournament",            "club": "Board Games & Tabletop",       "photographer": "Nikhil B.",  "date": "May 2025" },
+    { "id": "gal-11", "base": "clubs",  "image": "games.avif",           "ratio": "square", "title": "D&D campaign night",               "club": "Board Games & Tabletop",       "photographer": "Isha V.",    "date": "Apr 2025" },
+    { "id": "gal-12", "base": "events", "image": "evt-hero11.avif",      "ratio": "medium", "title": "Campus clean-up drive",            "club": "Green Adobe",                  "photographer": "Rohan D.",   "date": "Apr 2025" },
+    { "id": "gal-13", "base": "clubs",  "image": "green-adobe.avif",     "ratio": "short",  "title": "Tree planting morning",            "club": "Green Adobe",                  "photographer": "Lakshmi A.", "date": "Mar 2025" },
+    { "id": "gal-14", "base": "events", "image": "evt-hero2.avif",       "ratio": "tall",   "title": "GenAI design sprint teams",        "club": "Adobe Creatives",              "photographer": "Tarun H.",   "date": "Jun 2025" },
+    { "id": "gal-15", "base": "clubs",  "image": "readers.avif",         "ratio": "medium", "title": "Monthly book discussion",          "club": "Book Club",                    "photographer": "Divya C.",   "date": "May 2025" },
+    { "id": "gal-16", "base": "events", "image": "evt-hero8.avif",       "ratio": "square", "title": "Peer support circle",              "club": "Mental Health & Peer Support", "photographer": "Admin",      "date": "Apr 2025" },
+    { "id": "gal-17", "base": "clubs",  "image": "volunteer.avif",       "ratio": "tall",   "title": "NGO teaching visit",               "club": "Volunteering Club",            "photographer": "Amir F.",    "date": "Mar 2025" },
+    { "id": "gal-18", "base": "events", "image": "evt-hero4.avif",       "ratio": "short",  "title": "Cricket league round 2",           "club": "SportZone",                    "photographer": "Vikram P.",  "date": "Jun 2025" }
+  ]
+}
