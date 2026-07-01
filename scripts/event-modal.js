@@ -4,6 +4,15 @@
 'use strict';
 
 window.AdobeEventModal = (function () {
+  function loadModalStyles() {
+    if (document.querySelector('link[data-ev-modal-css]')) return;
+    const link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.href = `${window.hlx?.codeBasePath || ''}/styles/event-modal.css`;
+    link.dataset.evModalCss = '1';
+    document.head.append(link);
+  }
+
   const IMAGE_BASE = '/assets/images/events/';
   const IMAGE_BASES = {
     clubs: '/assets/images/clubs/',
@@ -270,6 +279,7 @@ window.AdobeEventModal = (function () {
   }
 
   function injectModal() {
+    loadModalStyles();
     if (document.getElementById('ev-modal-overlay')) return;
     const el = document.createElement('div');
     el.innerHTML = `
