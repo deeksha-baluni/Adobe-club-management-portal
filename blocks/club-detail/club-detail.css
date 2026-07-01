@@ -1,22 +1,16 @@
 /* club-detail.css — Club detail page (EDS) */
 
-.section:has(.club-detail),
-.section:has(.club-detail) > div,
-.club-detail-container,
-.club-detail-wrapper {
-  margin: 0 !important;
-  padding: 0 !important;
-  max-width: unset !important;
+/* ── EDS wrapper reset (same pattern as clubs-list) ── */
+main > .section:has(.club-detail) > div {
+  max-width: unset;
+  padding: 0;
+  margin: 0;
 }
 
-.club-detail {
-  display: block;
-  width: 100%;
-}
-
+/* ── Token aliases scoped to root ── */
 .club-detail-root {
   --bg-page: var(--light-color, #f8f8f8);
-  --section-px: var(--section-padding-x, 24px);
+  --section-px: var(--section-padding-x, 40px);
   --text-1: var(--text-color, #2c2c2c);
   --text-2: var(--color-text-secondary, #505050);
   --text-3: var(--color-text-tertiary, rgba(0, 0, 0, 0.38));
@@ -33,20 +27,20 @@
   --aspect-featured: 4 / 3;
   --shadow-100: var(--shadow-s, 0 1px 4px rgba(0, 0, 0, 0.12));
   --shadow-200: var(--shadow-m, 0 4px 16px rgba(0, 0, 0, 0.12));
+  width: 100%;
 }
 
-/* club.css — Club detail page (aligned with site design system) */
-
+/* ── Page shell ── */
+.club-page,
 .club-detail-page {
-  background: var(--bg-page);
-}
-
-.club-page {
   position: relative;
+  background: var(--bg-page);
+  width: 100%;
 }
 
+/* ── Inner content container (provides its own max-width + spacing) ── */
 .club-detail-inner {
-  max-width: 1280px;
+  max-width: var(--max-width, 1280px);
   margin: 0 auto;
   padding: clamp(32px, 4vw, 56px) var(--section-px) clamp(64px, 10vw, 100px);
   display: flex;

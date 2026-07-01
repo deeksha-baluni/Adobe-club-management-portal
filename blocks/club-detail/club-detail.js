@@ -25,17 +25,19 @@ function loadScript(src) {
 }
 
 export default async function decorate(block) {
-  await Promise.all([
-    loadScript('/scripts/club-meta.js'),
-    loadScript('/scripts/auth-guard.js'),
-  ]);
+  // Clear EDS-generated row/cell wrappers, replace with our root
+  block.innerHTML = '';
 
   const root = document.createElement('div');
   root.className = 'club-detail-root';
   root.id = 'club-detail-root';
-
-  block.textContent = '';
   block.append(root);
+
+  // Load scripts in parallel before rendering
+  await Promise.all([
+    loadScript('/scripts/club-meta.js'),
+    loadScript('/scripts/auth-guard.js'),
+  ]);
 
   await initClubDetailPage(root);
 }
