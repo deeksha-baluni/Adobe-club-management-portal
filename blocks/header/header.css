@@ -363,3 +363,12 @@ header nav .nav-tools .button {
   border-radius: 100px;
   letter-spacing: -0.01em;
 }
+
+header nav .nav-tools .button.primary:any-link {
+  color: #ffffff;
+}
+
+header nav .nav-tools .button.primary:hover,
+header nav .nav-tools .button.primary:focus-visible {
+  color: #ffffff;
+}

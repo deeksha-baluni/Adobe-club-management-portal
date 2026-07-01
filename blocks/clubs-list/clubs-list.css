@@ -5,6 +5,16 @@
   border-top: none;
 }
 
+/* Tighter gap directly below clubs hero (matches original marquee → listing) */
+main > .section:has(.clubs-hero) + .section:has(.clubs-list) {
+  padding: 0;
+  border-top: 1px solid var(--color-border-default);
+}
+
+main > .section:has(.clubs-hero) + .section:has(.clubs-list) .cl-section-inner {
+  padding-top: clamp(32px, 5vw, 48px);
+}
+
 .cl-section-inner {
   max-width: var(--max-width);
   margin: 0 auto;
