@@ -167,7 +167,9 @@ main > .section:has(.club-events) > div {
 .ce-empty img {
   width: 56px;
   height: 56px;
+  max-width: 56px;
   object-fit: contain;
+  flex-shrink: 0;
 }
 
 @media (max-width: 1024px) {

@@ -73,7 +73,7 @@ function renderRecapCard(ev, club) {
 function renderEmpty(hidden) {
   return `
     <p class="cr-empty"${hidden ? ' hidden' : ''}>
-      <img src="/assets/images/club_details/icons/forbidden.png" alt="" width="56" height="56" decoding="async">
+      <img src="/assets/images/club_details/icons/forbidden.png" alt="" class="cr-empty-icon" width="56" height="56" decoding="async">
       <span>No recaps listed for past events.</span>
     </p>`;
 }
