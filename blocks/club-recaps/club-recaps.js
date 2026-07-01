@@ -9,15 +9,12 @@ import {
   resolveClubContext,
   getPastClubEvents,
   formatEventDate,
-  isEventPast,
   canPostRecapForClub,
 } from '../club-shared/club-page.js';
-
-function getRecapBody(recap) {
-  if (!recap) return '';
-  if (typeof recap === 'string') return recap;
-  return recap.summary || recap.body || '';
-}
+import {
+  buildRecapHtml,
+  getRecapBody,
+} from '../event-shared/event-page.js';
 
 function getRecapForEvent(ev) {
   return window.AdobeUserFeatures?.getEventRecap?.(ev.id, ev)
@@ -26,68 +23,11 @@ function getRecapForEvent(ev) {
     || null;
 }
 
-function getRecapAttendance(recap) {
-  if (!recap || typeof recap !== 'object') return '';
-  if (recap.attendance) return recap.attendance;
-  const count = Number(recap.attendanceCount);
-  if (Number.isFinite(count) && count > 0) {
-    return `${count} member${count === 1 ? '' : 's'}`;
-  }
-  return '';
-}
-
-function normalizeEventRecap(recap) {
-  if (!recap) return { summary: '', highlights: [], attendance: '' };
-  if (typeof recap === 'string') return { summary: recap, highlights: [], attendance: '' };
-  const highlights = Array.isArray(recap.highlights) ? recap.highlights : [];
-  const attendance = recap.attendance
-    || (Number.isFinite(Number(recap.attendanceCount)) && Number(recap.attendanceCount) > 0
-      ? `${recap.attendanceCount} members`
-      : '');
-  return {
-    summary: recap.summary || recap.body || '',
-    highlights,
-    attendance,
-  };
-}
-
 function buildRecapModalHtml(recap, ev, club) {
-  const uf = window.AdobeUserFeatures;
-  if (uf?.buildRecapHtml) {
-    return uf.buildRecapHtml(recap, ev, {
-      clubName: club?.name || ev.club,
-      dateLabel: formatEventDate(ev),
-    });
-  }
-
-  const data = normalizeEventRecap(recap);
-  const highlightsHtml = data.highlights.length
-    ? `<ul class="recap-highlights">${data.highlights.map((item) => `<li>${esc(item)}</li>`).join('')}</ul>`
-    : '';
-  const attendanceHtml = data.attendance
-    ? `<div class="recap-stat"><span class="recap-stat-label">Attended</span><strong class="recap-stat-value">${esc(data.attendance)}</strong></div>`
-    : '';
-  const dateLabel = formatEventDate(ev);
-  const clubName = club?.name || ev.club || '';
-
-  return `
-    <div class="recap-detail">
-      <div class="recap-detail-head">
-        <p class="recap-detail-eyebrow">Event recap${dateLabel ? ` · ${esc(dateLabel)}` : ''}</p>
-        ${clubName ? `<span class="recap-detail-club">${esc(clubName)}</span>` : ''}
-      </div>
-      <h2 class="recap-detail-title" id="club-recap-modal-title">${esc(ev?.title || 'Event recap')}</h2>
-      <section class="recap-detail-section">
-        <h3>What happened</h3>
-        <p class="recap-detail-summary">${esc(data.summary)}</p>
-      </section>
-      ${data.highlights.length ? `
-        <section class="recap-detail-section">
-          <h3>Highlights</h3>
-          ${highlightsHtml}
-        </section>` : ''}
-      ${attendanceHtml ? `<div class="recap-detail-stats">${attendanceHtml}</div>` : ''}
-    </div>`;
+  return buildRecapHtml(recap, ev, {
+    clubName: club?.name || ev.club,
+    dateLabel: formatEventDate(ev),
+  });
 }
 
 function injectRecapReadModal() {
@@ -122,6 +62,7 @@ function openRecapReadModal(ev, recap, club) {
   if (!modal || !content) return;
 
   content.innerHTML = buildRecapModalHtml(recap, ev, club);
+  content.querySelector('.recap-detail-title')?.setAttribute('id', 'club-recap-modal-title');
   modal.hidden = false;
   document.documentElement.classList.add('club-recap-modal-open');
   document.body.classList.add('club-recap-modal-open');
@@ -149,34 +90,23 @@ function getEventsNeedingRecap(pastEvents) {
 
 function renderRecapCard(ev, club) {
   const recap = getRecapForEvent(ev);
-  const body = getRecapBody(recap);
-  if (!body) return '';
-  const summaryLimit = 100;
-  const summaryText = body.length > summaryLimit
-    ? `${body.slice(0, summaryLimit).trim()}…`
-    : body;
-  const dateLabel = formatEventDate(ev);
-  const attendance = getRecapAttendance(recap);
+  if (!getRecapBody(recap)) return '';
   return `
-    <div class="cr-card-wrap">
-      <button type="button" class="cr-card" data-recap-event="${esc(ev.id)}">
-        <div class="cr-detail cr-detail--card">
-          <p class="cr-eyebrow">Event recap${dateLabel ? ` · ${esc(dateLabel)}` : ''}</p>
-          <h3 class="cr-title">${esc(ev.title)}</h3>
-          <p class="cr-summary">${esc(summaryText)}</p>
-          <div class="cr-footer">
-            ${attendance ? `<span class="cr-attendance">${esc(attendance)}</span>` : '<span></span>'}
-            <span class="cr-read-link">Read recap →</span>
-          </div>
-        </div>
+    <div class="club-recap-card-wrap">
+      <button type="button" class="club-recap-card" data-recap-event="${esc(ev.id)}" aria-label="Read recap for ${esc(ev.title)}">
+        ${buildRecapHtml(recap, ev, {
+    card: true,
+    showReadLink: true,
+    dateLabel: formatEventDate(ev),
+  })}
       </button>
     </div>`;
 }
 
 function renderEmpty(hidden) {
   return `
-    <p class="cr-empty"${hidden ? ' hidden' : ''}>
-      <img src="/assets/images/club_details/icons/forbidden.png" alt="" class="cr-empty-icon" width="56" height="56" decoding="async">
+    <p class="club-recap-empty-state"${hidden ? ' hidden' : ''}>
+      <img src="/assets/images/club_details/icons/forbidden.png" alt="" class="club-recap-empty-icon" width="56" height="56" decoding="async">
       <span>No recaps listed for past events.</span>
     </p>`;
 }
@@ -252,11 +182,11 @@ function closeForm() {
 }
 
 function refreshGrid(block, pastEvents, club) {
-  const grid = block.querySelector('#cr-grid');
+  const grid = block.querySelector('#club-recap-grid');
   if (!grid) return;
   const cards = pastEvents.map((ev) => renderRecapCard(ev, club)).filter(Boolean).join('');
-  const empty = grid.querySelector('.cr-empty');
-  grid.querySelectorAll('.cr-card-wrap').forEach((n) => n.remove());
+  const empty = grid.querySelector('.club-recap-empty-state');
+  grid.querySelectorAll('.club-recap-card-wrap').forEach((n) => n.remove());
   if (cards) {
     empty?.insertAdjacentHTML('beforebegin', cards);
     if (empty) empty.hidden = true;
@@ -358,7 +288,7 @@ export default async function decorate(block) {
     <div class="club-section-inner" id="club-recaps">
       <h2 class="club-section-title">Highlights from recent sessions</h2>
       <div class="cr-panel">
-        <div class="cr-grid${hasAnyRecaps ? '' : ' is-empty'}" id="cr-grid">
+        <div class="club-recap-grid${hasAnyRecaps ? '' : ' is-recap-empty'}" id="club-recap-grid">
           ${pastEvents.map((ev) => renderRecapCard(ev, club)).filter(Boolean).join('')}
           ${renderEmpty(hasAnyRecaps)}
         </div>

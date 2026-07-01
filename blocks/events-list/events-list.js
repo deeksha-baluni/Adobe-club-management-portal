@@ -131,7 +131,9 @@ function isEventEligible(ev) {
 }
 
 function hasEventRecap(ev) {
-  const recap = window.AdobeUserFeatures?.getEventRecap?.(ev.id, ev) || ev.recap;
+  const recap = window.AdobeUserFeatures?.getEventRecap?.(ev.id, ev)
+    || getAuth().getEventRecap?.(ev.id, ev)
+    || ev.recap;
   if (!recap) return false;
   const summary = typeof recap === 'string' ? recap : (recap.summary || recap.body);
   return Boolean(summary);
@@ -250,6 +252,17 @@ function wireImageFallback(img, ev) {
   });
 }
 
+const ICON_TIME = '<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>';
+const ICON_PIN = '<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>';
+
+function appendMetaRow(meta, icon, text) {
+  if (!text) return;
+  const row = document.createElement('span');
+  row.className = 'ev-poster-meta-row';
+  row.innerHTML = `${icon}${text}`;
+  meta.append(row);
+}
+
 function buildPosterCard(ev, { past = false } = {}) {
   const li = document.createElement('li');
   li.className = `ev-poster-card${past ? ' ev-poster-card--past' : ''}`;
@@ -313,18 +326,8 @@ function buildPosterCard(ev, { past = false } = {}) {
   const meta = document.createElement('div');
   meta.className = 'ev-poster-meta';
 
-  if (ev.time) {
-    const timeRow = document.createElement('span');
-    timeRow.className = 'ev-poster-meta-row';
-    timeRow.textContent = ev.time;
-    meta.append(timeRow);
-  }
-  if (ev.location) {
-    const locRow = document.createElement('span');
-    locRow.className = 'ev-poster-meta-row';
-    locRow.textContent = ev.location;
-    meta.append(locRow);
-  }
+  appendMetaRow(meta, ICON_TIME, ev.time);
+  appendMetaRow(meta, ICON_PIN, ev.location);
 
   info.append(club, title, meta);
 
@@ -358,6 +361,7 @@ function buildPosterCard(ev, { past = false } = {}) {
     const recapBtn = document.createElement('button');
     recapBtn.type = 'button';
     recapBtn.className = 'ev-poster-recap-btn';
+    recapBtn.dataset.eventId = ev.id;
     recapBtn.textContent = 'Read recap →';
     recapBtn.addEventListener('click', (e) => {
       e.stopPropagation();

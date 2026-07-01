@@ -110,7 +110,14 @@ export function isUpcoming(ev) {
 }
 
 export function isPast(ev) {
-  return window.AdobeEventModal?.isPast?.(ev) ?? false;
+  if (window.AdobeEventModal?.isPast) return window.AdobeEventModal.isPast(ev);
+  const dt = parseEventDate(ev);
+  if (!dt) return false;
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const eventDay = new Date(dt);
+  eventDay.setHours(0, 0, 0, 0);
+  return eventDay < today;
 }
 
 export function isVirtualEvent(ev) {
@@ -155,17 +162,101 @@ export function getRecapBody(recap) {
   return recap.summary || recap.body || '';
 }
 
-export function buildRecapHtml(recap, ev, club) {
-  const uf = window.AdobeUserFeatures;
-  if (uf?.buildRecapHtml) {
-    return uf.buildRecapHtml(recap, ev, {
-      clubName: club?.name || ev.club,
+export function normalizeEventRecap(recap) {
+  if (!recap) return { summary: '', highlights: [], attendance: '' };
+  if (typeof recap === 'string') return { summary: recap, highlights: [], attendance: '' };
+  const highlights = Array.isArray(recap.highlights) ? recap.highlights : [];
+  const attendance = recap.attendance
+    || (Number.isFinite(Number(recap.attendanceCount)) && Number(recap.attendanceCount) > 0
+      ? `${recap.attendanceCount} members`
+      : '');
+  return {
+    summary: recap.summary || recap.body || '',
+    highlights,
+    attendance,
+  };
+}
+
+function resolveRecapOpts(ev, third) {
+  if (!third) return { dateLabel: `${ev.month} ${ev.day}` };
+  if (third.name || third.id) {
+    return {
+      clubName: third.name || ev.club,
       dateLabel: `${ev.month} ${ev.day}`,
-    });
+    };
   }
-  const body = getRecapBody(recap);
-  if (!body) return '';
-  return `<div class="recap-detail"><p class="recap-detail-summary">${esc(body)}</p></div>`;
+  return {
+    dateLabel: `${ev.month} ${ev.day}`,
+    ...third,
+  };
+}
+
+export function buildRecapHtml(recap, ev, third) {
+  const uf = window.AdobeUserFeatures;
+  const opts = resolveRecapOpts(ev, third);
+  if (uf?.buildRecapHtml) {
+    return uf.buildRecapHtml(recap, ev, opts);
+  }
+
+  const data = normalizeEventRecap(recap);
+  if (!data.summary) return '';
+
+  const {
+    clubName = ev?.club || '',
+    dateLabel = opts.dateLabel || '',
+    compact = false,
+    showReadLink = false,
+    card = false,
+  } = opts;
+
+  if (card) {
+    const summaryLimit = 100;
+    const summaryText = data.summary.length > summaryLimit
+      ? `${data.summary.slice(0, summaryLimit).trim()}…`
+      : data.summary;
+    return `
+      <div class="recap-detail recap-detail--card">
+        <p class="recap-detail-eyebrow">Event recap${dateLabel ? ` · ${esc(dateLabel)}` : ''}</p>
+        <h2 class="recap-detail-title">${esc(ev?.title || 'Event recap')}</h2>
+        <p class="recap-detail-summary">${esc(summaryText)}</p>
+        <div class="recap-card-footer">
+          ${data.attendance ? `<span class="recap-card-attendance">${esc(data.attendance)}</span>` : ''}
+          ${showReadLink ? '<span class="recap-read-link">Read recap →</span>' : ''}
+        </div>
+      </div>`;
+  }
+
+  const summaryLimit = compact ? 220 : Infinity;
+  const summaryText = data.summary.length > summaryLimit
+    ? `${data.summary.slice(0, summaryLimit).trim()}…`
+    : data.summary;
+  const highlightItems = compact ? data.highlights.slice(0, 3) : data.highlights;
+  const highlightsHtml = highlightItems.length
+    ? `<ul class="recap-highlights">${highlightItems.map((item) => `<li>${esc(item)}</li>`).join('')}</ul>`
+    : '';
+  const attendanceHtml = data.attendance
+    ? `<div class="recap-stat"><span class="recap-stat-label">Attended</span><strong class="recap-stat-value">${esc(data.attendance)}</strong></div>`
+    : '';
+
+  return `
+    <div class="recap-detail${compact ? ' recap-detail--compact' : ''}">
+      <div class="recap-detail-head">
+        <p class="recap-detail-eyebrow">Event recap${dateLabel ? ` · ${esc(dateLabel)}` : ''}</p>
+        ${clubName ? `<span class="recap-detail-club">${esc(clubName)}</span>` : ''}
+      </div>
+      <h2 class="recap-detail-title">${esc(ev?.title || 'Event recap')}</h2>
+      <section class="recap-detail-section">
+        <h3>What happened</h3>
+        <p class="recap-detail-summary">${esc(summaryText)}</p>
+      </section>
+      ${highlightItems.length ? `
+        <section class="recap-detail-section">
+          <h3>Highlights</h3>
+          ${highlightsHtml}
+        </section>` : ''}
+      ${attendanceHtml ? `<div class="recap-detail-stats">${attendanceHtml}</div>` : ''}
+      ${showReadLink ? '<span class="recap-read-link">Read recap →</span>' : ''}
+    </div>`;
 }
 
 export function buildAboutHtml(ev, club) {

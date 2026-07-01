@@ -381,11 +381,16 @@ main > .section:has(.events-hero) + .section:has(.events-list) .ev-section-inner
   display: flex;
   flex-direction: column;
   gap: 4px;
+  margin-top: 2px;
   flex: 1;
 }
 
 .ev-poster-meta-row {
+  display: flex;
+  align-items: center;
+  gap: 5px;
   font-size: 12px;
+  font-weight: 400;
   color: var(--color-text-secondary);
   line-height: 1.35;
 }

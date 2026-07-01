@@ -52,6 +52,52 @@ main:has(.event-hero) > .section:has(.event-rsvp) {
   top: calc(var(--nav-height, 55px) + 16px);
 }
 
+.recap-detail {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.recap-detail--card {
+  gap: 8px;
+}
+
+.recap-detail-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.recap-detail-eyebrow {
+  margin: 0;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #616161;
+}
+
+.recap-detail-club {
+  flex-shrink: 0;
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid #edebe9;
+  font-size: 11px;
+  font-weight: 600;
+  color: #505050;
+  white-space: nowrap;
+}
+
+.recap-detail-title {
+  margin: 0;
+  font-size: clamp(18px, 2.5vw, 24px);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.2;
+  color: #242424;
+}
+
 .recap-detail-summary {
   margin: 0;
   font-size: 14px;
@@ -66,6 +112,27 @@ main:has(.event-hero) > .section:has(.event-rsvp) {
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: #616161;
+}
+
+.recap-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.recap-card-attendance {
+  font-size: 12px;
+  font-weight: 600;
+  color: #616161;
+}
+
+.recap-read-link {
+  display: inline-block;
+  margin-top: 4px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-accent, #1473e6);
 }
 
 .recap-highlights {
@@ -90,6 +157,43 @@ main:has(.event-hero) > .section:has(.event-rsvp) {
   position: absolute;
   left: 0;
   color: var(--color-accent, #1473e6);
+}
+
+.recap-detail-stats {
+  display: flex;
+  gap: 12px;
+}
+
+.recap-stat {
+  flex: 1;
+  min-width: 0;
+  max-width: 220px;
+  padding: 16px 18px;
+  border-radius: 8px;
+  background: #faf9f8;
+  border: 1px solid #edebe9;
+}
+
+.recap-stat-label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #616161;
+}
+
+.recap-stat-value {
+  display: block;
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: #242424;
+}
+
+.event-recap-body .recap-detail-title {
+  font-size: clamp(18px, 2.5vw, 24px);
 }
 
 
