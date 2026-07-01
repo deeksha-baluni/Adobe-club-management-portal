@@ -44,33 +44,29 @@ export default async function decorate(block) {
 
   block.innerHTML = `
     <div class="ev-inner">
-      <div class="ev-page-head">
-        <a class="ev-back" href="/events">← All events</a>
-        <div class="event-page-topbar">
-          <span id="event_title_top" class="event-page-top-title">${esc(ev.title)}</span>
-          <button type="button" class="event-share-btn" id="event-share-btn" aria-label="Share event">
-            ${ICON_SHARE}
-            <span>Share</span>
-          </button>
-        </div>
+      <a class="ev-back" href="/events">← All events</a>
+      <div class="event-page-topbar">
+        <span id="event_title_top" class="event-page-top-title">${esc(ev.title)}</span>
+        <button type="button" class="event-share-btn" id="event-share-btn" aria-label="Share event">
+          ${ICON_SHARE}
+          <span>Share</span>
+        </button>
       </div>
-      <div class="ev-body-start">
-        <div class="event-hero-stack">
-          <div class="event-hero-img event-hero-img--primary" id="event-hero-primary" style="background-image:url('${esc(heroSrc)}')"></div>
-        </div>
-        <div class="event-page-container">
-          <div class="event-page-intro">
-            <div class="event-club-thumb-wrap">
-              <img class="event-club-thumb" src="${esc(clubSrc || heroSrc)}" alt="" loading="lazy" decoding="async">
+      <div class="event-hero-stack">
+        <div class="event-hero-img event-hero-img--primary" id="event-hero-primary" style="background-image:url('${esc(heroSrc)}')"></div>
+      </div>
+      <div class="event-page-container">
+        <div class="event-page-intro">
+          <div class="event-club-thumb-wrap">
+            <img class="event-club-thumb" src="${esc(clubSrc || heroSrc)}" alt="" loading="lazy" decoding="async">
+          </div>
+          <div class="event-page-intro-text">
+            <div class="event-status-row">
+              <span class="event-date-label">${esc(dateLabel)}</span>
+              <span class="event-status-badge ${statusClass}">${esc(statusLabel)}</span>
             </div>
-            <div class="event-page-intro-text">
-              <div class="event-status-row">
-                <span class="event-date-label">${esc(dateLabel)}</span>
-                <span class="event-status-badge ${statusClass}">${esc(statusLabel)}</span>
-              </div>
-              <h1 id="event_title" class="event-page-title">${esc(ev.title)}</h1>
-              ${club ? `<p class="event-page-club">${esc(club.name)}</p>` : ''}
-            </div>
+            <h1 id="event_title" class="event-page-title">${esc(ev.title)}</h1>
+            ${club ? `<p class="event-page-club">${esc(club.name)}</p>` : ''}
           </div>
         </div>
       </div>

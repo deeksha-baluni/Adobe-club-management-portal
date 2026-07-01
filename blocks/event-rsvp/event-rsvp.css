@@ -5,3 +5,7 @@ main > .section:has(.event-rsvp) > div {
   padding: 0;
   margin: 0;
 }
+
+.event-page-right-rail {
+  width: 100%;
+}
