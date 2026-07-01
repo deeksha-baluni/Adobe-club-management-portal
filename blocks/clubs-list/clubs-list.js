@@ -76,7 +76,7 @@ function buildClubCard(club) {
 
   const link = document.createElement('a');
   link.className = 'cl-card-link';
-  link.href = `/clubs/${club.id}`;
+  link.href = `/club?id=${encodeURIComponent(club.id)}`;
 
   const imgWrap = document.createElement('div');
   imgWrap.className = 'cl-card-img-wrap';
