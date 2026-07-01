@@ -4,6 +4,93 @@ import { loadFragment } from '../fragment/fragment.js';
 // media query match that indicates mobile/tablet width
 const isDesktop = window.matchMedia('(min-width: 900px)');
 
+/**
+ * Normalizes a pathname for nav comparison.
+ * @param {string} path
+ * @returns {string}
+ */
+function normalizeNavPath(path) {
+  const normalized = path.replace(/\/$/, '') || '/';
+  return normalized === '/index' ? '/' : normalized;
+}
+
+/**
+ * Returns whether a nav link href matches the current page.
+ * @param {string} linkPath
+ * @param {string} currentPath
+ * @returns {boolean}
+ */
+function isNavLinkActive(linkPath, currentPath) {
+  const link = normalizeNavPath(linkPath);
+  const current = normalizeNavPath(currentPath);
+
+  if (link === '/') return current === '/';
+  return current === link || current.startsWith(`${link}/`);
+}
+
+/**
+ * Unwraps DA list markup (li > p > a) to li > a for nav links.
+ * @param {Element} navSections
+ */
+function unwrapNavLinks(navSections) {
+  if (!navSections) return;
+  navSections.querySelectorAll('.default-content-wrapper > ul > li').forEach((li) => {
+    const paragraph = li.querySelector(':scope > p');
+    const link = paragraph?.querySelector('a[href]');
+    if (
+      paragraph
+      && link
+      && paragraph.children.length === 1
+      && paragraph.textContent.trim() === link.textContent.trim()
+    ) {
+      li.replaceChildren(link);
+    }
+  });
+}
+
+/**
+ * Marks the nav link that matches the current page.
+ * @param {Element} nav
+ */
+function syncNavActiveState(nav) {
+  const navSections = nav.querySelector('.nav-sections');
+  if (!navSections) return;
+
+  const currentPath = normalizeNavPath(window.location.pathname);
+
+  navSections.querySelectorAll('a[href]').forEach((link) => {
+    link.classList.remove('active');
+    link.removeAttribute('aria-current');
+
+    try {
+      const linkPath = normalizeNavPath(new URL(link.href).pathname);
+      if (isNavLinkActive(linkPath, currentPath)) {
+        link.classList.add('active');
+        link.setAttribute('aria-current', 'page');
+      }
+    } catch {
+      // ignore malformed hrefs
+    }
+  });
+}
+
+/**
+ * Closes the mobile nav after a section link is clicked.
+ * @param {Element} nav
+ * @param {Element} navSections
+ */
+function bindNavLinkClose(nav, navSections) {
+  if (!navSections) return;
+  navSections.querySelectorAll('a[href]').forEach((link) => {
+    link.addEventListener('click', () => {
+      if (!isDesktop.matches && nav.getAttribute('aria-expanded') === 'true') {
+        // eslint-disable-next-line no-use-before-define
+        toggleMenu(nav, navSections, false);
+      }
+    });
+  });
+}
+
 function closeOnEscape(e) {
   if (e.code === 'Escape') {
     const nav = document.getElementById('nav');
@@ -122,6 +209,7 @@ export default async function decorate(block) {
   block.textContent = '';
   const nav = document.createElement('nav');
   nav.id = 'nav';
+  nav.setAttribute('aria-label', 'Main navigation');
   while (fragment.firstElementChild) nav.append(fragment.firstElementChild);
 
   const classes = ['brand', 'sections', 'tools'];
@@ -131,14 +219,20 @@ export default async function decorate(block) {
   });
 
   const navBrand = nav.querySelector('.nav-brand');
-  const brandLink = navBrand.querySelector('.button');
-  if (brandLink) {
-    brandLink.className = '';
-    brandLink.closest('.button-container').className = '';
+  if (navBrand) {
+    const brandLink = navBrand.querySelector('.button');
+    if (brandLink) {
+      brandLink.className = '';
+      brandLink.closest('.button-container')?.classList.remove('button-container');
+    }
   }
 
   const navSections = nav.querySelector('.nav-sections');
   if (navSections) {
+    unwrapNavLinks(navSections);
+    syncNavActiveState(nav);
+    bindNavLinkClose(nav, navSections);
+
     navSections.querySelectorAll(':scope .default-content-wrapper > ul > li').forEach((navSection) => {
       if (navSection.querySelector('ul')) navSection.classList.add('nav-drop');
       navSection.addEventListener('click', () => {
