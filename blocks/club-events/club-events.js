@@ -6,6 +6,7 @@ import {
   esc,
   getAuth,
   initClubPage,
+  redirectToLogin,
   getUpcomingClubEvents,
   getClubImagePool,
   getEventImageSrc,
@@ -33,6 +34,9 @@ function getEventDateFilter(ev) {
 }
 
 function getClubEventActionState(ev, club) {
+  if (!getAuth().isAuthenticated()) {
+    return { label: 'RSVP', joined: false, membersOnly: false, requiresLogin: true };
+  }
   if (!getAuth().isClubJoined(club.id)) {
     return { label: 'Members only', joined: false, membersOnly: true };
   }
@@ -109,12 +113,12 @@ function wireRsvp(block, club, upcomingEvents) {
     clone.addEventListener('click', (e) => {
       e.preventDefault();
       e.stopPropagation();
-      const ev = upcomingEvents.find((item) => item.id === clone.dataset.eventId);
-      if (!ev || !getAuth().isClubJoined(club.id)) return;
       if (!getAuth().isAuthenticated()) {
-        window.location.href = getAuth().loginUrlWithNext?.() || '/login';
+        redirectToLogin();
         return;
       }
+      const ev = upcomingEvents.find((item) => item.id === clone.dataset.eventId);
+      if (!ev || !getAuth().isClubJoined(club.id)) return;
       getAuth().toggleEventRsvp?.(ev.id);
       refreshActions(block, club, upcomingEvents);
     });

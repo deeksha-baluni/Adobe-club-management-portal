@@ -9,6 +9,7 @@ import {
   loadSection,
   loadSections,
   loadCSS,
+  loadScript,
   buildBlock,
 } from './aem.js';
 
@@ -137,6 +138,7 @@ export function decorateMain(main) {
 async function loadEager(doc) {
   document.documentElement.lang = 'en';
   decorateTemplateAndTheme();
+  loadScript(`${window.hlx?.codeBasePath || ''}/scripts/auth-guard.js`);
   const main = doc.querySelector('main');
   if (main) {
     decorateMain(main);

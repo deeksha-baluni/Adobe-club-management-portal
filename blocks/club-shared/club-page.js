@@ -18,7 +18,10 @@ export function esc(str) {
 export function getAuth() {
   return window.AdobeClubsAuth || {
     isAuthenticated: () => false,
-    loginUrlWithNext: () => '/login',
+    loginUrlWithNext: () => `/login?next=${encodeURIComponent(`${window.location.pathname}${window.location.search}${window.location.hash}`)}`,
+    redirectToLogin() {
+      window.location.href = this.loginUrlWithNext();
+    },
     getCurrentUser: () => null,
     isClubJoined: () => false,
     toggleClubJoin: () => false,
@@ -31,6 +34,16 @@ export function getAuth() {
     getEventRecap: null,
     onPublishedContentChange: null,
   };
+}
+
+export function redirectToLogin() {
+  const auth = getAuth();
+  if (auth.redirectToLogin) {
+    auth.redirectToLogin();
+    return;
+  }
+  window.location.href = auth.loginUrlWithNext?.()
+    || `/login?next=${encodeURIComponent(`${window.location.pathname}${window.location.search}${window.location.hash}`)}`;
 }
 
 export function getClubIdFromUrl() {
@@ -155,8 +168,7 @@ export function wireClubJoinButton(btn, club) {
   btn.addEventListener('click', () => {
     const auth = getAuth();
     if (!auth.isAuthenticated()) {
-      window.location.href = auth.loginUrlWithNext?.()
-        || `/login?next=${encodeURIComponent(window.location.href)}`;
+      redirectToLogin();
       return;
     }
     const joined = window.AdobeJoinModal?.toggleClubJoinWithModal?.(club, { events: window.__clubPageEvents })

@@ -11,6 +11,7 @@ import {
   esc,
   getAuth,
   initClubPage,
+  redirectToLogin,
   getJoinLabel,
   wireClubJoinButton,
   bindClubJoinSync,
@@ -83,6 +84,10 @@ export default async function decorate(block) {
     });
   } else {
     block.querySelector('[data-club-join]')?.addEventListener('click', () => {
+      if (!getAuth().isAuthenticated()) {
+        redirectToLogin();
+        return;
+      }
       window.location.href = '/clubs';
     });
   }

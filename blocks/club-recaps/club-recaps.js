@@ -6,6 +6,7 @@ import {
   esc,
   getAuth,
   initClubPage,
+  redirectToLogin,
   getPastClubEvents,
   formatEventDate,
   canPostRecapForClub,
@@ -221,7 +222,7 @@ function wireForm(block, club, pastEvents) {
       msg.className = ok ? 'cr-form-msg cr-form-msg--ok' : 'cr-form-msg cr-form-msg--err';
     };
     if (!getAuth().isAuthenticated()) {
-      window.location.href = getAuth().loginUrlWithNext?.() || '/login';
+      redirectToLogin();
       return;
     }
     if (!canPostRecapForClub(club.id)) {

@@ -66,7 +66,10 @@ window.AdobeEventModal = (function () {
   function getAuth() {
     return window.AdobeClubsAuth || {
       isAuthenticated: () => false,
-      loginUrlWithNext: () => '/login',
+      loginUrlWithNext: () => `/login?next=${encodeURIComponent(`${window.location.pathname}${window.location.search}${window.location.hash}`)}`,
+      redirectToLogin() {
+        window.location.href = this.loginUrlWithNext();
+      },
       isEventRsvped: () => false,
       isClubJoined: () => false,
       toggleEventRsvp: () => false,
@@ -428,7 +431,7 @@ window.AdobeEventModal = (function () {
 
   function handleRsvpClick(ev, btn) {
     if (!getAuth().isAuthenticated()) {
-      window.location.href = getAuth().loginUrlWithNext();
+      getAuth().redirectToLogin?.() || (window.location.href = getAuth().loginUrlWithNext());
       return false;
     }
 

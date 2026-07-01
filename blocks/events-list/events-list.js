@@ -35,7 +35,10 @@ function getAuth() {
     isEventRsvped: () => false,
     isClubJoined: () => false,
     toggleEventRsvp: () => false,
-    loginUrlWithNext: () => '/login',
+    loginUrlWithNext: () => `/login?next=${encodeURIComponent(`${window.location.pathname}${window.location.search}${window.location.hash}`)}`,
+    redirectToLogin() {
+      window.location.href = this.loginUrlWithNext();
+    },
   };
 }
 
@@ -220,12 +223,14 @@ function getSpotsLeft(ev) {
 }
 
 function handleRsvpClick(ev, btn) {
-  if (window.AdobeEventModal?.handleRsvpClick) {
-    window.AdobeEventModal.handleRsvpClick(ev, btn);
+  if (!getAuth().isAuthenticated()) {
+    const login = getAuth().loginUrlWithNext?.()
+      || `/login?next=${encodeURIComponent(`${window.location.pathname}${window.location.search}${window.location.hash}`)}`;
+    window.location.href = login;
     return;
   }
-  if (!getAuth().isAuthenticated()) {
-    window.location.href = getAuth().loginUrlWithNext?.() || '/login';
+  if (window.AdobeEventModal?.handleRsvpClick) {
+    window.AdobeEventModal.handleRsvpClick(ev, btn);
     return;
   }
   const state = getRsvpButtonState(ev);

@@ -311,6 +311,12 @@ export function refreshRegisterButton(ev) {
   }
 
   btn.onclick = () => {
+    if (!getAuth().isAuthenticated()) {
+      const login = getAuth().loginUrlWithNext?.()
+        || `/login?next=${encodeURIComponent(`${window.location.pathname}${window.location.search}${window.location.hash}`)}`;
+      window.location.href = login;
+      return;
+    }
     window.AdobeEventModal?.handleRsvpClick?.(ev, btn);
     refreshRegisterButton(ev);
   };

@@ -142,19 +142,24 @@
   text-align: right;
 }
 
-.featured-club-btn a {
+.featured-club-btn a,
+.featured-club-btn button {
   display: inline-block;
   padding: 8px 22px;
   border-radius: 100px;
+  border: none;
   background-color: var(--color-accent);
   color: #ffffff;
   font-size: 13px;
   font-weight: 600;
   text-decoration: none;
+  font-family: inherit;
+  cursor: pointer;
   transition: background-color 0.15s;
 }
 
-.featured-club-btn a:hover {
+.featured-club-btn a:hover,
+.featured-club-btn button:hover {
   background-color: var(--color-accent-hover);
   text-decoration: none;
 }

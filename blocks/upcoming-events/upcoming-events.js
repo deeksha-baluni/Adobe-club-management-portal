@@ -10,6 +10,22 @@ const DATA_PATH = '/data/data.json';
 const EVENT_IMG_PATH = '/assets/images/events/';
 const EVENT_IMG_FALLBACK = `${EVENT_IMG_PATH}evt-hero1.avif`;
 
+function getAuth() {
+  return window.AdobeClubsAuth || {
+    isAuthenticated: () => false,
+    loginUrlWithNext: () => `/login?next=${encodeURIComponent(`${window.location.pathname}${window.location.search}${window.location.hash}`)}`,
+    redirectToLogin() {
+      window.location.href = this.loginUrlWithNext();
+    },
+  };
+}
+
+function redirectToLogin() {
+  const auth = getAuth();
+  if (auth.redirectToLogin) auth.redirectToLogin();
+  else window.location.href = auth.loginUrlWithNext();
+}
+
 const MONTH_SHORT = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 const MONTH_MAP = { JAN: 0, FEB: 1, MAR: 2, APR: 3, MAY: 4, JUN: 5, JUL: 6, AUG: 7, SEP: 8, OCT: 9, NOV: 10, DEC: 11 };
 
@@ -87,9 +103,18 @@ function buildEventCard(ev) {
 
   const btnWrap = document.createElement('div');
   btnWrap.className = 'upcoming-event-btn';
-  const btn = document.createElement('a');
-  btn.href = `/event?id=${encodeURIComponent(ev.id)}`;
+  const btn = document.createElement('button');
+  btn.type = 'button';
+  btn.className = 'upcoming-event-rsvp';
   btn.textContent = 'RSVP';
+  btn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    if (!getAuth().isAuthenticated()) {
+      redirectToLogin();
+      return;
+    }
+    window.location.href = `/event?id=${encodeURIComponent(ev.id)}`;
+  });
   btnWrap.append(btn);
 
   card.append(thumb, body, btnWrap);

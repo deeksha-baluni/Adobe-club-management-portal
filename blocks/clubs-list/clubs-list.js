@@ -23,9 +23,18 @@ function getAuth() {
     isAuthenticated: () => false,
     isClubJoined: () => false,
     toggleClubJoin: () => false,
-    loginUrlWithNext: () => '/login',
+    loginUrlWithNext: () => `/login?next=${encodeURIComponent(`${window.location.pathname}${window.location.search}${window.location.hash}`)}`,
+    redirectToLogin() {
+      window.location.href = this.loginUrlWithNext();
+    },
     getAdminOf: () => [],
   };
+}
+
+function redirectToLogin() {
+  const auth = getAuth();
+  if (auth.redirectToLogin) auth.redirectToLogin();
+  else window.location.href = auth.loginUrlWithNext();
 }
 
 // ── Data ──────────────────────────────────────────────────────────────────────
@@ -119,7 +128,7 @@ function buildClubCard(club) {
     e.preventDefault();
     e.stopPropagation();
     if (!getAuth().isAuthenticated()) {
-      window.location.href = getAuth().loginUrlWithNext();
+      redirectToLogin();
       return;
     }
     if (isAdmin) return;

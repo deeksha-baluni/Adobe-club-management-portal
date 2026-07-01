@@ -8,7 +8,7 @@
   const AUTH_STORAGE_KEY = 'adobeClubsAuth';
   const USERS_REGISTRY_KEY = 'adobeClubsUsersRegistry';
   const USER_PROFILE_PREFIX = 'adobeClubsUserProfile:';
-  const LOGIN_PAGE = 'login.html';
+  const LOGIN_PAGE = '/login';
   const JOINED_CLUBS_KEY = 'adobeClubsJoinedClubs';
   const RSVP_EVENTS_KEY = 'adobeClubsRsvpedEvents';
   const CUSTOM_EVENTS_KEY = 'adobeClubsCustomEvents';
@@ -81,9 +81,12 @@
   }
 
   function loginUrlWithNext() {
-    const file = window.location.pathname.split('/').pop() || 'index.html';
-    const target = `${file}${window.location.search || ''}`;
+    const target = `${window.location.pathname}${window.location.search || ''}${window.location.hash || ''}`;
     return `${LOGIN_PAGE}?next=${encodeURIComponent(target)}`;
+  }
+
+  function redirectToLogin() {
+    window.location.href = loginUrlWithNext();
   }
 
   function readArray(key) {
@@ -835,6 +838,7 @@
     getActiveUsername,
     isAuthenticated,
     loginUrlWithNext,
+    redirectToLogin,
     getRole,
     isAdmin,
     isClubAdmin,

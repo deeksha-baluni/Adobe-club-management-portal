@@ -9,6 +9,22 @@
 const DATA_PATH = '/data/data.json';
 const CLUB_IMG_PATH = '/assets/images/clubs/';
 
+function getAuth() {
+  return window.AdobeClubsAuth || {
+    isAuthenticated: () => false,
+    loginUrlWithNext: () => `/login?next=${encodeURIComponent(`${window.location.pathname}${window.location.search}${window.location.hash}`)}`,
+    redirectToLogin() {
+      window.location.href = this.loginUrlWithNext();
+    },
+  };
+}
+
+function redirectToLogin() {
+  const auth = getAuth();
+  if (auth.redirectToLogin) auth.redirectToLogin();
+  else window.location.href = auth.loginUrlWithNext();
+}
+
 async function fetchData() {
   try {
     const resp = await fetch(DATA_PATH);
@@ -64,9 +80,19 @@ function buildClubCard(club) {
 
   const btnWrap = document.createElement('div');
   btnWrap.className = 'featured-club-btn';
-  const btn = document.createElement('a');
-  btn.href = `/clubs/${club.id}`;
+  const btn = document.createElement('button');
+  btn.type = 'button';
+  btn.className = 'featured-club-join';
   btn.textContent = 'Join';
+  btn.addEventListener('click', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (!getAuth().isAuthenticated()) {
+      redirectToLogin();
+      return;
+    }
+    window.location.href = `/club?id=${encodeURIComponent(club.id)}`;
+  });
   btnWrap.append(btn);
 
   body.append(tag, name, members, desc, btnWrap);
