@@ -259,19 +259,6 @@ export function buildRecapHtml(recap, ev, third) {
     </div>`;
 }
 
-export function buildEventRecapSectionHtml(ev, club) {
-  if (!isPast(ev)) return '';
-  const recap = getEventRecap(ev);
-  if (!getRecapBody(recap)) return '';
-  return `
-    <section class="event-recap-section" id="recap" aria-label="Event recap">
-      <h3 class="event-recap-heading">Event recap</h3>
-      <div class="event-recap-body">
-        ${buildRecapHtml(recap, ev, club)}
-      </div>
-    </section>`;
-}
-
 export function buildAboutHtml(ev, club) {
   const desc = ev.desc || ev.description || '';
   const clubName = club?.name || ev.club || 'Adobe Clubs';
