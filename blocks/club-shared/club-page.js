@@ -121,14 +121,14 @@ export function wireClubJoinButton(btn, club) {
 
 export function syncClubJoinUI(club, joined) {
   const label = joined ? 'Joined' : 'Join';
-  document.querySelectorAll('#club-detail-join, #club-detail-join-footer, #club-detail-join-team, [data-club-join]').forEach((el) => {
+  const isAdmin = getAuth().getAdminOf().includes(club.id);
+  document.querySelectorAll('[data-club-join]').forEach((el) => {
     el.classList.toggle('is-joined', joined);
-    if (el.id === 'club-detail-join') {
-      el.textContent = label;
-    } else if (el.id === 'club-detail-join-footer' || el.id === 'club-detail-join-team') {
-      el.textContent = `${label} →`;
-    } else if (el.dataset.joinSuffix) {
-      el.textContent = `${label} ${el.dataset.joinSuffix}`;
+    const suffix = el.dataset.joinSuffix || '';
+    if (el.classList.contains('ch-join-btn')) {
+      el.textContent = joined ? 'Joined' : (isAdmin ? 'Admin only' : 'Join');
+    } else {
+      el.textContent = suffix ? `${label} ${suffix}` : label;
     }
   });
   window.dispatchEvent(new CustomEvent('adobe-club-join-changed', {
@@ -243,47 +243,6 @@ export function getClubHeroImageSrc(club) {
   return getClubImageSrc(club);
 }
 
-export function clubHasHeroIllustration(clubId) {
-  return Boolean(window.AdobeClubMeta?.heroIllustrations?.[clubId]);
-}
-
-export function formatClubMemberLabel(count) {
-  const n = Number(count);
-  if (!Number.isFinite(n) || n < 0) return '';
-  return `${n} member${n === 1 ? '' : 's'}`;
-}
-
-const CLUB_MEMBER_ICON = '<svg class="club-member-count-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>';
-
-export function clubMemberCountHtml(count) {
-  const label = formatClubMemberLabel(count);
-  if (!label) return '';
-  return `<p class="club-member-count"><span class="club-member-count-dot" aria-hidden="true">·</span>${CLUB_MEMBER_ICON}<span class="club-member-count-text">${esc(label)}</span></p>`;
-}
-
-export function getClubSlack(club) {
-  if (club && (club.slackUrl || club.slackChannel)) {
-    return { url: club.slackUrl || '#', channel: club.slackChannel || '' };
-  }
-  const id = typeof club === 'string' ? club : club?.id;
-  return window.AdobeClubMeta?.slack?.[id] || null;
-}
-
-const SLACK_ICON_SVG = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M9.04 15.17a1.85 1.85 0 1 1-1.85-1.85h1.85v1.85Zm.93 0a1.85 1.85 0 0 1 3.7 0v4.63a1.85 1.85 0 1 1-3.7 0v-4.63Zm1.85-7.43a1.85 1.85 0 1 1 1.85-1.85v1.85h-1.85Zm0 .93a1.85 1.85 0 0 1 0 3.7H7.19a1.85 1.85 0 1 1 0-3.7h4.63Zm7.42 1.85a1.85 1.85 0 1 1 1.85 1.85h-1.85V10.5Zm-.93 0a1.85 1.85 0 0 1-3.7 0V5.87a1.85 1.85 0 1 1 3.7 0v4.63Zm-1.85 7.42a1.85 1.85 0 1 1-1.85 1.85v-1.85h1.85Zm0-.92a1.85 1.85 0 0 1 0-3.7h4.63a1.85 1.85 0 1 1 0 3.7h-4.63Z"/></svg>';
-
-export function slackLinkHtml(slack) {
-  if (!slack) return '';
-  return `<a class="slack-link" href="${esc(slack.url)}" target="_blank" rel="noopener noreferrer">${SLACK_ICON_SVG}Discuss on Slack${slack.channel ? ` <span class="slack-channel">${esc(slack.channel)}</span>` : ''}</a>`;
-}
-
-export function getSimilarClubs(allClubs, club) {
-  const myTag = String(club?.tag || '').toLowerCase();
-  if (!myTag) return [];
-  return (allClubs || [])
-    .filter((c) => c.id !== club.id && String(c.tag || '').toLowerCase() === myTag)
-    .slice(0, 3);
-}
-
 function clubMatchesGalleryItem(club, item) {
   const galClub = (item?.club || '').toLowerCase();
   const name = (club?.name || '').toLowerCase();
@@ -307,4 +266,21 @@ export function getClubImagePool(club, gallery) {
 export function pickClubImage(pool, index, club) {
   if (pool.length) return pool[index % pool.length];
   return getClubImageSrc(club);
+}
+
+export function getSimilarClubs(allClubs, club) {
+  const myTag = String(club?.tag || '').toLowerCase();
+  if (!myTag) return [];
+  return (allClubs || [])
+    .filter((c) => c.id !== club.id && String(c.tag || '').toLowerCase() === myTag)
+    .slice(0, 3);
+}
+
+export const SLACK_ICON_SVG = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M9.04 15.17a1.85 1.85 0 1 1-1.85-1.85h1.85v1.85Zm.93 0a1.85 1.85 0 0 1 3.7 0v4.63a1.85 1.85 0 1 1-3.7 0v-4.63Zm1.85-7.43a1.85 1.85 0 1 1 1.85-1.85v1.85h-1.85Zm0 .93a1.85 1.85 0 0 1 0 3.7H7.19a1.85 1.85 0 1 1 0-3.7h4.63Zm7.42 1.85a1.85 1.85 0 1 1 1.85 1.85h-1.85V10.5Zm-.93 0a1.85 1.85 0 0 1-3.7 0V5.87a1.85 1.85 0 1 1 3.7 0v4.63Zm-1.85 7.42a1.85 1.85 0 1 1-1.85 1.85v-1.85h1.85Zm0-.92a1.85 1.85 0 0 1 0-3.7h4.63a1.85 1.85 0 1 1 0 3.7h-4.63Z"/></svg>';
+
+export function slackLinkHtml(club) {
+  if (!club?.slackUrl && !club?.slackChannel) return '';
+  const url = club.slackUrl || '#';
+  const channel = club.slackChannel || '';
+  return `<a class="slack-link" href="${esc(url)}" target="_blank" rel="noopener noreferrer">${SLACK_ICON_SVG}Discuss on Slack${channel ? ` <span class="slack-channel">${esc(channel)}</span>` : ''}</a>`;
 }

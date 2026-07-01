@@ -1,1 +1,130 @@
-@import url('../club-shared/club-styles.css');
+@import url('../club-shared/club-section.css');
+@import url('../club-shared/club-buttons.css');
+
+main > .section:has(.club-team) > div {
+  max-width: unset;
+  padding: 0;
+  margin: 0;
+}
+
+.ct-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.ct-card {
+  position: relative;
+  aspect-ratio: 3 / 4;
+  min-height: 0;
+  border-radius: 22px;
+  overflow: hidden;
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.ct-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.ct-overlay {
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  bottom: 12px;
+  padding: 14px 16px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.78);
+  backdrop-filter: blur(12px);
+}
+
+.ct-overlay strong {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-color, #2c2c2c);
+}
+
+.ct-overlay span {
+  display: block;
+  font-size: 13px;
+  color: var(--color-text-secondary, #505050);
+}
+
+.ct-card--join {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  padding: 28px 24px;
+  background: var(--text-color, #2c2c2c);
+  color: #fff;
+  text-align: center;
+}
+
+.ct-card--join p {
+  margin: 0;
+  max-width: 18ch;
+  font-size: clamp(22px, 2.5vw, 30px);
+  font-weight: 600;
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+  color: #fff;
+}
+
+.ct-join-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 28px;
+  border: 1px solid var(--color-accent, #1473e6);
+  border-radius: 100px;
+  background: var(--color-accent, #1473e6);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.18s, border-color 0.18s;
+}
+
+.ct-join-btn:hover {
+  background: var(--color-accent-hover, #0d66d0);
+  border-color: var(--color-accent-hover, #0d66d0);
+}
+
+.ct-join-btn.is-joined {
+  background: transparent;
+  border-color: #fff;
+  color: #fff;
+}
+
+.ct-join-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+@media (max-width: 1024px) {
+  .ct-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .ct-grid {
+    grid-auto-flow: column;
+    grid-auto-columns: min(78vw, 280px);
+    grid-template-columns: none;
+    overflow-x: auto;
+    padding-bottom: 8px;
+    scroll-snap-type: x mandatory;
+  }
+
+  .ct-card {
+    scroll-snap-align: start;
+  }
+}

@@ -1,5 +1,9 @@
 /**
- * Club Activities block — original "What this club does" section.
+ * Club Activities block — "What this club does" activity cards.
+ *
+ * da.live:
+ *   | Club Activities |
+ *   | (empty)         |
  */
 
 import {
@@ -17,18 +21,18 @@ const ACTIVITY_ICON_SVGS = [
   '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>',
 ];
 
-function renderCategoryGrid(activities, club) {
+function renderGrid(activities, club) {
   const cats = (activities.length ? activities : [club.tag]).slice(0, 4);
   const items = cats.map((name, i) => `
-    <article class="club-cat-item">
-      <span class="club-cat-icon">${ACTIVITY_ICON_SVGS[i % ACTIVITY_ICON_SVGS.length]}</span>
-      <div class="club-cat-text">
+    <article class="ca-item">
+      <span class="ca-icon">${ACTIVITY_ICON_SVGS[i % ACTIVITY_ICON_SVGS.length]}</span>
+      <div class="ca-text">
         <h4>${esc(name)}</h4>
         <p>${esc(getActivityDesc(club.id, name, club))}</p>
       </div>
     </article>
   `).join('');
-  return `<div class="club-cat-grid">${items}</div>`;
+  return `<div class="ca-grid">${items}</div>`;
 }
 
 export default async function decorate(block) {
@@ -49,10 +53,8 @@ export default async function decorate(block) {
   const meta = getMeta(club.id);
 
   block.innerHTML = `
-    <div class="club-detail-page">
-      <section class="club-block club-does-block">
-        <h2 class="club-section-title">What this club does</h2>
-        ${renderCategoryGrid(meta.activities, club)}
-      </section>
+    <div class="club-section-inner">
+      <h2 class="club-section-title">What this club does</h2>
+      ${renderGrid(meta.activities, club)}
     </div>`;
 }

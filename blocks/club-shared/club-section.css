@@ -1,5 +1,9 @@
 /* Shared styles for club page body blocks */
 
+main:has(.club-hero) {
+  background: var(--light-color, #f8f8f8);
+}
+
 .club-section-title {
   margin: 0 0 32px;
   text-align: center;
@@ -23,5 +27,10 @@
 .club-section-inner {
   max-width: var(--max-width, 1280px);
   margin: 0 auto;
-  padding: clamp(40px, 6vw, 64px) var(--section-padding-x, 40px);
+  padding: clamp(28px, 4vw, 48px) var(--section-padding-x, 40px);
+}
+
+/* Tighter gap below hero — matches original .club-hero + .club-block spacing */
+main > .section:has(.club-hero) + .section:has(.club-activities) .club-section-inner {
+  padding-top: 40px;
 }

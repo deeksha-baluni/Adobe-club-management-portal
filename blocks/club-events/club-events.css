@@ -1,1 +1,183 @@
-@import url('../club-shared/club-styles.css');
+@import url('../club-shared/club-section.css');
+
+main > .section:has(.club-events) > div {
+  max-width: unset;
+  padding: 0;
+  margin: 0;
+}
+
+.ce-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+
+.ce-chip {
+  font-size: 13px;
+  font-weight: 500;
+  padding: 8px 18px;
+  border-radius: 100px;
+  border: 1px solid var(--color-border-default, rgba(0, 0, 0, 0.11));
+  background: transparent;
+  color: var(--color-text-secondary, #505050);
+  cursor: pointer;
+  font-family: inherit;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+  transition: background 0.18s, border-color 0.18s, color 0.18s;
+}
+
+.ce-chip:hover {
+  color: var(--text-color, #2c2c2c);
+}
+
+.ce-chip.is-active {
+  background: var(--text-color, #2c2c2c);
+  border-color: var(--text-color, #2c2c2c);
+  color: #fff;
+}
+
+.ce-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 20px;
+  position: relative;
+  min-height: 0;
+}
+
+.ce-grid.is-filter-empty {
+  min-height: 220px;
+}
+
+.ce-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--color-border-default, rgba(0, 0, 0, 0.11));
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--background-color, #fff);
+  cursor: pointer;
+  transition: transform 0.22s, box-shadow 0.22s, border-color 0.22s;
+}
+
+.ce-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-m, 0 4px 16px rgba(0, 0, 0, 0.12));
+}
+
+.ce-card[hidden] {
+  display: none !important;
+}
+
+.ce-card-img {
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  background: var(--light-color, #f8f8f8);
+}
+
+.ce-card-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.35s ease;
+}
+
+.ce-card:hover .ce-card-img img {
+  transform: scale(1.04);
+}
+
+.ce-card-foot {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 16px 16px;
+  border-top: 1px solid var(--color-border-default, rgba(0, 0, 0, 0.11));
+}
+
+.ce-card-label {
+  margin: 0;
+  flex: 1;
+  min-width: 0;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.45;
+  letter-spacing: -0.01em;
+  color: var(--text-color, #2c2c2c);
+}
+
+.ce-rsvp {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 4.75rem;
+  min-height: 30px;
+  padding: 6px 14px;
+  border-radius: 100px;
+  border: 1px solid var(--color-accent, #1473e6);
+  background: var(--color-accent, #1473e6);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  font-family: inherit;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.ce-rsvp.is-joined {
+  background: transparent;
+  color: var(--text-color, #2c2c2c);
+  border-color: var(--color-border-default, rgba(0, 0, 0, 0.11));
+}
+
+.ce-rsvp--locked {
+  border: none;
+  background: transparent;
+  color: var(--color-text-tertiary, rgba(0, 0, 0, 0.38));
+  cursor: default;
+  min-width: 0;
+  padding: 0;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.ce-empty {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin: 0;
+  padding: 24px 16px;
+  text-align: center;
+  color: var(--color-text-tertiary, rgba(0, 0, 0, 0.38));
+  font-size: 14px;
+}
+
+.ce-empty[hidden] {
+  display: none !important;
+}
+
+.ce-empty img {
+  width: 56px;
+  height: 56px;
+  object-fit: contain;
+}
+
+@media (max-width: 1024px) {
+  .ce-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 560px) {
+  .ce-grid {
+    grid-template-columns: 1fr;
+  }
+}
