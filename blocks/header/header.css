@@ -364,11 +364,9 @@ header nav .nav-tools .button {
   letter-spacing: -0.01em;
 }
 
-header nav .nav-tools .button.primary:any-link {
-  color: #ffffff;
-}
-
-header nav .nav-tools .button.primary:hover,
-header nav .nav-tools .button.primary:focus-visible {
+header nav .nav-tools a.button.primary:any-link,
+header nav .nav-tools a.button.primary:any-link:hover,
+header nav .nav-tools a.button.primary:any-link:focus-visible,
+header nav .nav-tools a.button.primary:any-link:visited {
   color: #ffffff;
 }

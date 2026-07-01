@@ -133,29 +133,25 @@
   flex-wrap: wrap;
 }
 
-/* Primary pill button — blue fill */
-.clubs-hero-banner-btn--primary {
-  display: inline-block;
-  padding: 9px 22px;
-  border-radius: 100px;
-  font-size: 14px;
-  font-weight: 600;
-  text-decoration: none;
-  cursor: pointer;
+/* Primary pill button — blue fill, force white text over global link styles */
+a.clubs-hero-banner-btn--primary:any-link,
+a.clubs-hero-banner-btn--primary:any-link:hover,
+a.clubs-hero-banner-btn--primary:any-link:focus-visible,
+a.clubs-hero-banner-btn--primary:any-link:visited {
+  color: #ffffff;
   background: var(--color-accent);
   border: 1px solid var(--color-accent);
-  color: #ffffff;
-  font-family: var(--body-font-family);
-  transition: background 0.15s, border-color 0.15s;
 }
 
-.clubs-hero-banner-btn--primary:hover {
+a.clubs-hero-banner-btn--primary:any-link:hover,
+a.clubs-hero-banner-btn--primary:any-link:focus-visible {
   background: var(--color-accent-hover);
   border-color: var(--color-accent-hover);
+  color: #ffffff;
 }
 
-/* Outline pill button — dark border */
-.clubs-hero-banner-btn--outline {
+a.clubs-hero-banner-btn--primary:any-link,
+a.clubs-hero-banner-btn--outline:any-link {
   display: inline-block;
   padding: 9px 22px;
   border-radius: 100px;
@@ -163,16 +159,20 @@
   font-weight: 600;
   text-decoration: none;
   cursor: pointer;
+  font-family: var(--body-font-family);
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+
+a.clubs-hero-banner-btn--outline:any-link {
   background: transparent;
   border: 1px solid var(--color-border-default);
   color: var(--text-color);
-  font-family: var(--body-font-family);
-  transition: background 0.15s, border-color 0.15s;
 }
 
-.clubs-hero-banner-btn--outline:hover {
+a.clubs-hero-banner-btn--outline:any-link:hover {
   background: var(--color-surface);
   border-color: var(--dark-color);
+  color: var(--text-color);
 }
 
 /* ── Mobile: image on top, then text ── */

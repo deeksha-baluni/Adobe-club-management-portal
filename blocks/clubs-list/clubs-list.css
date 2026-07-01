@@ -11,6 +11,12 @@ main > .section:has(.clubs-hero) + .section:has(.clubs-list) {
   border-top: 1px solid var(--color-border-default);
 }
 
+/* Use full section width — avoid double EDS wrapper padding */
+main > .section:has(.clubs-list) > div {
+  max-width: unset;
+  padding: 0;
+}
+
 main > .section:has(.clubs-hero) + .section:has(.clubs-list) .cl-section-inner {
   padding-top: clamp(32px, 5vw, 48px);
 }
@@ -18,13 +24,13 @@ main > .section:has(.clubs-hero) + .section:has(.clubs-list) .cl-section-inner {
 .cl-section-inner {
   max-width: var(--max-width);
   margin: 0 auto;
-  padding: clamp(40px, 6vw, 72px) var(--section-padding-x) clamp(60px, 8vw, 96px);
+  padding: clamp(40px, 6vw, 72px) 24px clamp(60px, 8vw, 96px);
 }
 
 /* ── Two-column layout ── */
 .cl-layout {
   display: grid;
-  grid-template-columns: 240px minmax(0, 1fr);
+  grid-template-columns: 248px minmax(0, 1fr);
   gap: 36px;
   align-items: start;
 }
