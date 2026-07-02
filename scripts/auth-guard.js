@@ -4,6 +4,17 @@
  */
 'use strict';
 
+/* Clear session via ?logout=1 — works without user-view code */
+(function handleLogoutQuery() {
+  try {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('logout') === '1') {
+      localStorage.removeItem('adobeClubsAuth');
+      window.location.replace(window.location.pathname || '/');
+    }
+  } catch (err) { /* ignore */ }
+})();
+
 (function initAuthGuard() {
   const AUTH_STORAGE_KEY = 'adobeClubsAuth';
   const USERS_REGISTRY_KEY = 'adobeClubsUsersRegistry';
