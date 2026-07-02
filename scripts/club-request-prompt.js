@@ -5,6 +5,8 @@
 'use strict';
 
 (function () {
+  let activeDismissHandler = null;
+
   function auth() {
     return window.AdobeClubsAuth || null;
   }
@@ -24,10 +26,10 @@
     root.innerHTML = '<div class="cr-panel" id="cr-panel"></div>';
     document.body.appendChild(root);
     root.addEventListener('click', (e) => {
-      if (e.target === root && root.dataset.dismissible === 'true') closeOverlay();
+      if (e.target === root && root.dataset.dismissible === 'true') dismissOverlay();
     });
     document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && !root.hidden && root.dataset.dismissible === 'true') closeOverlay();
+      if (e.key === 'Escape' && !root.hidden && root.dataset.dismissible === 'true') dismissOverlay();
     });
   }
 
@@ -35,9 +37,16 @@
     const overlay = document.getElementById('cr-overlay');
     if (overlay) overlay.hidden = true;
     document.body.classList.remove('cr-open');
+    activeDismissHandler = null;
     if (!document.body.classList.contains('uf-quiz-open')) {
       document.body.style.overflow = '';
     }
+  }
+
+  function dismissOverlay() {
+    const handler = activeDismissHandler;
+    closeOverlay();
+    handler?.();
   }
 
   function openOverlay(html, { dismissible = true } = {}) {
@@ -70,15 +79,11 @@
     window.AdobeInterestQuiz?.closeQuiz?.();
   }
 
-  function wirePrompt({ onSkipAnyway, fromQuiz = false } = {}) {
+  function wirePrompt({ onSkipAnyway } = {}) {
     document.getElementById('cr-skip-anyway')?.addEventListener('click', () => {
-      closeOverlay();
-      if (fromQuiz) {
-        finishQuizSkip();
-        return;
-      }
-      onSkipAnyway?.();
+      dismissOverlay();
     });
+    if (onSkipAnyway) activeDismissHandler = onSkipAnyway;
   }
 
   function openCreateClubPrompt({ fromQuiz = false, onSkipAnyway } = {}) {
@@ -86,11 +91,9 @@
       window.location.href = auth()?.loginUrlWithNext?.() || '/login';
       return;
     }
-    openOverlay(renderPrompt(), { dismissible: false });
-    wirePrompt({
-      fromQuiz,
-      onSkipAnyway: onSkipAnyway || (fromQuiz ? finishQuizSkip : closeOverlay),
-    });
+    const skipHandler = onSkipAnyway || (fromQuiz ? finishQuizSkip : undefined);
+    openOverlay(renderPrompt(), { dismissible: Boolean(fromQuiz) });
+    wirePrompt({ onSkipAnyway: skipHandler });
   }
 
   function openCreateClubForm() {

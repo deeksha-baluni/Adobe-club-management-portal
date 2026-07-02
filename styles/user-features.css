@@ -45,7 +45,7 @@ html.uf-quiz-pending body {
   background: #f8f8fb;
 }
 
-html.uf-quiz-pending body > :not(script):not(.uf-quiz-overlay) {
+html.uf-quiz-pending body > :not(script):not(.uf-quiz-overlay):not(.cr-overlay) {
   visibility: hidden;
 }
 

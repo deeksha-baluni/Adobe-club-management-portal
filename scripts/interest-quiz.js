@@ -6,6 +6,10 @@
 (function () {
   const IMAGE_BASE = '/assets/images/clubs/';
 
+  function codeBase() {
+    return window.hlx?.codeBasePath || '';
+  }
+
   function uf() {
     return window.AdobeUserFeatures;
   }
@@ -103,29 +107,34 @@
 
     continueBtn.onclick = async () => {
       if (selected.size < (uf()?.MIN_INTERESTS || 5)) return;
-      uf()?.saveSelectedInterests?.([...selected]);
-      await showQuizResults();
+      const selectedIds = [...selected];
+      const tagWeights = uf()?.saveSelectedInterests?.(selectedIds);
+      await showQuizResults(selectedIds, tagWeights);
     };
 
-    document.getElementById('uf-quiz-skip')?.addEventListener('click', () => {
-      const overlay = document.getElementById('uf-quiz-overlay');
-      if (overlay) overlay.hidden = true;
-      document.body.classList.remove('uf-quiz-open');
-      document.body.style.overflow = '';
-      window.AdobeClubRequest?.openCreateClubPrompt?.({
-        fromQuiz: true,
-        onSkipAnyway: () => {
-          uf()?.markInterestQuizSkipped?.();
-          closeQuiz();
-        },
-      });
-    });
+    const skipBtn = document.getElementById('uf-quiz-skip');
+    if (skipBtn) {
+      skipBtn.onclick = () => {
+        const overlay = document.getElementById('uf-quiz-overlay');
+        if (overlay) overlay.hidden = true;
+        document.documentElement.classList.remove('uf-quiz-pending');
+        document.body.classList.remove('uf-quiz-open');
+        document.body.style.overflow = '';
+        window.AdobeClubRequest?.openCreateClubPrompt?.({
+          fromQuiz: true,
+          onSkipAnyway: () => {
+            uf()?.markInterestQuizSkipped?.();
+            closeQuiz();
+          },
+        });
+      };
+    }
 
     syncUI();
     resetQuizScroll();
   }
 
-  async function showQuizResults() {
+  async function showQuizResults(selectedIds = [], tagWeights = null) {
     const picker = document.getElementById('uf-quiz-picker');
     const results = document.getElementById('uf-quiz-results');
     const actions = document.getElementById('uf-quiz-actions');
@@ -133,14 +142,27 @@
 
     let data;
     try {
-      const res = await fetch('/data/data.json');
+      const res = await fetch(`${codeBase()}/data/data.json`);
+      if (!res.ok) throw new Error('data unavailable');
       data = await res.json();
     } catch (err) {
       data = { clubs: [] };
     }
 
-    const clubs = uf()?.suggestClubs?.(data.clubs || [], 6) || [];
-    const interests = uf()?.getSelectedInterests?.() || [];
+    const allClubs = data.clubs || [];
+    let clubs = uf()?.suggestClubs?.(allClubs, 6) || [];
+    if (!clubs.length) {
+      clubs = uf()?.rankClubsByTagWeights?.(allClubs, tagWeights, 6)
+        || uf()?.suggestClubsFromSelection?.(allClubs, selectedIds, 6)
+        || [];
+    }
+
+    let interests = uf()?.getSelectedInterests?.() || [];
+    if (!interests.length && selectedIds.length) {
+      interests = selectedIds
+        .map((id) => uf()?.INTEREST_OPTIONS?.find((o) => o.id === id)?.label)
+        .filter(Boolean);
+    }
 
     if (picker) picker.hidden = true;
     if (actions) actions.hidden = true;

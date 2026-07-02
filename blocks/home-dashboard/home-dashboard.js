@@ -231,7 +231,12 @@ function renderRecommended() {
   const completed = features?.hasCompletedQuiz?.();
 
   if (completed) {
+    if (title) title.textContent = 'Recommended for you';
     let recs = features.suggestClubs(clubs, 6) || [];
+    if (!recs.length) {
+      const weights = features.getInterestProfile?.()?.tagWeights || {};
+      recs = features.rankClubsByTagWeights?.(clubs, weights, 6) || [];
+    }
     if (!recs.length) {
       recs = [...clubs]
         .map((club) => ({ club, score: features.getClubCompatibility?.(club)?.score || 0 }))
@@ -240,16 +245,16 @@ function renderRecommended() {
         .slice(0, 6)
         .map((entry) => entry.club);
     }
-    if (recs.length) {
-      if (title) title.textContent = 'Recommended for you';
-      const interests = features.getMatchedInterestTags?.() || [];
-      const pills = interests.length
-        ? `<div class="hm-interest-pills" aria-label="Your selected interests">${interests.map((label) => `<span class="hm-interest-pill">${esc(label)}</span>`).join('')}</div>`
-        : '';
-      root.innerHTML = `${pills}<div class="lp-clubs-grid">${recs.map(clubCard).join('')}</div>`;
-      wireHomeCardActions(root);
-      return;
-    }
+    const interests = features.getMatchedInterestTags?.() || [];
+    const pills = interests.length
+      ? `<div class="hm-interest-pills" aria-label="Your selected interests">${interests.map((label) => `<span class="hm-interest-pill">${esc(label)}</span>`).join('')}</div>`
+      : '';
+    const grid = recs.length
+      ? `<div class="lp-clubs-grid">${recs.map(clubCard).join('')}</div>`
+      : `<div class="hm-prompt"><p>We saved your interests. Browse clubs to find communities that fit you.</p><a href="/clubs" class="btn-primary btn-sm">Browse clubs</a></div>`;
+    root.innerHTML = `${pills}${grid}`;
+    wireHomeCardActions(root);
+    return;
   }
 
   if (title) title.textContent = 'Popular clubs';

@@ -44,8 +44,9 @@
   }
 
   function scopedKey(base) {
-    const session = getAuth().getSession?.();
-    const username = session?.isAuthenticated ? session.username : null;
+    const auth = getAuth();
+    const username = auth.getActiveUsername?.()
+      || (auth.getSession?.()?.isAuthenticated ? auth.getSession().username : null);
     return username ? `${base}:${username}` : null;
   }
 
@@ -145,9 +146,8 @@
     return saveSelectedInterests([]);
   }
 
-  function getClubCompatibility(club) {
-    if (!club || !hasCompletedQuiz()) return null;
-    const weights = getInterestProfile().tagWeights || {};
+  function scoreClubWithWeights(club, weights) {
+    if (!club || !weights || !Object.keys(weights).length) return 0;
     let score = weights[club.tag] || 0;
 
     Object.entries(TAG_TO_CLUBS).forEach(([tag, ids]) => {
@@ -164,7 +164,28 @@
     });
 
     const maxPossible = 12;
-    const pct = Math.min(100, Math.round((score / maxPossible) * 100));
+    return Math.min(100, Math.round((score / maxPossible) * 100));
+  }
+
+  function rankClubsByTagWeights(allClubs, tagWeights, limit = 6) {
+    if (!tagWeights || !Object.keys(tagWeights).length) return [];
+    return (allClubs || [])
+      .map(club => ({ club, score: scoreClubWithWeights(club, tagWeights) }))
+      .filter(entry => entry.score > 0)
+      .sort((a, b) => b.score - a.score)
+      .slice(0, limit)
+      .map(entry => entry.club);
+  }
+
+  function suggestClubsFromSelection(allClubs, selectedIds, limit = 6) {
+    const tagWeights = buildTagWeightsFromInterests(selectedIds);
+    return rankClubsByTagWeights(allClubs, tagWeights, limit);
+  }
+
+  function getClubCompatibility(club) {
+    if (!club || !hasCompletedQuiz()) return null;
+    const weights = getInterestProfile().tagWeights || {};
+    const pct = scoreClubWithWeights(club, weights);
     if (pct < 25) return { score: pct, label: 'Low match' };
     if (pct < 55) return { score: pct, label: 'Fair match' };
     if (pct < 80) return { score: pct, label: 'Good match' };
@@ -647,6 +668,8 @@
     saveQuizAnswers,
     getClubCompatibility,
     suggestClubs,
+    suggestClubsFromSelection,
+    rankClubsByTagWeights,
     suggestEvents,
     getMatchedInterestTags,
     isClubInterestMatch,

@@ -455,8 +455,18 @@ function bindSignup() {
     if (!valid) return;
 
     try {
-      const account = await auth.registerUser({ username, email, password, displayName: username, company: 'Adobe Inc.' });
-      auth.createSession(account, { isNewSignup: true });
+      const result = auth.registerUser({ username, email, password, displayName: username, company: 'Adobe Inc.' });
+      if (!result?.ok) {
+        showAlert(result?.error || 'Could not create account.', 'error');
+        return;
+      }
+      auth.createSession({
+        role: 'user',
+        username: result.account.username,
+        email: result.account.email,
+        displayName: result.account.displayName,
+        company: result.account.company,
+      }, { isNewSignup: true });
       try { sessionStorage.removeItem('theme'); localStorage.removeItem('theme'); } catch { /* */ }
       document.documentElement.setAttribute('data-theme', 'light');
       redirectAfterAuth('Account created. Welcome to Adobe Clubs!');
