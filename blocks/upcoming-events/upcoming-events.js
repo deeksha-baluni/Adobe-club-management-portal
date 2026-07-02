@@ -53,9 +53,27 @@ function isUpcoming(ev) {
   return Date.now() <= endOfDay.getTime();
 }
 
+function eventPageUrl(id) {
+  return `/event?id=${encodeURIComponent(id)}`;
+}
+
 function buildEventCard(ev) {
   const card = document.createElement('div');
   card.className = 'upcoming-event-card';
+  card.tabIndex = 0;
+  card.setAttribute('role', 'link');
+  card.setAttribute('aria-label', ev.title || 'View event');
+
+  const navigate = () => {
+    window.location.href = eventPageUrl(ev.id);
+  };
+  card.addEventListener('click', navigate);
+  card.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      navigate();
+    }
+  });
 
   const thumb = document.createElement('div');
   thumb.className = 'upcoming-event-thumb';
@@ -113,7 +131,7 @@ function buildEventCard(ev) {
       redirectToLogin();
       return;
     }
-    window.location.href = `/event?id=${encodeURIComponent(ev.id)}`;
+    window.location.href = eventPageUrl(ev.id);
   });
   btnWrap.append(btn);
 

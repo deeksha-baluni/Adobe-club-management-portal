@@ -4,13 +4,26 @@
 'use strict';
 
 window.AdobeEventModal = (function () {
+  let modalStylesPromise = null;
+
   function loadModalStyles() {
-    if (document.querySelector('link[data-ev-modal-css]')) return;
-    const link = document.createElement('link');
-    link.rel = 'stylesheet';
-    link.href = `${window.hlx?.codeBasePath || ''}/styles/event-modal.css`;
-    link.dataset.evModalCss = '1';
-    document.head.append(link);
+    if (modalStylesPromise) return modalStylesPromise;
+    const href = `${window.hlx?.codeBasePath || ''}/styles/event-modal.css`;
+    const existing = document.querySelector('link[data-ev-modal-css]');
+    if (existing) {
+      modalStylesPromise = Promise.resolve();
+      return modalStylesPromise;
+    }
+    modalStylesPromise = new Promise((resolve) => {
+      const link = document.createElement('link');
+      link.rel = 'stylesheet';
+      link.href = href;
+      link.dataset.evModalCss = '1';
+      link.onload = () => resolve();
+      link.onerror = () => resolve();
+      document.head.append(link);
+    });
+    return modalStylesPromise;
   }
 
   const IMAGE_BASE = '/assets/images/events/';
@@ -286,7 +299,7 @@ window.AdobeEventModal = (function () {
     if (document.getElementById('ev-modal-overlay')) return;
     const el = document.createElement('div');
     el.innerHTML = `
-      <div class="ev-modal-overlay" id="ev-modal-overlay" role="dialog" aria-modal="true" aria-label="Event details">
+      <div class="ev-modal-overlay" id="ev-modal-overlay" role="dialog" aria-modal="true" aria-label="Event details" hidden>
         <div class="ev-modal-glass" id="ev-modal-glass" tabindex="-1">
           <button class="ev-modal-close" id="ev-modal-close" aria-label="Close">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
@@ -315,7 +328,9 @@ window.AdobeEventModal = (function () {
       if (e.target === e.currentTarget) close();
     });
     document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') close();
+      if (e.key !== 'Escape') return;
+      const overlay = document.getElementById('ev-modal-overlay');
+      if (overlay && !overlay.hidden) close();
     });
   }
 
@@ -474,8 +489,9 @@ window.AdobeEventModal = (function () {
     });
   }
 
-  function open(ev, { scrollToRecap = false, recapOnly = false, onStateChange: localChange } = {}) {
+  async function open(ev, { scrollToRecap = false, recapOnly = false, onStateChange: localChange } = {}) {
     if (!ev) return;
+    await loadModalStyles();
     injectModal();
 
     activeOpenChange = typeof localChange === 'function' ? localChange : null;
@@ -561,8 +577,11 @@ window.AdobeEventModal = (function () {
     document.body.classList.add('ev-modal-open');
     document.body.style.overflow = 'hidden';
     overlay.classList.toggle('ev-modal-overlay--recap', recapOnlyView);
-    overlay.classList.add('open');
     overlay.setAttribute('aria-label', recapOnlyView ? 'Event recap' : 'Event details');
+    overlay.hidden = false;
+    overlay.classList.remove('open');
+    void overlay.offsetWidth;
+    overlay.classList.add('open');
     requestAnimationFrame(() => {
       glass.scrollTo(0, 0);
       glass.style.scrollBehavior = 'smooth';
@@ -581,9 +600,13 @@ window.AdobeEventModal = (function () {
     activeOpenChange = null;
     const overlay = document.getElementById('ev-modal-overlay');
     const glass = document.getElementById('ev-modal-glass');
-    if (overlay) {
-      overlay.classList.remove('open', 'ev-modal-overlay--recap');
-    }
+    if (!overlay || overlay.hidden) return;
+    overlay.classList.remove('open', 'ev-modal-overlay--recap');
+    window.setTimeout(() => {
+      if (overlay && !overlay.classList.contains('open')) {
+        overlay.hidden = true;
+      }
+    }, 300);
     if (glass) {
       glass.style.scrollBehavior = 'auto';
       glass.scrollTo(0, 0);

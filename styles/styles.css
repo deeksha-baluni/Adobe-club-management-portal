@@ -104,8 +104,44 @@ body.appear {
   display: block;
 }
 
+/* Scrollbar — matches OG global.css */
+html {
+  overflow-y: scroll;
+  scrollbar-gutter: stable;
+  scroll-padding-top: var(--nav-height);
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-border-default) transparent;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-border-default);
+  border-radius: 3px;
+}
+
+[data-theme="dark"] {
+  scrollbar-color: rgba(255, 255, 255, 0.22) transparent;
+}
+
+[data-theme="dark"] ::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.22);
+}
+
 header {
-  height: var(--nav-height);
+  position: sticky;
+  top: 0;
+  z-index: 200;
+  min-height: var(--nav-height);
+  background-color: var(--background-color);
+  isolation: isolate;
 }
 
 header .header,

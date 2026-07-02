@@ -105,7 +105,7 @@ function renderRecapCard(ev, club) {
 
 function renderEmpty(hidden) {
   return `
-    <p class="club-recap-empty-state"${hidden ? ' hidden' : ''}>
+    <p class="club-recap-empty-state" id="club-recap-empty"${hidden ? ' hidden' : ''}>
       <img src="/assets/images/club_details/icons/forbidden.png" alt="" class="club-recap-empty-icon" width="56" height="56" decoding="async">
       <span>No recaps listed for past events.</span>
     </p>`;
@@ -126,14 +126,14 @@ function injectFormModal(club, pastEvents, canPost) {
   const disabled = canPost ? '' : 'disabled';
   const el = document.createElement('div');
   el.innerHTML = `
-    <div class="cr-modal" id="club-recap-form-modal" aria-hidden="true">
-      <div class="cr-modal-card" role="dialog" aria-modal="true" aria-labelledby="club-recap-form-title">
-        <div class="cr-modal-head">
+    <div class="club-recap-form-modal" id="club-recap-form-modal" aria-hidden="true">
+      <div class="club-recap-form-card" role="dialog" aria-modal="true" aria-labelledby="club-recap-form-title">
+        <div class="club-recap-form-head">
           <h3 id="club-recap-form-title">Post Event Recap</h3>
-          <button type="button" class="cr-modal-close" data-close-recap-form aria-label="Close">✕</button>
+          <button type="button" class="club-recap-form-close" data-close-recap-form aria-label="Close">✕</button>
         </div>
-        <form class="cr-form" id="club-recap-form" novalidate>
-          <p class="cr-form-msg" id="club-recap-msg" hidden role="alert"></p>
+        <form class="club-recap-form-fields" id="club-recap-form" novalidate>
+          <p class="club-recap-form-msg" id="club-recap-msg" hidden role="alert"></p>
           <label><span>Past event *</span>
             <select id="club-recap-event" required ${disabled}>${renderOptions(pastEvents)}</select>
           </label>
@@ -146,7 +146,7 @@ function injectFormModal(club, pastEvents, canPost) {
           <label><span>Highlights *</span>
             <textarea id="club-recap-highlights" required minlength="10" rows="3" placeholder="One highlight per line" ${disabled}></textarea>
           </label>
-          <button type="submit" class="cr-submit" id="club-recap-submit" ${disabled}>Post recap</button>
+          <button type="submit" class="club-recap-form-submit" id="club-recap-submit" ${disabled}>Post recap</button>
         </form>
       </div>
     </div>`;
@@ -190,8 +190,10 @@ function refreshGrid(block, pastEvents, club) {
   if (cards) {
     empty?.insertAdjacentHTML('beforebegin', cards);
     if (empty) empty.hidden = true;
+    grid.classList.remove('is-recap-empty');
   } else if (empty) {
     empty.hidden = false;
+    grid.classList.add('is-recap-empty');
   }
   wireReadCards(block, pastEvents, club);
 }
@@ -219,7 +221,7 @@ function wireForm(block, club, pastEvents) {
       if (!msg) return;
       msg.hidden = !text;
       msg.textContent = text || '';
-      msg.className = ok ? 'cr-form-msg cr-form-msg--ok' : 'cr-form-msg cr-form-msg--err';
+      msg.className = ok ? 'club-recap-form-msg club-recap-form-msg--ok' : 'club-recap-form-msg club-recap-form-msg--err';
     };
     if (!getAuth().isAuthenticated()) {
       redirectToLogin();
@@ -252,7 +254,7 @@ function wireForm(block, club, pastEvents) {
     refreshGrid(block, pastEvents, club);
     const select = document.getElementById('club-recap-event');
     if (select) select.innerHTML = renderOptions(pastEvents);
-    const cta = block.querySelector('#cr-cta');
+    const cta = block.querySelector('#club-recap-cta');
     if (cta) {
       const hasWork = getEventsNeedingRecap(pastEvents).length > 0;
       cta.disabled = !hasWork;
@@ -285,14 +287,14 @@ export default async function decorate(block) {
   block.innerHTML = `
     <div class="club-section-inner" id="club-recaps">
       <h2 class="club-section-title">Highlights from recent sessions</h2>
-      <div class="cr-panel">
+      <div class="club-recap-panel">
         <div class="club-recap-grid${hasAnyRecaps ? '' : ' is-recap-empty'}" id="club-recap-grid">
           ${pastEvents.map((ev) => renderRecapCard(ev, club)).filter(Boolean).join('')}
           ${renderEmpty(hasAnyRecaps)}
         </div>
         ${showCta ? `
-          <div class="cr-foot">
-            <button type="button" class="cr-cta${hasWork ? ' cr-cta--active' : ''}" id="cr-cta"${hasWork ? '' : ' disabled'}>Post a recap</button>
+          <div class="club-recap-foot">
+            <button type="button" class="club-recap-cta${hasWork ? ' club-recap-cta--active' : ''}" id="club-recap-cta"${hasWork ? '' : ' disabled'}>Post a recap</button>
           </div>` : ''}
       </div>
     </div>`;
@@ -300,8 +302,8 @@ export default async function decorate(block) {
   injectFormModal(club, pastEvents, canPost);
   wireReadCards(block, pastEvents, club);
   wireForm(block, club, pastEvents);
-  block.querySelector('#cr-cta')?.addEventListener('click', () => {
-    if (block.querySelector('#cr-cta')?.disabled) return;
+  block.querySelector('#club-recap-cta')?.addEventListener('click', () => {
+    if (block.querySelector('#club-recap-cta')?.disabled) return;
     openForm();
   });
 

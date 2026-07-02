@@ -16,6 +16,10 @@
   transition: opacity 0.3s ease;
 }
 
+.ev-modal-overlay[hidden] {
+  display: none !important;
+}
+
 .ev-modal-overlay.open {
   opacity: 1;
   pointer-events: auto;

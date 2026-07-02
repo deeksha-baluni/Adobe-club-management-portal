@@ -35,10 +35,14 @@ async function fetchData() {
   }
 }
 
+function clubPageUrl(id) {
+  return `/club?id=${encodeURIComponent(id)}`;
+}
+
 function buildClubCard(club) {
   const card = document.createElement('a');
   card.className = 'featured-club-card';
-  card.href = `/clubs/${club.id}`;
+  card.href = clubPageUrl(club.id);
   card.setAttribute('aria-label', club.name);
 
   const thumb = document.createElement('div');
@@ -91,7 +95,7 @@ function buildClubCard(club) {
       redirectToLogin();
       return;
     }
-    window.location.href = `/club?id=${encodeURIComponent(club.id)}`;
+    window.location.href = clubPageUrl(club.id);
   });
   btnWrap.append(btn);
 

@@ -7,6 +7,8 @@
  *   (empty — block name only)
  */
 
+import { loadCSS, loadScript } from '../../scripts/aem.js';
+
 const DATA_PATH = '/data/data.json';
 const IMG_BASE = '/assets/images/clubs/';
 
@@ -15,6 +17,22 @@ let ALL_EVENTS = [];
 let SEARCH_QUERY = '';
 let ACTIVE_TAGS = new Set();
 const FILTER_STATE = { membership: 'all' };
+let depsLoaded = false;
+
+function codeBase() {
+  return window.hlx?.codeBasePath || '';
+}
+
+async function loadClubsDependencies() {
+  if (depsLoaded) return;
+  const base = codeBase();
+  await Promise.all([
+    loadCSS(`${base}/styles/join-modal.css`),
+    loadScript(`${base}/scripts/club-meta.js`),
+    loadScript(`${base}/scripts/join-modal.js`),
+  ]);
+  depsLoaded = true;
+}
 
 const MONTH_INDEX = { JAN: 0, FEB: 1, MAR: 2, APR: 3, MAY: 4, JUN: 5, JUL: 6, AUG: 7, SEP: 8, OCT: 9, NOV: 10, DEC: 11 };
 
@@ -300,6 +318,7 @@ function buildToolbar(grid, noResults) {
 
 export default async function decorate(block) {
   block.textContent = '';
+  await loadClubsDependencies();
 
   const section = document.createElement('div');
   section.className = 'cl-section-inner';

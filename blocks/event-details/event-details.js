@@ -1,8 +1,13 @@
 /**
- * Event Details block — metadata definition list.
+ * Event Details block — metadata definition list + past-event recap (when available).
  */
 
-import { initEventPage, buildDetailsListHtml } from '../event-shared/event-page.js';
+import {
+  initEventPage,
+  buildDetailsListHtml,
+  buildRecapSectionHtml,
+  scrollToRecapIfNeeded,
+} from '../event-shared/event-page.js';
 
 export default async function decorate(block) {
   block.innerHTML = '';
@@ -19,5 +24,8 @@ export default async function decorate(block) {
         <h2 class="event-about-heading">Event details</h2>
         ${buildDetailsListHtml(ev, club)}
       </div>
+      ${buildRecapSectionHtml(ev, club)}
     </div>`;
+
+  scrollToRecapIfNeeded();
 }

@@ -57,6 +57,7 @@
   background: var(--color-surface);
   box-shadow: var(--shadow-s);
   transition: box-shadow 0.2s, transform 0.2s;
+  cursor: pointer;
 }
 
 .upcoming-event-card:hover {

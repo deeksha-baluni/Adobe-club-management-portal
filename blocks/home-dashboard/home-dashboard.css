@@ -1,0 +1,689 @@
+/* Home Dashboard — member logged-in home (OG home.html + landing card grids) */
+
+/* Reset EDS main wrappers (styles.css sets main > div { margin: 40px 16px }) */
+body.user-home {
+  overflow-x: clip;
+}
+
+body.user-home main {
+  max-width: none;
+  padding: 0;
+  margin: 0;
+  overflow-x: clip;
+}
+
+body.user-home main > div {
+  margin: 0;
+  max-width: none;
+  width: 100%;
+}
+
+body.user-home .hm-dashboard {
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  overflow-x: clip;
+  box-sizing: border-box;
+}
+
+body.user-home .home-dashboard {
+  display: none;
+}
+
+/* ── Layout ── */
+.hm-header {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  width: 100%;
+  padding: clamp(40px, 6vw, 64px) var(--section-padding-x) 0;
+  box-sizing: border-box;
+  min-width: 0;
+}
+
+.hm-welcome-row {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.hm-title {
+  font-size: clamp(28px, 4vw, 42px);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--text-color);
+  line-height: 1.1;
+  margin: 0;
+}
+
+.hm-section {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  width: 100%;
+  padding: clamp(36px, 5vw, 56px) var(--section-padding-x) 0;
+  box-sizing: border-box;
+  min-width: 0;
+}
+
+.hm-section-head {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 10px;
+  margin-bottom: 32px;
+}
+
+.hm-section-head h2 {
+  display: inline-block;
+  padding-bottom: 10px;
+  font-size: clamp(26px, 3vw, 36px);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--text-color);
+  line-height: 1.1;
+  margin: 0;
+}
+
+.hm-section-link {
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--color-accent);
+  text-decoration: underline;
+  text-decoration-color: var(--color-accent);
+  text-underline-offset: 3px;
+}
+
+.hm-section-link:hover {
+  color: var(--color-accent-hover);
+  text-decoration-color: var(--color-accent-hover);
+}
+
+/* Black band when no joined clubs — matches guest index main .section.dark / .lp-cta */
+.hm-section--dark {
+  max-width: none;
+  width: 100%;
+  margin: 0;
+  background: var(--color-dark-bg);
+  border: none;
+  border-radius: 0;
+  color: var(--color-dark-text, #fff);
+  padding: clamp(40px, 6vw, 72px) var(--section-padding-x);
+  text-align: center;
+  box-sizing: border-box;
+}
+
+.hm-section--dark .hm-section-head {
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 10px;
+  margin-bottom: 12px;
+  max-width: var(--max-width);
+  margin-left: auto;
+  margin-right: auto;
+  width: 100%;
+}
+
+.hm-section--dark #hm-your-clubs {
+  max-width: var(--max-width);
+  margin-left: auto;
+  margin-right: auto;
+  width: 100%;
+}
+
+.hm-section--dark .hm-section-head h2 {
+  display: inline-block;
+  font-size: clamp(26px, 3vw, 38px);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  color: var(--color-dark-text, #fff);
+  margin: 0;
+  padding-bottom: 12px;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.35);
+}
+
+.hm-section--dark .hm-section-head .hm-section-link {
+  display: none;
+}
+
+.hm-section--dark .hm-empty {
+  border: none;
+  background: transparent;
+  padding: 0;
+}
+
+.hm-section--dark .hm-empty p {
+  font-size: 16px;
+  color: rgba(255, 255, 255, 0.78);
+  margin: 0 0 28px;
+}
+
+.hm-section--dark .lp-cta-actions .btn-primary {
+  padding: 11px 28px;
+  font-size: 15px;
+  min-height: unset;
+}
+
+[data-theme="dark"] .hm-section--dark {
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.hm-section:last-of-type:not(.hm-section--dark) {
+  padding-bottom: clamp(48px, 7vw, 80px);
+}
+
+/* Extra breathing room before Your clubs / Find your first club */
+.hm-section[aria-label="Upcoming events"] {
+  padding-bottom: clamp(40px, 5vw, 56px);
+}
+
+.hm-section[aria-label="Your clubs"]:not(.hm-section--dark) {
+  margin-top: clamp(24px, 4vw, 40px);
+}
+
+.hm-section[aria-label="Your clubs"].hm-section--dark {
+  margin-top: 0;
+}
+
+.hm-section .lp-clubs-grid,
+.hm-section .lp-events-grid {
+  padding-inline: 0;
+  width: 100%;
+  min-width: 0;
+}
+
+.hm-prompt {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding: 18px 20px;
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--border-radius-l);
+  background: var(--color-surface);
+  margin-bottom: 18px;
+}
+
+.hm-prompt p {
+  font-size: 14px;
+  color: var(--color-text-secondary);
+  margin: 0;
+}
+
+.hm-prompt strong {
+  color: var(--text-color);
+  font-weight: 700;
+}
+
+.hm-interest-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  margin-bottom: 18px;
+}
+
+#hm-recommended {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+  min-width: 0;
+}
+
+.hm-interest-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 12px;
+  border-radius: 100px;
+  border: 1px solid var(--color-border-default);
+  background: var(--light-color);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+}
+
+.lp-club-card--action,
+.lp-event-card--action {
+  text-decoration: none;
+}
+
+.lp-card-link,
+.lp-card-link:hover,
+.lp-card-link:focus-visible,
+.lp-card-link:hover *,
+.lp-card-link:focus-visible * {
+  text-decoration: none;
+  color: inherit;
+}
+
+.hm-rsvp-item,
+.hm-rsvp-item:hover,
+.hm-rsvp-item:focus-visible,
+.hm-rsvp-item:hover *,
+.hm-rsvp-item:focus-visible * {
+  text-decoration: none;
+  color: inherit;
+}
+
+.hm-empty {
+  padding: 28px 20px;
+  border: 1px dashed var(--color-border-default);
+  border-radius: var(--border-radius-l);
+  text-align: center;
+}
+
+.hm-empty p {
+  font-size: 14px;
+  color: var(--color-text-secondary);
+  margin-bottom: 14px;
+}
+
+/* Calendar */
+.hm-cal-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 380px) minmax(0, 1fr);
+  gap: clamp(20px, 3vw, 32px);
+  align-items: start;
+  width: 100%;
+  min-width: 0;
+}
+
+.hm-cal-card {
+  padding: 20px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-l);
+  background: var(--background-color);
+  min-width: 0;
+  overflow: hidden;
+}
+
+body.user-home .uf-cal-grid {
+  min-width: 0;
+}
+
+.hm-cal-rsvps {
+  padding: 20px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-l);
+  background: var(--color-surface);
+  min-width: 0;
+}
+
+.hm-cal-rsvps-title {
+  margin: 0 0 14px;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-text-tertiary);
+}
+
+.hm-rsvp-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.hm-rsvp-item {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 12px 14px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-m);
+  background: var(--background-color);
+  text-decoration: none;
+  transition: border-color 0.18s, background 0.18s;
+}
+
+.hm-rsvp-item:hover {
+  border-color: var(--color-border-default);
+  background: var(--light-color);
+}
+
+.hm-rsvp-date {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-brand-red);
+}
+
+.hm-rsvp-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-color);
+  line-height: 1.3;
+}
+
+.hm-rsvp-meta {
+  font-size: 12.5px;
+  color: var(--color-text-tertiary);
+}
+
+.hm-rsvp-empty p {
+  margin: 0 0 10px;
+  font-size: 14px;
+  color: var(--color-text-secondary);
+}
+
+.hm-rsvp-more {
+  margin: 12px 0 0;
+  font-size: 13px;
+}
+
+@media (max-width: 768px) {
+  .hm-cal-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ── Club / event card grids (OG lp-*) ── */
+.lp-clubs-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(20px, 3vw, 36px);
+  width: 100%;
+  min-width: 0;
+}
+
+.lp-club-card {
+  display: flex;
+  flex-direction: column;
+  border-radius: var(--border-radius-s);
+  overflow: hidden;
+  background: var(--background-color);
+  text-decoration: none;
+  border: 1px solid var(--color-border-default);
+  padding-bottom: 7px;
+  transition: box-shadow 0.2s, transform 0.2s;
+  min-width: 0;
+}
+
+.lp-club-card:hover {
+  box-shadow: var(--shadow-m);
+  transform: translateY(-4px);
+}
+
+.lp-club-thumb {
+  position: relative;
+  height: 213px;
+  overflow: hidden;
+  background: var(--color-border);
+  flex-shrink: 0;
+}
+
+.lp-club-thumb img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.lp-club-body {
+  padding: 20px 18px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.lp-club-tag {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--color-brand-red);
+}
+
+.lp-club-name {
+  font-size: 21px;
+  font-weight: 700;
+  color: var(--text-color);
+  letter-spacing: -0.02em;
+  line-height: 1.25;
+}
+
+.lp-club-members {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--color-text-tertiary);
+}
+
+.lp-club-desc {
+  font-size: 15px;
+  color: var(--color-text-secondary);
+  line-height: 1.55;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.lp-card-link {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  text-decoration: none;
+  color: inherit;
+}
+
+.lp-card-action {
+  padding: 8px 18px 18px;
+  display: flex;
+  justify-content: flex-end;
+  margin-top: auto;
+}
+
+.lp-events-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(20px, 3vw, 36px);
+  width: 100%;
+  min-width: 0;
+}
+
+.lp-event-card {
+  display: flex;
+  flex-direction: column;
+  border-radius: var(--border-radius-l);
+  overflow: hidden;
+  background: var(--color-surface);
+  text-decoration: none;
+  box-shadow: var(--shadow-s);
+  transition: box-shadow 0.2s, transform 0.2s;
+  min-width: 0;
+}
+
+.lp-event-card:hover {
+  box-shadow: var(--shadow-m);
+  transform: translateY(-2px);
+}
+
+.lp-event-thumb {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  background: var(--light-color);
+}
+
+.lp-event-thumb img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.lp-event-date {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background: var(--background-color);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-s);
+  padding: 5px 9px;
+  text-align: center;
+  line-height: 1.05;
+}
+
+.lp-event-date .m {
+  display: block;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--color-text-tertiary);
+  text-transform: uppercase;
+}
+
+.lp-event-date .d {
+  display: block;
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--text-color);
+}
+
+.lp-event-body {
+  padding: 16px 18px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.lp-event-club {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-brand-red);
+}
+
+.lp-event-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-color);
+  line-height: 1.3;
+}
+
+.lp-event-meta {
+  font-size: 12.5px;
+  color: var(--color-text-secondary);
+}
+
+.lp-event-card .lp-card-action .cb-poster-join {
+  width: 100%;
+}
+
+@media (max-width: 900px) {
+  body.user-home {
+    --section-padding-x: 24px;
+  }
+
+  .lp-clubs-grid,
+  .lp-events-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 560px) {
+  body.user-home {
+    --section-padding-x: 16px;
+  }
+
+  .lp-clubs-grid,
+  .lp-events-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* ── Action buttons ── */
+.hm-dashboard .btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40px;
+  padding: 10px 22px;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 100px;
+  border: 1px solid var(--color-accent);
+  background: var(--color-accent);
+  color: #fff;
+  text-decoration: none;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.18s, border-color 0.18s;
+}
+
+.hm-dashboard .btn-primary:hover {
+  background: var(--color-accent-hover);
+  border-color: var(--color-accent-hover);
+  color: #fff;
+}
+
+.hm-dashboard .btn-sm {
+  padding: 7px 18px;
+  font-size: 13px;
+}
+
+.hm-dashboard .cb-poster-join {
+  min-width: 120px;
+  padding: 10px 26px;
+  font-size: 14px;
+  font-weight: 600;
+  background: var(--color-accent);
+  border: 1px solid var(--color-accent);
+  border-radius: 100px;
+  color: #fff;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.18s, border-color 0.18s, color 0.18s;
+}
+
+.hm-dashboard .cb-poster-join:hover:not(:disabled):not(.is-joined) {
+  background: var(--color-accent-hover);
+  border-color: var(--color-accent-hover);
+}
+
+.hm-dashboard .cb-poster-join:disabled {
+  background: var(--light-color);
+  border-color: var(--color-border-default);
+  color: var(--color-text-tertiary);
+  cursor: not-allowed;
+  opacity: 0.72;
+}
+
+.hm-dashboard .cb-poster-join.is-joined {
+  background: transparent;
+  border: 1px solid #000;
+  color: #000;
+}
+
+.hm-dashboard .cb-poster-join[data-club-id].is-joined::before {
+  content: '✓';
+  font-size: 12px;
+  font-weight: 700;
+  margin-right: 4px;
+}
+
+[data-theme="dark"] .hm-dashboard .cb-poster-join.is-joined {
+  border-color: rgba(255, 255, 255, 0.88);
+  color: #fff;
+}
+
+.lp-cta-actions {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}

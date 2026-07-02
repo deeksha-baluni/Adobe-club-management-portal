@@ -15,6 +15,24 @@ function normalizeNavPath(path) {
 }
 
 /**
+ * Detail routes that belong to a nav section (e.g. /club → /clubs).
+ */
+const NAV_DETAIL_SECTIONS = {
+  '/club': '/clubs',
+  '/event': '/events',
+};
+
+const HOME_PATHS = new Set(['/', '/home']);
+
+/**
+ * @param {string} path
+ * @returns {boolean}
+ */
+function isHomePath(path) {
+  return HOME_PATHS.has(normalizeNavPath(path));
+}
+
+/**
  * Returns whether a nav link href matches the current page.
  * @param {string} linkPath
  * @param {string} currentPath
@@ -24,7 +42,11 @@ function isNavLinkActive(linkPath, currentPath) {
   const link = normalizeNavPath(linkPath);
   const current = normalizeNavPath(currentPath);
 
-  if (link === '/') return current === '/';
+  if (isHomePath(link) && isHomePath(current)) return true;
+
+  const sectionForDetail = NAV_DETAIL_SECTIONS[current];
+  if (sectionForDetail && link === sectionForDetail) return true;
+
   return current === link || current.startsWith(`${link}/`);
 }
 

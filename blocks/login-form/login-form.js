@@ -29,6 +29,7 @@ function getNextPath() {
       return next;
     }
   } catch { /* ignore */ }
+  if (getAuth()?.isAuthenticated?.()) return '/home';
   return '/';
 }
 

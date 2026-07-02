@@ -138,7 +138,8 @@ export function decorateMain(main) {
 async function loadEager(doc) {
   document.documentElement.lang = 'en';
   decorateTemplateAndTheme();
-  loadScript(`${window.hlx?.codeBasePath || ''}/scripts/auth-guard.js`);
+  await loadScript(`${window.hlx?.codeBasePath || ''}/scripts/auth-guard.js`);
+  if (handleAuthRouting(doc)) return;
   const main = doc.querySelector('main');
   if (main) {
     decorateMain(main);
@@ -163,6 +164,41 @@ function isAuthPage(doc) {
   return Boolean(doc.querySelector('main .login-form'));
 }
 
+function normalizePath(path) {
+  const normalized = (path || '/').replace(/\/$/, '') || '/';
+  return normalized === '/index' ? '/' : normalized;
+}
+
+function isHomePath() {
+  return normalizePath(window.location.pathname) === '/home';
+}
+
+/**
+ * Redirect guests/authed users between / and /home.
+ * @returns {boolean} true if a redirect was triggered
+ */
+function handleAuthRouting(doc) {
+  const authApi = window.AdobeClubsAuth;
+  const path = normalizePath(window.location.pathname);
+  const authed = authApi?.isAuthenticated?.();
+
+  if (!authed) {
+    if (path === '/home') {
+      const next = encodeURIComponent('/home');
+      window.location.replace(authApi?.loginUrlWithNext?.() || `/login?next=${next}`);
+      return true;
+    }
+    return false;
+  }
+
+  if (path === '/' && !isAuthPage(doc)) {
+    window.location.replace('/home');
+    return true;
+  }
+
+  return false;
+}
+
 /**
  * Loads everything that doesn't need to be delayed.
  * @param {Element} doc The container element
@@ -171,7 +207,7 @@ async function loadLazy(doc) {
   const authPage = isAuthPage(doc);
 
   if (!authPage) {
-    loadHeader(doc.querySelector('header'));
+    await loadHeader(doc.querySelector('header'));
   } else {
     doc.body.classList.add('auth-page');
     doc.querySelector('header')?.remove();
@@ -186,7 +222,9 @@ async function loadLazy(doc) {
   if (hash && element) element.scrollIntoView();
 
   if (!authPage) {
-    loadFooter(doc.querySelector('footer'));
+    await loadFooter(doc.querySelector('footer'));
+    const { initUserChrome } = await import('./user-chrome.js');
+    await initUserChrome();
   }
 
   loadCSS(`${window.hlx.codeBasePath}/styles/lazy-styles.css`);

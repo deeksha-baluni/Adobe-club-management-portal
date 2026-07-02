@@ -42,6 +42,7 @@ export function eventPageUrl(id) {
 export async function loadEventScripts() {
   await Promise.all([
     loadScript('/scripts/auth-guard.js'),
+    loadScript('/scripts/user-features.js'),
     loadScript('/scripts/event-seats.js'),
     loadScript('/scripts/event-modal.js'),
   ]);
@@ -159,6 +160,30 @@ export function getEventTotalSpots(ev) {
 
 export function getEventRecap(ev) {
   return getAuth().getEventRecap?.(ev.id, ev) || ev.recap || null;
+}
+
+export function hasEventRecap(ev) {
+  const recap = getEventRecap(ev);
+  if (!recap) return false;
+  const data = normalizeEventRecap(recap);
+  return Boolean(data.summary?.trim()) || data.highlights.length > 0;
+}
+
+export function buildRecapSectionHtml(ev, club) {
+  if (!isPast(ev) || !hasEventRecap(ev)) return '';
+  const recap = getEventRecap(ev);
+  return `
+    <section class="event-recap-section" id="recap" aria-label="Event recap">
+      <h3 class="event-recap-heading">Event recap</h3>
+      <div class="event-recap-body">
+        ${buildRecapHtml(recap, ev, club)}
+      </div>
+    </section>`;
+}
+
+export function scrollToRecapIfNeeded() {
+  if (window.location.hash !== '#recap') return;
+  document.getElementById('recap')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
 export function buildAboutHtml(ev, club) {

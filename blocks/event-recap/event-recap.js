@@ -6,22 +6,24 @@ import {
   initEventPage,
   isPast,
   getEventRecap,
-  getRecapBody,
+  hasEventRecap,
   buildRecapHtml,
+  scrollToRecapIfNeeded,
 } from '../event-shared/event-page.js';
 
 export default async function decorate(block) {
   block.innerHTML = '';
   block.classList.add('event-recap');
 
+  if (document.getElementById('recap')) return;
+
   const ctx = await initEventPage();
   if (ctx.error) return;
 
   const { event: ev, club } = ctx;
-  if (!isPast(ev)) return;
+  if (!isPast(ev) || !hasEventRecap(ev)) return;
 
   const recap = getEventRecap(ev);
-  if (!getRecapBody(recap)) return;
 
   block.innerHTML = `
     <div class="ev-card-part ev-card-part--mid">
@@ -33,7 +35,5 @@ export default async function decorate(block) {
       </section>
     </div>`;
 
-  if (window.location.hash === '#recap') {
-    block.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  }
+  scrollToRecapIfNeeded();
 }
