@@ -1,10 +1,5 @@
-/**
- * Event RSVP block — sticky right rail with RSVP + meta rows.
- */
-
 import {
   esc,
-  initEventPage,
   formatEventLongDate,
   getLocationLabel,
   getAccessLabel,
@@ -12,15 +7,9 @@ import {
   ICON_CAL,
   ICON_PIN,
   ICON_GLOBE,
-} from '../event-shared/event-page.js';
+} from '../event-page.js';
 
-export default async function decorate(block) {
-  block.innerHTML = '';
-  block.classList.add('event-rsvp');
-
-  const ctx = await initEventPage();
-  if (ctx.error) return;
-
+export function mountRsvpSection(block, ctx) {
   const { event: ev } = ctx;
   const railDateTime = formatEventLongDate(ev);
   const locationLabel = getLocationLabel(ev);

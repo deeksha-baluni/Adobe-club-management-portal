@@ -1,20 +1,16 @@
-/**
- * Club Recaps block — past session highlights + admin recap form.
- */
-
 import {
   esc,
   getAuth,
-  initClubPage,
   redirectToLogin,
   getPastClubEvents,
   formatEventDate,
   canPostRecapForClub,
-} from '../club-shared/club-page.js';
+  isEventPast,
+} from '../club-page.js';
 import {
   buildRecapHtml,
   getRecapBody,
-} from '../club-shared/recap-html.js';
+} from '../recap-html.js';
 
 function getRecapForEvent(ev) {
   return window.AdobeUserFeatures?.getEventRecap?.(ev.id, ev)
@@ -265,18 +261,7 @@ function wireForm(block, club, pastEvents) {
   });
 }
 
-export default async function decorate(block) {
-  block.innerHTML = '';
-  let ctx;
-  try {
-    ctx = await initClubPage();
-  } catch (err) {
-    // eslint-disable-next-line no-console
-    console.error('[club-recaps]', err);
-    return;
-  }
-  if (ctx.error) return;
-
+export function mountRecapsSection(block, ctx) {
   const { club, events } = ctx;
   const pastEvents = getPastClubEvents(club, events);
   const hasAnyRecaps = hasRecaps(pastEvents);
@@ -306,8 +291,9 @@ export default async function decorate(block) {
     if (block.querySelector('#club-recap-cta')?.disabled) return;
     openForm();
   });
+}
 
-  if (window.location.hash === '#club-recaps') {
-    block.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  }
+export function scrollToRecapsSection(block) {
+  if (window.location.hash !== '#club-recaps') return;
+  block.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }

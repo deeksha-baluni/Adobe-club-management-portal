@@ -1,12 +1,4 @@
-@import url('../club-shared/club-section.css');
-
-main > .section:has(.club-recaps) > div {
-  max-width: unset;
-  padding: 0;
-  margin: 0;
-}
-
-/* ── Recaps panel (OG club-recap-panel) ── */
+/* Recaps panel */
 .club-recap-panel {
   position: relative;
 }

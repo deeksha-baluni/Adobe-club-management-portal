@@ -1,6 +1,6 @@
 /**
- * Shared data loader — cached so both club-hero and club-detail
- * blocks only fetch /data/data.json once per page load.
+ * Shared data loader — cached for club page blocks.
+ * Fetches /data/data.json once per page load.
  */
 
 let cache = null;

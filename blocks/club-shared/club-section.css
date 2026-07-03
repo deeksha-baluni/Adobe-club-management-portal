@@ -24,7 +24,7 @@ main:has(.club-hero) > .section:not(.dark) {
 /* Collapse empty breadcrumb / placeholder section above hero (da.live) */
 main:has(.club-hero) > .section:has(.page-breadcrumb),
 main:has(.club-hero) > .section:has(.breadcrumb),
-main:has(.club-hero) > .section:first-of-type:not(:has(.club-hero)):not(:has(.cta-banner)) {
+main:has(.club-hero) > .section:first-of-type:not(:has(.club-hero)):not(:has(.cta-banner)):not(:has(.club-list)) {
   display: none !important;
 }
 
@@ -56,15 +56,12 @@ main:has(.club-hero) > .section:first-of-type:not(:has(.club-hero)):not(:has(.ct
 }
 
 /* OG .club-hero + .club-block { margin-top: 40px } */
-main > .section:has(.club-hero) + .section:has(.club-activities) .club-section-inner {
+main > .section:has(.club-hero) + .section:has(.club-list) .club-list-section--activities .club-section-inner {
   padding-top: 40px;
 }
 
-/* Below-fold sections: skip layout/paint until near viewport */
-main:has(.club-hero) > .section:has(.club-events),
-main:has(.club-hero) > .section:has(.club-recaps),
-main:has(.club-hero) > .section:has(.club-team),
-main:has(.club-hero) > .section:has(.cta-banner) {
+/* Below-fold club body */
+main:has(.club-hero) > .section:has(.club-list) {
   content-visibility: auto;
   contain-intrinsic-size: auto 480px;
 }
@@ -74,7 +71,7 @@ main:has(.club-hero) > .section:has(.cta-banner) {
     padding-bottom: 56px;
   }
 
-  main > .section:has(.club-hero) + .section:has(.club-activities) .club-section-inner {
+  main > .section:has(.club-hero) + .section:has(.club-list) .club-list-section--activities .club-section-inner {
     padding-top: 32px;
   }
 }
@@ -84,7 +81,7 @@ main:has(.club-hero) > .section:has(.cta-banner) {
     padding-bottom: 48px;
   }
 
-  main > .section:has(.club-hero) + .section:has(.club-activities) .club-section-inner {
+  main > .section:has(.club-hero) + .section:has(.club-list) .club-list-section--activities .club-section-inner {
     padding-top: 28px;
   }
 }

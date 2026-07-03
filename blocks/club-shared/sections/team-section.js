@@ -1,14 +1,8 @@
-/**
- * Club Team block — team member cards with join card.
- */
-
 import {
   esc,
-  initClubPage,
   getJoinLabel,
   wireClubJoinButton,
-  bindClubJoinSync,
-} from '../club-shared/club-page.js';
+} from '../club-page.js';
 
 const TEAM_IMAGE_BASE = '/assets/images/club_details/team_images/';
 const TEAM_IMAGE_FILES = [
@@ -72,18 +66,7 @@ function renderJoinCard(club, joinLabel, isAdmin) {
     </article>`;
 }
 
-export default async function decorate(block) {
-  block.innerHTML = '';
-  let ctx;
-  try {
-    ctx = await initClubPage();
-  } catch (err) {
-    // eslint-disable-next-line no-console
-    console.error('[club-team]', err);
-    return;
-  }
-  if (ctx.error) return;
-
+export function mountTeamSection(block, ctx) {
   const { club } = ctx;
   const joinLabel = getJoinLabel(club);
   const isAdmin = joinLabel === 'Admin only';
@@ -97,14 +80,5 @@ export default async function decorate(block) {
       <div class="ct-grid">${cards.join('')}</div>
     </div>`;
 
-  bindClubJoinSync(club);
   wireClubJoinButton(block.querySelector('[data-club-join]'), club);
-  window.addEventListener('adobe-club-join-changed', (e) => {
-    if (e.detail?.clubId !== club.id) return;
-    const btn = block.querySelector('[data-club-join]');
-    if (btn) {
-      btn.classList.toggle('is-joined', e.detail.joined);
-      btn.textContent = `${e.detail.joined ? 'Joined' : 'Join'} →`;
-    }
-  });
 }

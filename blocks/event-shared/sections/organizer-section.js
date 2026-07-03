@@ -1,17 +1,7 @@
-/**
- * Event Organizer block — contact section (auth-gated).
- */
+import { esc } from '../event-page.js';
+import { getAuth } from '../../club-shared/club-page.js';
 
-import { esc, initEventPage } from '../event-shared/event-page.js';
-import { getAuth } from '../club-shared/club-page.js';
-
-export default async function decorate(block) {
-  block.innerHTML = '';
-  block.classList.add('event-organizer');
-
-  const ctx = await initEventPage();
-  if (ctx.error) return;
-
+export function mountOrganizerSection(block, ctx) {
   const { event: ev, club } = ctx;
   const authed = getAuth().isAuthenticated();
   const clubName = club?.name || ev.club || 'Adobe Clubs';
@@ -57,5 +47,8 @@ export default async function decorate(block) {
       <hr class="event-page-divider" role="separator">`;
   }
 
-  block.innerHTML = `<div class="ev-card-part ev-card-part--tail">${body}</div>`;
+  const part = document.createElement('div');
+  part.className = 'ev-card-part ev-card-part--tail';
+  part.innerHTML = body;
+  block.appendChild(part);
 }

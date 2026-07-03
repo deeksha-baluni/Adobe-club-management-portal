@@ -1,17 +1,8 @@
-/**
- * Club Activities block — "What this club does" activity cards.
- *
- * da.live:
- *   | Club Activities |
- *   | (empty)         |
- */
-
 import {
   esc,
-  initClubPage,
   getMeta,
   getActivityDesc,
-} from '../club-shared/club-page.js';
+} from '../club-page.js';
 
 const ACTIVITY_ICON_SVGS = [
   '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="5" r="1"/><path d="m9 20 3-6 3 6"/><path d="M6 8l6-3 6 3"/></svg>',
@@ -34,21 +25,9 @@ function renderGrid(activities, club) {
   return `<div class="ca-grid">${items}</div>`;
 }
 
-export default async function decorate(block) {
-  block.innerHTML = '';
-  let ctx;
-  try {
-    ctx = await initClubPage();
-  } catch (err) {
-    // eslint-disable-next-line no-console
-    console.error('[club-activities]', err);
-    return;
-  }
-  if (ctx.error) return;
-
+export function mountActivitiesSection(block, ctx) {
   const { club } = ctx;
   const meta = getMeta(club.id);
-
   block.innerHTML = `
     <div class="club-section-inner">
       <h2 class="club-section-title">What this club does</h2>

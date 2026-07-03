@@ -1,11 +1,6 @@
-/**
- * Club Events block — upcoming events with date filters and RSVP.
- */
-
 import {
   esc,
   getAuth,
-  initClubPage,
   redirectToLogin,
   getUpcomingClubEvents,
   getClubImagePool,
@@ -13,7 +8,7 @@ import {
   pickClubImage,
   formatEventDate,
   parseEventDate,
-} from '../club-shared/club-page.js';
+} from '../club-page.js';
 
 function getEventDateFilter(ev) {
   const eventDate = parseEventDate(ev);
@@ -35,7 +30,7 @@ function getEventDateFilter(ev) {
 
 function getClubEventActionState(ev, club) {
   if (!getAuth().isAuthenticated()) {
-    return { label: 'RSVP', joined: false, membersOnly: false, requiresLogin: true };
+    return { label: 'RSVP', joined: false, membersOnly: false };
   }
   if (!getAuth().isClubJoined(club.id)) {
     return { label: 'Members only', joined: false, membersOnly: true };
@@ -128,7 +123,7 @@ function wireRsvp(block, club, upcomingEvents) {
 function wireCards(block, club, upcomingEvents) {
   wireRsvp(block, club, upcomingEvents);
   block.querySelectorAll('.ce-card[data-event-id]').forEach((card) => {
-      const open = () => {
+    const open = () => {
       const id = card.dataset.eventId;
       if (id) window.location.href = `/event?id=${encodeURIComponent(id)}`;
     };
@@ -185,18 +180,7 @@ function wireFilters(block) {
   });
 }
 
-export default async function decorate(block) {
-  block.innerHTML = '';
-  let ctx;
-  try {
-    ctx = await initClubPage();
-  } catch (err) {
-    // eslint-disable-next-line no-console
-    console.error('[club-events]', err);
-    return;
-  }
-  if (ctx.error) return;
-
+export function mountEventsSection(block, ctx) {
   const { club, events, gallery } = ctx;
   window.__clubPageEvents = events;
   const upcomingEvents = getUpcomingClubEvents(club, events);

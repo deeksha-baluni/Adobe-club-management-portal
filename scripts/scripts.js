@@ -144,7 +144,7 @@ async function loadEager(doc) {
   if (main) {
     decorateMain(main);
     document.body.classList.add('appear');
-    if (main.querySelector('.club-hero')) {
+    if (main.querySelector('.club-hero, .club-list')) {
       import('../blocks/club-shared/club-page.js').then((mod) => mod.prefetchClubData());
     }
     await loadSection(main.querySelector('.section'), waitForFirstImage);

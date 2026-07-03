@@ -1,10 +1,4 @@
-@import url('../club-shared/club-section.css');
-
-main > .section:has(.club-activities) > div {
-  max-width: unset;
-  padding: 0;
-  margin: 0;
-}
+/* Club activities section (What this club does) */
 
 .ca-grid {
   display: grid;

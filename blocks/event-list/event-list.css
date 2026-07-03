@@ -1,7 +1,11 @@
 @import url('../event-shared/event-section.css');
 
-main > .section:has(.event-details) > div {
+main > .section:has(.event-list) > div {
   max-width: unset;
   padding: 0;
   margin: 0;
+}
+
+.event-page-right-rail {
+  width: 100%;
 }
