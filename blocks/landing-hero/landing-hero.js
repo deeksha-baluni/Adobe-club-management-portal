@@ -148,6 +148,37 @@ function mountHeroImage(src, alt, preset = 'index') {
   return img;
 }
 
+/** Reuse da.live picture/img when present — avoids re-fetch and layout swap on decorate. */
+function adoptHeroMedia(mediaCell, src, alt, preset = 'index') {
+  const media = document.createElement('div');
+  media.className = 'landing-hero-media';
+  const picture = mediaCell?.querySelector('picture');
+  const authoredImg = mediaCell?.querySelector('picture img, img');
+  const cleanSrc = publishedImageSrc(src || authoredImg?.src);
+
+  if (picture) {
+    const img = picture.querySelector('img');
+    if (img) {
+      img.alt = alt || img.alt || '';
+      if (cleanSrc) img.src = cleanSrc;
+      prepareHeroImage(img, preset);
+    }
+    media.append(picture);
+    return media;
+  }
+
+  if (authoredImg) {
+    authoredImg.alt = alt || authoredImg.alt || '';
+    if (cleanSrc) authoredImg.src = cleanSrc;
+    prepareHeroImage(authoredImg, preset);
+    media.append(authoredImg);
+    return media;
+  }
+
+  if (cleanSrc) media.append(mountHeroImage(cleanSrc, alt, preset));
+  return media;
+}
+
 function buildMedia(src, alt, preset = 'index') {
   const media = document.createElement('div');
   media.className = 'landing-hero-media';
@@ -322,7 +353,7 @@ function buildIndexFromTable(block, config, defaults) {
   const alt = authoredImg?.alt || cfg(config, 'hero-alt', defaults['hero-alt']);
   const src = publishedImageSrc(authoredImg?.src)
     || cfg(config, 'hero-fallback', defaults['hero-fallback']);
-  const media = buildMedia(src, alt, 'index');
+  const media = adoptHeroMedia(mediaCell, src, alt, 'index');
 
   const content = document.createElement('div');
   content.className = 'landing-hero-content';
@@ -458,9 +489,8 @@ export default async function decorate(block) {
     ? buildIndexFromTable(block, config, defaults)
     : buildFromConfig(config, defaults, preset);
 
-  block.textContent = '';
   block.classList.add('landing-hero', `landing-hero--${preset}`);
-  block.append(content, media);
+  block.replaceChildren(content, media);
 
   if (preset === 'clubs' || preset === 'events') {
     window.AdobeBreadcrumbs?.set([

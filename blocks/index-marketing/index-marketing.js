@@ -10,26 +10,28 @@ import { hasAuthoredSectionIntro } from '../club-shared/section-intro.js';
 
 function decorateStepsOnly(block) {
   const parsed = parseIndexMarketingBlock(block);
-  block.textContent = '';
+  const fragment = document.createDocumentFragment();
   block.classList.add('index-marketing', 'index-marketing--steps-only');
   if (parsed.steps) {
-    mountStepsSection(block, parsed.steps, {
+    mountStepsSection(fragment, parsed.steps, {
       standalone: true,
       skipHead: hasAuthoredSectionIntro(block),
     });
   }
+  block.replaceChildren(...fragment.children);
 }
 
 function decorateStoriesOnly(block) {
   const parsed = parseIndexMarketingBlock(block);
-  block.textContent = '';
+  const fragment = document.createDocumentFragment();
   block.classList.add('index-marketing', 'index-marketing--stories-only');
   if (parsed.stories) {
-    mountStoriesSection(block, parsed.stories, {
+    mountStoriesSection(fragment, parsed.stories, {
       standalone: true,
       skipHead: hasAuthoredSectionIntro(block),
     });
   }
+  block.replaceChildren(...fragment.children);
 }
 
 export default function decorate(block) {
@@ -43,14 +45,14 @@ export default function decorate(block) {
   }
 
   const parsed = parseIndexMarketingBlock(block);
-
-  block.textContent = '';
+  const fragment = document.createDocumentFragment();
   block.classList.add('index-marketing');
 
   if (parsed.steps) {
-    mountStepsSection(block, parsed.steps);
+    mountStepsSection(fragment, parsed.steps);
   }
   if (parsed.stories) {
-    mountStoriesSection(block, parsed.stories);
+    mountStoriesSection(fragment, parsed.stories);
   }
+  block.replaceChildren(...fragment.children);
 }

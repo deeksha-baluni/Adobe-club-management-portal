@@ -558,7 +558,9 @@ async function loadGuestIndex(main) {
   document.documentElement.classList.add('guest-index-route');
   const sections = [...main.querySelectorAll(':scope > .section')];
   if (!sections.length) return;
-  await loadSection(sections[0], waitForGuestHeroImage);
+  const [heroSection, ...rest] = sections;
+  await loadSection(heroSection, waitForGuestHeroImage);
+  await Promise.all(rest.map((section) => loadSection(section)));
 }
 
 async function loadEventDetailPage(main) {

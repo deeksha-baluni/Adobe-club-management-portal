@@ -117,6 +117,48 @@ body.guest-index.appear {
   visibility: visible;
 }
 
+/* Guest index — section rhythm in critical CSS (avoid lazy-styles load shift) */
+body.guest-index main > .section:not(:first-of-type):not(.dark) {
+  margin: 0;
+  border-top: 1px solid var(--color-border-default);
+  padding: clamp(32px, 4.5vw, 56px) 0;
+}
+
+body.guest-index main > .section > .default-content-wrapper:has(+ .index-marketing-wrapper) {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+body.guest-index main > .section > .default-content-wrapper:has(+ .index-marketing-wrapper) h2 {
+  font-size: clamp(26px, 3vw, 36px);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  color: var(--text-color);
+  margin: 0;
+}
+
+body.guest-index .default-content-wrapper p:has(+ h2),
+body.guest-index .default-content-wrapper p:has(+ h3) {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-brand-red);
+  margin: 0 0 10px;
+  line-height: 1;
+}
+
+html.guest-index-route .landing-hero-wrapper {
+  min-height: clamp(420px, 72vw, 560px);
+}
+
+@media (width >= 900px) {
+  html.guest-index-route .landing-hero-wrapper {
+    min-height: clamp(360px, 36vw, 480px);
+  }
+}
+
 /* Scrollbar — matches OG global.css */
 html {
   overflow-x: clip;
