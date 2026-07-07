@@ -362,7 +362,7 @@ function renderCalendar() {
         ${extraCount > 0 ? `<p class="hm-rsvp-more"><a href="${calHref}" class="hm-section-link">${esc(fillTemplate(moreTemplate, { count: extraCount, plural: extraCount === 1 ? '' : 's' }))}</a></p>` : ''}`
     : `<div class="hm-rsvp-empty">
         <p>${esc(cfg(PAGE_CONFIG, 'cal-empty-text', HOME_DASHBOARD_DEFAULTS['cal-empty-text']))}</p>
-        <a href="${esc(cfg(PAGE_CONFIG, 'cal-empty-href', '/events'))}" class="btn-primary btn-sm">${esc(cfg(PAGE_CONFIG, 'cal-empty-link', HOME_DASHBOARD_DEFAULTS['cal-empty-link']))}</a>
+        <a href="${esc(cfg(PAGE_CONFIG, 'cal-empty-href', '/events'))}" class="hm-section-link">${esc(cfg(PAGE_CONFIG, 'cal-empty-link', HOME_DASHBOARD_DEFAULTS['cal-empty-link']))}</a>
       </div>`;
 
   root.innerHTML = `

@@ -12,7 +12,6 @@ import { readPageConfig, cfg, fillTemplate } from '../club-shared/block-config.j
 export const LOGIN_FORM_DEFAULTS = {
   'slide-image-1': '/assets/images/login/adobeimg.webp, /assets/images/login/img1.avif',
   'slide-image-2': '/assets/images/login/adobeimg2.webp, /assets/images/login/img2.avif',
-  'logo-fallback': '/assets/images/logo/Adobe-Logo-Transparent-PNG.png',
   'redirect-authed': '/home',
   'redirect-default': '/',
   'tab-login': 'Login',
@@ -177,7 +176,6 @@ function initSlider(panel, config) {
 
   const slide1Candidates = parseImageCandidates(cfg(config, 'slide-image-1'));
   const slide2Candidates = parseImageCandidates(cfg(config, 'slide-image-2'));
-  const logoFallback = cfg(config, 'logo-fallback', LOGIN_FORM_DEFAULTS['logo-fallback']);
 
   Promise.all([
     firstExistingImage(slide1Candidates),
@@ -186,10 +184,7 @@ function initSlider(panel, config) {
     if (src1) {
       slide1.src = src1;
     } else {
-      slide1.src = logoFallback;
-      slide1.style.objectFit = 'contain';
-      slide1.style.background = '#211d2f';
-      slide1.style.padding = '42px';
+      slide1.hidden = true;
     }
     if (src2) {
       slide2.src = src2;

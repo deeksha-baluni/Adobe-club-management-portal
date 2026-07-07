@@ -12,7 +12,7 @@ import {
   loadScript,
   buildBlock,
 } from './aem.js';
-import { preloadLcpImage } from '../blocks/club-shared/image-priority.js';
+import { preloadLcpImage, publishedImageSrc } from '../blocks/club-shared/image-priority.js';
 import { resolveEventIdUrl } from '../blocks/club-shared/event-images.js';
 import '../blocks/club-shared/club-images.js';
 import '../blocks/club-shared/event-images.js';
@@ -454,12 +454,10 @@ function isSessionAuthenticated() {
   }
 }
 
-function prefetchGuestHeroImage() {
-  const base = window.hlx?.codeBasePath || '';
-  const origin = window.location.origin;
-  const path = `${origin}${base}/assets/images/index/home-hero-img.webp`;
-  preloadLcpImage(path, { media: '(max-width: 899px)' });
-  preloadLcpImage(path, { media: '(min-width: 900px)' });
+function preloadGuestIndexHeroSrc(src) {
+  const clean = publishedImageSrc(src);
+  if (!clean) return;
+  preloadLcpImage(clean);
 }
 
 /** Promote authored hero img before block JS replaces the table (guest index LCP). */
@@ -475,20 +473,16 @@ function prepareGuestIndexHero(main) {
   if (!hero) return;
   const mediaCell = hero.firstElementChild?.firstElementChild;
   const img = mediaCell?.querySelector('picture img, img');
-  if (!img?.src) {
-    prefetchGuestHeroImage();
-    return;
-  }
+  if (!img?.src) return;
   img.loading = 'eager';
   img.decoding = 'async';
   if ('fetchPriority' in img) img.fetchPriority = 'high';
-  prefetchGuestHeroImage();
+  preloadGuestIndexHeroSrc(img.src);
 }
 
 if (normalizePath(window.location.pathname) === '/') {
   prepareGuestIndexEarly();
   prefetchAppData();
-  prefetchGuestHeroImage();
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => {
       prepareGuestIndexHero(document.querySelector('main'));
@@ -542,10 +536,8 @@ function prefetchRouteAssets(main, path) {
 
   if (normalized === '/clubs' || normalized === '/events'
     || (normalized !== '/' && main?.querySelector('.landing-hero'))) {
-    const base = window.hlx?.codeBasePath || '';
-    const origin = window.location.origin;
-    const heroPath = `${origin}${base}/assets/images/index/home-hero-img.webp`;
-    preloadLcpImage(heroPath);
+    const heroImg = main?.querySelector('.landing-hero picture img, .landing-hero img');
+    if (heroImg?.src) preloadGuestIndexHeroSrc(heroImg.src);
   }
 }
 

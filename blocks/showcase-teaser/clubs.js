@@ -3,7 +3,7 @@
  */
 import { fetchAppData, getAuth, redirectToLogin } from '../club-shared/fetch-app-data.js';
 import { setMarketingImage } from '../club-shared/image-priority.js';
-import { getClubImageSrc, CLUB_STOCK_FALLBACK_POOL } from '../club-shared/club-images.js';
+import { getIndexClubImageSrc, CLUB_STOCK_FALLBACK_POOL } from '../club-shared/club-images.js';
 import { buildSectionHead } from '../club-shared/marketing-head.js';
 import { cfg } from '../club-shared/block-config.js';
 
@@ -47,8 +47,8 @@ function buildClubCard(club) {
     const img = document.createElement('img');
     img.alt = '';
     img.width = 400;
-    img.height = 300;
-    setMarketingImage(img, getClubImageSrc(club));
+    img.height = 267;
+    setMarketingImage(img, getIndexClubImageSrc(club));
     img.onerror = () => {
       if (CLUB_STOCK_FALLBACK_POOL[0]) img.src = CLUB_STOCK_FALLBACK_POOL[0];
     };

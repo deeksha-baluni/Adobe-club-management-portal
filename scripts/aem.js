@@ -311,59 +311,21 @@ function getMetadata(name, doc = document) {
 }
 
 /**
- * Returns a picture element with webp and fallbacks
- * @param {string} src The image URL
- * @param {string} [alt] The image alternative text
- * @param {boolean} [eager] Set loading attribute to eager
- * @param {Array} [breakpoints] Breakpoints and corresponding params (eg. width)
- * @returns {Element} The picture element
+ * Returns a plain img — pre-compressed assets are served as authored (no AEM resize params).
  */
-function createOptimizedPicture(
-  src,
-  alt = '',
-  eager = false,
-  breakpoints = [{ media: '(min-width: 600px)', width: '2000' }, { width: '750' }],
-) {
-  const url = !src.startsWith('http') ? new URL(src, window.location.href) : new URL(src);
-  const picture = document.createElement('picture');
-  const { origin, pathname } = url;
-  const ext = pathname.split('.').pop();
-
-  // webp
-  breakpoints.forEach((br) => {
-    const source = document.createElement('source');
-    if (br.media) source.setAttribute('media', br.media);
-    source.setAttribute('type', 'image/webp');
-    source.setAttribute(
-      'srcset',
-      `${origin}${pathname}?width=${br.width}&format=webply&optimize=medium`,
-    );
-    picture.appendChild(source);
-  });
-
-  // fallback
-  breakpoints.forEach((br, i) => {
-    if (i < breakpoints.length - 1) {
-      const source = document.createElement('source');
-      if (br.media) source.setAttribute('media', br.media);
-      source.setAttribute(
-        'srcset',
-        `${origin}${pathname}?width=${br.width}&format=${ext}&optimize=medium`,
-      );
-      picture.appendChild(source);
-    } else {
-      const img = document.createElement('img');
-      img.setAttribute('loading', eager ? 'eager' : 'lazy');
-      img.setAttribute('alt', alt);
-      picture.appendChild(img);
-      img.setAttribute(
-        'src',
-        `${origin}${pathname}?width=${br.width}&format=${ext}&optimize=medium`,
-      );
-    }
-  });
-
-  return picture;
+function createOptimizedPicture(src, alt = '', eager = false) {
+  const img = document.createElement('img');
+  try {
+    const url = new URL(src, window.location.href);
+    url.search = '';
+    img.src = url.href;
+  } catch (err) {
+    img.src = String(src || '').split('?')[0];
+  }
+  img.alt = alt;
+  img.loading = eager ? 'eager' : 'lazy';
+  img.decoding = 'async';
+  return img;
 }
 
 /**

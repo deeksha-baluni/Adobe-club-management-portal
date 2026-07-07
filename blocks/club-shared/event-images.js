@@ -3,6 +3,7 @@
  */
 
 export const COMPRESSED_EVENTS_BASE = '/assets/images/events/compressed-events/';
+export const INDEX_COMPRESSED_EVENTS_BASE = '/assets/images/events/index-compressed/';
 
 const DEFAULT_EVENT_FILE = 'evt-hero.avif';
 
@@ -127,9 +128,20 @@ export function getEventImageSrc(ev) {
   return `${COMPRESSED_EVENTS_BASE}${DEFAULT_EVENT_FILE}`;
 }
 
+/** Smaller event thumbs for the guest index showcase grid (~768×432). */
+export function getIndexEventImageSrc(ev) {
+  const full = getEventImageSrc(ev);
+  const file = full.split('/').pop()?.split('?')[0];
+  if (file && (/^evt-\d+\.avif$/i.test(file) || /^evt-hero\d*\.avif$/i.test(file))) {
+    return `${INDEX_COMPRESSED_EVENTS_BASE}${file}`;
+  }
+  return full;
+}
+
 if (typeof window !== 'undefined') {
   window.AdobeEventImages = {
     COMPRESSED_EVENTS_BASE,
+    INDEX_COMPRESSED_EVENTS_BASE,
     EVENT_HERO_FILES,
     EVENT_HERO_IMAGE_OPTIONS,
     EVENT_STOCK_FALLBACK_POOL,
@@ -138,5 +150,6 @@ if (typeof window !== 'undefined') {
     resolveEventAssetUrl,
     resolveEventIdUrl,
     getEventImageSrc,
+    getIndexEventImageSrc,
   };
 }

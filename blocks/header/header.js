@@ -2,7 +2,7 @@ import { getMetadata } from '../../scripts/aem.js';
 import { loadFragment } from '../fragment/fragment.js';
 import { initBreadcrumbs } from '../../scripts/breadcrumbs.js';
 
-const ADOBE_LOGO_PATH = '/assets/images/logo/Adobe-Logo-Transparent-PNG.png';
+const ADOBE_LOGO_PATH = '/assets/images/logo/Adobe-Logo-Transparent-PNG-resized.webp';
 
 // media query match that indicates mobile/tablet width
 const isDesktop = window.matchMedia('(min-width: 900px)');

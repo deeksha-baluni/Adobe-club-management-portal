@@ -13,7 +13,7 @@
  *   | image        | upload or path |
  */
 import { loadCSS, loadScript, toClassName } from '../../scripts/aem.js';
-import { preloadLcpImage } from '../club-shared/image-priority.js';
+import { preloadLcpImage, publishedImageSrc } from '../club-shared/image-priority.js';
 import { resolveCompressedStockUrl } from '../club-shared/event-images.js';
 import { readPageConfig, cfg } from '../club-shared/block-config.js';
 
@@ -30,7 +30,7 @@ const PRESET_DEFAULTS = {
   index: {
     preset: 'index',
     'hero-alt': 'Adobe colleagues at a club event',
-    'hero-fallback': '/assets/images/index/home-hero-img.webp',
+    'hero-fallback': '',
   },
   events: {
     preset: 'events',
@@ -127,37 +127,32 @@ async function loadClubsDependencies() {
   clubsDepsLoaded = true;
 }
 
-function optimizeHeroImage(img, preset = 'index') {
+function prepareHeroImage(img, preset = 'index') {
   if (!img) return;
   img.loading = 'eager';
   img.decoding = 'async';
   if ('fetchPriority' in img) img.fetchPriority = 'high';
   if (!img.getAttribute('width')) {
-    img.setAttribute('width', preset === 'index' ? '800' : '800');
+    img.setAttribute('width', preset === 'index' ? '960' : '800');
   }
   if (!img.getAttribute('height')) {
-    img.setAttribute('height', preset === 'index' ? '600' : '500');
+    img.setAttribute('height', preset === 'index' ? '540' : '500');
   }
 }
 
 function mountHeroImage(src, alt, preset = 'index') {
   const img = document.createElement('img');
-  img.src = src;
+  img.src = publishedImageSrc(src);
   img.alt = alt;
-  optimizeHeroImage(img, preset);
+  prepareHeroImage(img, preset);
   return img;
 }
 
-function buildMedia(src, alt, preset = 'index', existingPicture = null) {
+function buildMedia(src, alt, preset = 'index') {
   const media = document.createElement('div');
   media.className = 'landing-hero-media';
-  if (existingPicture) {
-    const node = existingPicture.cloneNode(true);
-    optimizeHeroImage(node.querySelector('img') || node, preset);
-    media.append(node);
-    return media;
-  }
-  if (src) media.append(mountHeroImage(src, alt, preset));
+  const cleanSrc = publishedImageSrc(src);
+  if (cleanSrc) media.append(mountHeroImage(cleanSrc, alt, preset));
   return media;
 }
 
@@ -324,10 +319,10 @@ function buildIndexFromTable(block, config, defaults) {
   const [mediaCell, contentCell] = [...row.children];
 
   const authoredImg = mediaCell?.querySelector('picture img, img');
-  const authoredPicture = mediaCell?.querySelector('picture') || authoredImg;
   const alt = authoredImg?.alt || cfg(config, 'hero-alt', defaults['hero-alt']);
-  const src = authoredImg?.src || cfg(config, 'hero-fallback', defaults['hero-fallback']);
-  const media = buildMedia(src, alt, 'index', authoredPicture);
+  const src = publishedImageSrc(authoredImg?.src)
+    || cfg(config, 'hero-fallback', defaults['hero-fallback']);
+  const media = buildMedia(src, alt, 'index');
 
   const content = document.createElement('div');
   content.className = 'landing-hero-content';
@@ -442,7 +437,7 @@ export default async function decorate(block) {
   if (preset === 'index') {
     const row = block.firstElementChild;
     const authored = row?.children[0]?.querySelector('picture img, img');
-    const heroSrc = authored?.src
+    const heroSrc = publishedImageSrc(authored?.src)
       || cfg({ ...defaults, ...extras }, 'hero-fallback', defaults['hero-fallback']);
     if (heroSrc) {
       try {

@@ -1,18 +1,21 @@
 /**
  * Mount member stories section inside index-marketing.
  */
-import { isGuestIndexPath } from '../club-shared/image-priority.js';
+import { isGuestIndexPath, publishedImageSrc } from '../club-shared/image-priority.js';
 import { buildSectionHead } from '../club-shared/marketing-head.js';
 
-function optimizeStoryImage(wrap, src, alt = '') {
+function mountStoryImage(wrap, src, alt = '') {
   wrap.className = 'story-card-image';
-  if (!src) {
+  const cleanSrc = publishedImageSrc(src);
+  if (!cleanSrc) {
     wrap.classList.add('story-card-image--empty');
     return;
   }
   const img = document.createElement('img');
-  img.src = src;
+  img.src = cleanSrc;
   img.alt = alt;
+  img.width = 870;
+  img.height = 544;
   img.loading = 'lazy';
   img.decoding = 'async';
   if (isGuestIndexPath() && 'fetchPriority' in img) {
@@ -27,7 +30,7 @@ function mountStoryFromRow(row) {
 
   const imageWrap = document.createElement('div');
   const img = row.imageCell?.querySelector('picture img, img');
-  optimizeStoryImage(imageWrap, img?.src, img?.alt || '');
+  mountStoryImage(imageWrap, img?.src, img?.alt || '');
 
   const body = document.createElement('div');
   body.className = 'story-card-body';
@@ -53,7 +56,7 @@ function mountStoryFromItem(item) {
   li.className = 'story-card';
 
   const imageWrap = document.createElement('div');
-  optimizeStoryImage(imageWrap, item.image, item.title || '');
+  mountStoryImage(imageWrap, item.image, item.title || '');
 
   const body = document.createElement('div');
   body.className = 'story-card-body';

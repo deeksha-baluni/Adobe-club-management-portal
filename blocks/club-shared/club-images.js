@@ -5,7 +5,15 @@
 import { resolveEventAssetUrl } from './event-images.js';
 
 export const COMPRESSED_CLUBS_BASE = '/assets/images/clubs/compressed-clubs/';
+export const INDEX_COMPRESSED_CLUBS_BASE = '/assets/images/clubs/index-compressed/';
 export const CLUBS_BASE = '/assets/images/clubs/';
+
+/** Index showcase cards — 600×400 exports in index-compressed/. */
+const INDEX_COMPRESSED_FILES = new Set([
+  'adobe-lens.avif',
+  'adobe-creatives.avif',
+  'dev-guild.avif',
+]);
 
 const DEFAULT_CLUB_FILE = 'adobe-lens.avif';
 
@@ -71,14 +79,26 @@ export function getClubImageSrc(club) {
   return resolveClubAssetUrl(file);
 }
 
+/** Smaller club thumbs for the guest index showcase grid. */
+export function getIndexClubImageSrc(club) {
+  if (!club) return `${INDEX_COMPRESSED_CLUBS_BASE}${DEFAULT_CLUB_FILE}`;
+  const file = resolveClubFilename(club.image || `${club.id}.avif`);
+  if (file && INDEX_COMPRESSED_FILES.has(file)) {
+    return `${INDEX_COMPRESSED_CLUBS_BASE}${file}`;
+  }
+  return getClubImageSrc(club);
+}
+
 if (typeof window !== 'undefined') {
   window.AdobeClubImages = {
     COMPRESSED_CLUBS_BASE,
+    INDEX_COMPRESSED_CLUBS_BASE,
     CLUBS_BASE,
     CLUB_STOCK_FALLBACK_POOL,
     CLUB_PICKER_OPTIONS,
     resolveClubFilename,
     resolveClubAssetUrl,
     getClubImageSrc,
+    getIndexClubImageSrc,
   };
 }

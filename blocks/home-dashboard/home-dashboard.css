@@ -348,13 +348,9 @@ body.user-home .uf-cal-grid {
 }
 
 .hm-rsvp-empty p {
-  margin: 0 0 10px;
+  margin: 0 0 8px;
   font-size: 14px;
   color: var(--color-text-secondary);
-}
-
-.hm-rsvp-empty .btn-primary {
-  width: 100%;
 }
 
 .hm-rsvp-more {

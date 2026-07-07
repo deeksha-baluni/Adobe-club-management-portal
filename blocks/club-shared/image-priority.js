@@ -19,10 +19,22 @@ export function preloadLcpImage(src, { media } = {}) {
   document.head.append(link);
 }
 
+/** Use the authored asset URL as published — no AEM width/format query params. */
+export function publishedImageSrc(src) {
+  if (!src) return '';
+  try {
+    const url = new URL(src, window.location.href);
+    url.search = '';
+    return url.href;
+  } catch (err) {
+    return String(src).split('?')[0];
+  }
+}
+
 /** Below-fold card images — lazy load pre-compressed assets as-is. */
 export function setMarketingImage(img, src) {
   img.decoding = 'async';
   img.loading = 'lazy';
   if (isGuestIndexPath() && 'fetchPriority' in img) img.fetchPriority = 'low';
-  img.src = src || '';
+  img.src = publishedImageSrc(src);
 }
