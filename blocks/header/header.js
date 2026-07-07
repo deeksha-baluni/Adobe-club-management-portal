@@ -1,5 +1,8 @@
 import { getMetadata } from '../../scripts/aem.js';
 import { loadFragment } from '../fragment/fragment.js';
+import { initBreadcrumbs } from '../../scripts/breadcrumbs.js';
+
+const ADOBE_LOGO_PATH = '/assets/images/logo/Adobe-Logo-Transparent-PNG.png';
 
 // media query match that indicates mobile/tablet width
 const isDesktop = window.matchMedia('(min-width: 900px)');
@@ -172,6 +175,82 @@ function setMobileNavOpen(open) {
   if (overlay) overlay.hidden = !open;
 }
 
+function getLogoSrc() {
+  const base = window.hlx?.codeBasePath || '';
+  return `${base}${ADOBE_LOGO_PATH}`;
+}
+
+/**
+ * Replaces authored "Adobe" text with the logo image + Clubs suffix.
+ * @param {Element} nav
+ */
+function ensureNavBrand(nav) {
+  const navBrand = nav.querySelector('.nav-brand');
+  if (!navBrand) return;
+
+  const logoSrc = getLogoSrc();
+  let link = navBrand.querySelector('a[href]');
+  if (!link) {
+    link = document.createElement('a');
+    link.href = '/';
+    navBrand.append(link);
+  }
+
+  link.classList.add('nav-logo');
+  if (!link.getAttribute('aria-label')) {
+    link.setAttribute('aria-label', 'Adobe Clubs home');
+  }
+
+  const existingIcon = link.querySelector('.adobe-icon');
+  if (existingIcon) {
+    const img = existingIcon.querySelector('img');
+    if (img && !img.src.includes('Adobe-Logo-Transparent-PNG')) {
+      img.src = logoSrc;
+      img.classList.add('adobe-logo-img');
+    }
+    return;
+  }
+
+  const rawText = navBrand.textContent.trim();
+  const suffix = rawText.replace(/^Adobe\s*/i, '').trim() || 'Clubs';
+  const preservedImg = navBrand.querySelector('img');
+
+  link.textContent = '';
+  const icon = document.createElement('div');
+  icon.className = 'adobe-icon';
+  icon.setAttribute('aria-hidden', 'true');
+
+  const img = preservedImg || document.createElement('img');
+  img.className = 'adobe-logo-img';
+  img.src = logoSrc;
+  img.alt = '';
+  img.width = 240;
+  img.height = 240;
+  img.decoding = 'async';
+  icon.append(img);
+
+  const suffixEl = document.createElement('span');
+  suffixEl.className = 'brand-suffix';
+  suffixEl.textContent = suffix;
+
+  link.append(icon, suffixEl);
+  navBrand.textContent = '';
+  navBrand.append(link);
+}
+
+function ensureBreadcrumbMount(headerBlock) {
+  let crumb = headerBlock.querySelector('#page-breadcrumb');
+  if (crumb) return crumb;
+
+  crumb = document.createElement('nav');
+  crumb.className = 'page-breadcrumb';
+  crumb.id = 'page-breadcrumb';
+  crumb.setAttribute('aria-label', 'Breadcrumb');
+  crumb.hidden = true;
+  headerBlock.append(crumb);
+  return crumb;
+}
+
 function ensureMobileNavChrome(nav, navSections) {
   let overlay = getNavOverlay();
   if (!overlay) {
@@ -290,6 +369,7 @@ export default async function decorate(block) {
       brandLink.closest('.button-container')?.classList.remove('button-container');
     }
   }
+  ensureNavBrand(nav);
 
   const navSections = nav.querySelector('.nav-sections');
   if (navSections) {
@@ -327,4 +407,6 @@ export default async function decorate(block) {
   navWrapper.className = 'nav-wrapper';
   navWrapper.append(nav);
   block.append(navWrapper);
+  ensureBreadcrumbMount(block);
+  initBreadcrumbs();
 }

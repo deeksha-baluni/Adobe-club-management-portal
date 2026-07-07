@@ -128,25 +128,29 @@ async function loadClubsDependencies() {
   clubsDepsLoaded = true;
 }
 
-function optimizeHeroImage(img) {
+function optimizeHeroImage(img, preset = 'index') {
   if (!img) return;
   img.loading = 'eager';
   img.decoding = 'async';
   if ('fetchPriority' in img) img.fetchPriority = 'high';
-  if (!img.getAttribute('width')) img.setAttribute('width', '800');
-  if (!img.getAttribute('height')) img.setAttribute('height', '600');
+  if (!img.getAttribute('width')) {
+    img.setAttribute('width', preset === 'index' ? '800' : '800');
+  }
+  if (!img.getAttribute('height')) {
+    img.setAttribute('height', preset === 'index' ? '600' : '500');
+  }
 }
 
-function mountHeroPicture(src, alt) {
+function mountHeroPicture(src, alt, preset = 'index') {
   const picture = createOptimizedPicture(src, alt, true, HERO_WIDTHS);
-  optimizeHeroImage(picture.querySelector('img'));
+  optimizeHeroImage(picture.querySelector('img'), preset);
   return picture;
 }
 
-function buildMedia(src, alt) {
+function buildMedia(src, alt, preset = 'index') {
   const media = document.createElement('div');
   media.className = 'landing-hero-media';
-  if (src) media.append(mountHeroPicture(src, alt));
+  if (src) media.append(mountHeroPicture(src, alt, preset));
   return media;
 }
 
@@ -416,7 +420,7 @@ function buildFromConfig(config, defaults, preset) {
 
   const alt = cfg(config, 'image-alt', defaults['image-alt'] || defaults['hero-alt']);
   const src = cfg(config, 'image', defaults.image || defaults['hero-fallback']);
-  const media = buildMedia(src, alt);
+  const media = buildMedia(src, alt, preset);
 
   return { content, media };
 }
@@ -454,4 +458,11 @@ export default async function decorate(block) {
   block.textContent = '';
   block.classList.add('landing-hero', `landing-hero--${preset}`);
   block.append(content, media);
+
+  if (preset === 'clubs' || preset === 'events') {
+    window.AdobeBreadcrumbs?.set([
+      { label: 'Home', href: window.AdobeBreadcrumbs?.getHomeHref?.() || '/' },
+      { label: preset === 'clubs' ? 'Clubs' : 'Events', current: true },
+    ]);
+  }
 }

@@ -156,6 +156,12 @@ async function decorateClubHero(block, config) {
 
   document.title = `${club.name} — Adobe Clubs`;
 
+  window.AdobeBreadcrumbs?.set([
+    { label: 'Home', href: window.AdobeBreadcrumbs?.getHomeHref?.() || '/' },
+    { label: 'Clubs', href: '/clubs' },
+    { label: club.name, current: true },
+  ]);
+
   block.innerHTML = `
     <div class="ch-inner">
       <a class="ch-back" href="${esc(backHref)}">${esc(cfg(config, 'back-label', CLUB_DEFAULTS['back-label']))}</a>
@@ -213,6 +219,12 @@ async function decorateEventHero(block, config) {
   preloadHeroImage(heroSrc);
   document.body.classList.add('event-detail-page');
   document.querySelector('main')?.classList.add('event-detail-page');
+
+  window.AdobeBreadcrumbs?.set([
+    { label: 'Home', href: window.AdobeBreadcrumbs?.getHomeHref?.() || '/' },
+    { label: 'Events', href: '/events' },
+    { label: ev.title, current: true },
+  ]);
 
   block.innerHTML = `
     <div class="ev-inner">

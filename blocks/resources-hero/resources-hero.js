@@ -59,4 +59,9 @@ export default function decorate(block) {
   content.append(eyebrow, heading, sub);
   hero.append(content);
   block.append(hero);
+
+  window.AdobeBreadcrumbs?.set([
+    { label: 'Home', href: window.AdobeBreadcrumbs?.getHomeHref?.() || '/' },
+    { label: 'Resources', current: true },
+  ]);
 }
