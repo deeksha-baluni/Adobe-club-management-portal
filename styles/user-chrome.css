@@ -13,10 +13,13 @@ header nav .nav-tools.nav-right {
 /* Guest: hide user-only tools */
 body.is-guest header nav .nav-tools .notif-wrap,
 body.is-guest header nav .nav-tools .nav-profile-trigger,
-body.is-guest header nav .nav-tools .theme-toggle,
 body:not(.is-authenticated) header nav .nav-tools .notif-wrap,
-body:not(.is-authenticated) header nav .nav-tools .nav-profile-trigger,
-body:not(.is-authenticated) header nav .nav-tools .theme-toggle {
+body:not(.is-authenticated) header nav .nav-tools .nav-profile-trigger {
+  display: none !important;
+}
+
+/* Logged-in: no theme toggle (light app chrome) */
+body.is-authenticated header nav .nav-tools .theme-toggle {
   display: none !important;
 }
 

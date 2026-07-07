@@ -162,6 +162,45 @@ function focusNavSection() {
   document.activeElement.addEventListener('keydown', openOnKeydown);
 }
 
+function getNavOverlay() {
+  return document.querySelector('.nav-overlay');
+}
+
+function setMobileNavOpen(open) {
+  document.body.classList.toggle('nav-drawer-open', open);
+  const overlay = getNavOverlay();
+  if (overlay) overlay.hidden = !open;
+}
+
+function ensureMobileNavChrome(nav, navSections) {
+  let overlay = getNavOverlay();
+  if (!overlay) {
+    overlay = document.createElement('button');
+    overlay.type = 'button';
+    overlay.className = 'nav-overlay';
+    overlay.hidden = true;
+    overlay.setAttribute('aria-label', 'Close navigation');
+    overlay.addEventListener('click', () => {
+      toggleMenu(nav, navSections, false);
+    });
+    document.body.appendChild(overlay);
+  }
+
+  if (navSections && !navSections.querySelector('.nav-drawer-close')) {
+    const closeBtn = document.createElement('button');
+    closeBtn.type = 'button';
+    closeBtn.className = 'nav-drawer-close';
+    closeBtn.setAttribute('aria-label', 'Close navigation');
+    closeBtn.innerHTML = '<span aria-hidden="true">✕</span>';
+    closeBtn.addEventListener('click', () => {
+      toggleMenu(nav, navSections, false);
+    });
+    navSections.prepend(closeBtn);
+  }
+
+  return overlay;
+}
+
 /**
  * Toggles all nav sections
  * @param {Element} sections The container element
@@ -183,10 +222,13 @@ function toggleAllNavSections(sections, expanded = false) {
 function toggleMenu(nav, navSections, forceExpanded = null) {
   const expanded = forceExpanded !== null ? !forceExpanded : nav.getAttribute('aria-expanded') === 'true';
   const button = nav.querySelector('.nav-hamburger button');
-  document.body.style.overflowY = (expanded || isDesktop.matches) ? '' : 'hidden';
   nav.setAttribute('aria-expanded', expanded ? 'false' : 'true');
+  const menuOpen = nav.getAttribute('aria-expanded') === 'true' && !isDesktop.matches;
+  setMobileNavOpen(menuOpen);
   toggleAllNavSections(navSections, expanded || isDesktop.matches ? 'false' : 'true');
-  button.setAttribute('aria-label', expanded ? 'Open navigation' : 'Close navigation');
+  if (button) {
+    button.setAttribute('aria-label', menuOpen ? 'Close navigation' : 'Open navigation');
+  }
   // enable nav dropdown keyboard accessibility
   if (navSections) {
     const navDrops = navSections.querySelectorAll('.nav-drop');
@@ -275,6 +317,7 @@ export default async function decorate(block) {
     </button>`;
   hamburger.addEventListener('click', () => toggleMenu(nav, navSections));
   nav.prepend(hamburger);
+  ensureMobileNavChrome(nav, navSections);
   nav.setAttribute('aria-expanded', 'false');
   // prevent mobile nav behavior on window resize
   toggleMenu(nav, navSections, isDesktop.matches);

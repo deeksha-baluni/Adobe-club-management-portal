@@ -878,13 +878,32 @@ a.adm-update:hover .adm-update-text { color: var(--accent); }
   .adm-cards { grid-template-columns: 1fr; }
   .adm-col-side { flex-direction: column; }
   .adm-donut-wrap { justify-content: center; }
-}
-@media (max-width: 560px) {
-  .adm-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
   .adm-head {
     flex-direction: column;
     align-items: stretch;
+    justify-content: flex-start;
+    gap: 16px;
   }
-  .adm-actions { width: 100%; justify-content: flex-start; }
-  .adm-action-btn { flex: 1 1 auto; justify-content: center; }
+
+  .adm-head-text {
+    flex: 0 1 auto;
+  }
+
+  .adm-actions {
+    width: 100%;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: space-around;
+    gap: 10px;
+  }
+
+  .adm-action-btn {
+    width: 100%;
+    flex: 0 0 auto;
+    justify-content: center;
+  }
+}
+@media (max-width: 560px) {
+  .adm-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }

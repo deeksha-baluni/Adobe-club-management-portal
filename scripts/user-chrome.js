@@ -4,9 +4,6 @@
 import { loadCSS, loadScript } from './aem.js';
 import { renderProfilePanel } from './profile-panel.js';
 
-const MOON_ICON = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>';
-const SUN_ICON = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>';
-
 const GUEST_ACCOUNT_LINKS = [
   { label: 'Sign in', href: '/login' },
   { label: 'Sign up', href: '/login#signup' },
@@ -81,62 +78,6 @@ async function ensureNotifications() {
   }
 }
 
-function wireThemeToggle(btn) {
-  if (!btn || btn.dataset.wired === 'true') return;
-  btn.dataset.wired = 'true';
-  const html = document.documentElement;
-  const THEME_SESSION_KEY = 'theme';
-
-  function getTheme() {
-    return html.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
-  }
-
-  function syncToggleUi(theme) {
-    const isDark = theme === 'dark';
-    const wantIcon = isDark ? 'sun' : 'moon';
-    if (btn.dataset.icon === wantIcon) return;
-    btn.innerHTML = isDark ? SUN_ICON : MOON_ICON;
-    btn.dataset.icon = wantIcon;
-    btn.setAttribute('aria-label', isDark ? 'Switch to light mode' : 'Switch to dark mode');
-  }
-
-  function applyTheme(theme, { persist = true } = {}) {
-    const next = theme === 'dark' ? 'dark' : 'light';
-    html.setAttribute('data-theme', next);
-    html.style.colorScheme = next;
-    html.style.backgroundColor = next === 'dark' ? '#000000' : '#f8f8f8';
-    if (persist) {
-      try {
-        if (next === 'dark') sessionStorage.setItem(THEME_SESSION_KEY, 'dark');
-        else sessionStorage.removeItem(THEME_SESSION_KEY);
-        localStorage.removeItem(THEME_SESSION_KEY);
-      } catch (err) { /* ignore */ }
-    }
-    syncToggleUi(next);
-  }
-
-  applyTheme(getTheme(), { persist: false });
-  btn.addEventListener('click', () => {
-    applyTheme(getTheme() === 'light' ? 'dark' : 'light');
-  });
-}
-
-function ensureThemeToggle(navTools) {
-  let btn = navTools.querySelector('#theme-toggle');
-  if (!btn) {
-    btn = document.createElement('button');
-    btn.type = 'button';
-    btn.className = 'theme-toggle';
-    btn.id = 'theme-toggle';
-    btn.innerHTML = MOON_ICON;
-    btn.dataset.icon = 'moon';
-    btn.setAttribute('aria-label', 'Switch to dark mode');
-    navTools.appendChild(btn);
-  }
-  wireThemeToggle(btn);
-  return btn;
-}
-
 function setAvatarEl(el, initials, src) {
   if (!el) return;
   if (src) {
@@ -164,9 +105,7 @@ function ensureProfile(navTools) {
     trigger.setAttribute('aria-haspopup', 'dialog');
     trigger.setAttribute('aria-expanded', 'false');
     trigger.setAttribute('aria-label', 'Open profile panel');
-    const theme = navTools.querySelector('#theme-toggle');
-    if (theme) navTools.insertBefore(trigger, theme);
-    else navTools.appendChild(trigger);
+    navTools.appendChild(trigger);
   }
 
   let overlay = document.getElementById('profile-overlay');
@@ -240,9 +179,9 @@ async function syncNavTools() {
 
   if (authed) {
     if (signIn) signIn.hidden = true;
+    navTools.querySelector('#theme-toggle')?.remove();
     await ensureNotifications();
     ensureProfile(navTools);
-    ensureThemeToggle(navTools);
   } else if (signIn) {
     signIn.hidden = false;
     signIn.href = getAuth().loginUrlWithNext?.() || '/login';
