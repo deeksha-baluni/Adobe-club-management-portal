@@ -1,9 +1,62 @@
 /* Reserve hero space until landing-hero JS runs (limits CLS / aids LCP discovery) */
+html.guest-index-route .landing-hero-wrapper:has(.landing-hero:not(:has(.landing-hero-content))) {
+  min-height: clamp(520px, 88vw, 680px);
+}
+
 html.guest-index-route .landing-hero.block:not(:has(.landing-hero-content)),
 .landing-hero.block:not(:has(.landing-hero-content)) {
-  min-height: clamp(320px, 45vw, 520px);
   visibility: hidden;
   pointer-events: none;
+}
+
+/* Undecorated da.live table — match decorated index grid before JS */
+html.guest-index-route .landing-hero.block:not(:has(.landing-hero-content)) > div {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: clamp(16px, 2.5vw, 32px);
+  width: 100%;
+  max-width: min(var(--max-width), 100%);
+  margin: 0 auto;
+  padding: clamp(10px, 1.8vw, 20px) var(--section-padding-x) clamp(12px, 2vw, 20px);
+  box-sizing: border-box;
+}
+
+html.guest-index-route .landing-hero.block:not(:has(.landing-hero-content)) > div > div:first-child {
+  line-height: 0;
+  border-radius: var(--border-radius-l);
+  overflow: hidden;
+  aspect-ratio: 16 / 9;
+  max-height: min(48vw, 260px);
+  background-color: var(--color-surface);
+}
+
+html.guest-index-route .landing-hero.block:not(:has(.landing-hero-content)) > div > div:first-child picture,
+html.guest-index-route .landing-hero.block:not(:has(.landing-hero-content)) > div > div:first-child img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+@media (width >= 900px) {
+  html.guest-index-route .landing-hero-wrapper:has(.landing-hero:not(:has(.landing-hero-content))) {
+    min-height: clamp(380px, 38vw, 500px);
+  }
+
+  html.guest-index-route .landing-hero.block:not(:has(.landing-hero-content)) > div {
+    grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr);
+    align-items: center;
+  }
+
+  html.guest-index-route .landing-hero.block:not(:has(.landing-hero-content)) > div > div:first-child {
+    order: 2;
+    max-height: none;
+    aspect-ratio: 4 / 3;
+  }
+
+  html.guest-index-route .landing-hero.block:not(:has(.landing-hero-content)) > div > div:last-child {
+    order: 1;
+  }
 }
 
 /* ── Landing Hero — unified split hero (index, events, clubs) ── */
@@ -246,6 +299,7 @@ main > .section:has(.landing-hero--clubs) > div {
 .landing-hero--index .landing-hero-media {
   border-radius: var(--border-radius-l);
   aspect-ratio: 4 / 3;
+  contain: layout style paint;
 }
 
 .landing-hero-media img {

@@ -21,6 +21,8 @@ import '../blocks/club-shared/event-images.js';
  * load fonts.css and set a session storage flag
  */
 async function loadFonts() {
+  if (window.__adobeClubsFontsLoaded) return;
+  window.__adobeClubsFontsLoaded = true;
   await loadCSS(`${window.hlx.codeBasePath}/styles/fonts.css`);
   try {
     if (!window.location.hostname.includes('localhost')) sessionStorage.setItem('fonts-loaded', 'true');
@@ -357,6 +359,7 @@ async function loadEager(doc) {
     }
 
     if (guestIndex) {
+      loadFonts();
       const header = doc.querySelector('header');
       const headerPromise = !authPage && header && !isHeaderReady(header)
         ? loadHeader(header)
@@ -384,8 +387,8 @@ async function loadEager(doc) {
   }
 
   try {
-    /* if desktop (proxy for fast connection) or fonts already loaded, load fonts.css */
-    if (!document.body.classList.contains('guest-index')
+    /* Guest index: fonts load in loadEager to limit hero CLS. Others: desktop or repeat visit. */
+    if (!onGuestIndex
       && (window.innerWidth >= 900 || sessionStorage.getItem('fonts-loaded'))) {
       loadFonts();
     }

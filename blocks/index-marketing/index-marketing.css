@@ -1,8 +1,30 @@
 @import url('../club-shared/marketing-head.css');
 
-/* Hide raw da.live config rows until index-marketing JS runs */
+/* Reserve space until index-marketing JS runs (avoid display:none collapse) */
 .index-marketing.block:not(:has(.index-marketing-section)):not(:has(.index-marketing-steps)):not(:has(.index-marketing-stories)) {
-  display: none;
+  min-height: clamp(280px, 38vw, 400px);
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.index-marketing--steps-only.block:not(:has(.index-marketing-steps)) {
+  min-height: clamp(220px, 32vw, 300px);
+}
+
+.index-marketing--stories-only.block:not(:has(.index-marketing-stories)) {
+  min-height: clamp(360px, 52vw, 480px);
+}
+
+.section.index-marketing-container:has(.index-marketing-wrapper .index-marketing:not(:has(.index-marketing-steps)):not(:has(.index-marketing-stories))) {
+  min-height: clamp(360px, 48vw, 520px);
+}
+
+.section.index-marketing-container:has(.index-marketing--steps-only:not(:has(.index-marketing-steps))) {
+  min-height: clamp(300px, 42vw, 440px);
+}
+
+.section.index-marketing-container:has(.index-marketing--stories-only:not(:has(.index-marketing-stories))) {
+  min-height: clamp(440px, 58vw, 600px);
 }
 
 .index-marketing {
@@ -75,6 +97,8 @@
 .story-card-image {
   line-height: 0;
   flex-shrink: 0;
+  aspect-ratio: 16 / 10;
+  background: var(--color-surface);
 }
 
 .story-card-image img {
