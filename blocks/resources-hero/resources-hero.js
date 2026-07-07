@@ -1,47 +1,41 @@
 /**
- * Resources Hero block — text-only centered hero (no image).
- *
- * da.live table shape:
- *   | Resources Hero |
- *   | H1 + paragraph in one cell |
- *
- * Outputs:
- *   <section class="rs-hero">
- *     <div class="rs-hero-content">…</div>
- *   </section>
+ * Resources Hero — centered text hero for the Resource Hub.
+ * da.live: key | value config rows.
  */
+import { readPageConfig, cfg } from '../club-shared/block-config.js';
 
-function findContentCell(row) {
-  const cells = [...row.children];
-  if (!cells.length) return null;
-  return cells.find((c) => c.querySelector('h1, h2, h3, p')) || cells[0];
+export const RESOURCES_HERO_DEFAULTS = {
+  eyebrow: 'Resource Hub · Adobe Clubs',
+  'title-line-1': 'Guides, articles',
+  'title-accent': '& how-tos',
+  description: 'Articles for club leads and members — policies, tips, and stories from across the community.',
+  'description-emphasis': 'club leads and members',
+};
+
+function esc(str) {
+  return String(str ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
 }
 
-function buildHeading(h) {
-  const heading = document.createElement('h1');
-  heading.className = 'rs-hero-title';
-  const defaultTitle = 'Guides, articles<br><span class="rs-hero-accent">&amp; how-tos</span>';
-
-  if (!h) {
-    heading.innerHTML = defaultTitle;
-    return heading;
+function buildDescription(config) {
+  const text = cfg(config, 'description', RESOURCES_HERO_DEFAULTS.description);
+  const emphasis = cfg(config, 'description-emphasis', RESOURCES_HERO_DEFAULTS['description-emphasis']);
+  if (!emphasis || !text.includes(emphasis)) {
+    return esc(text);
   }
-
-  const text = h.textContent.trim();
-  if (h.querySelector('br, .rs-hero-accent') || /how-?tos/i.test(text)) {
-    heading.innerHTML = h.innerHTML;
-  } else if (/^guides,\s*articles$/i.test(text)) {
-    heading.innerHTML = defaultTitle;
-  } else {
-    heading.textContent = text;
-  }
-
-  return heading;
+  const [before, after] = text.split(emphasis);
+  return `${esc(before)}<strong>${esc(emphasis)}</strong>${esc(after)}`;
 }
 
 export default function decorate(block) {
-  const row = block.firstElementChild;
-  const contentEl = row ? findContentCell(row) : null;
+  document.body.classList.add('resources-page');
+  const config = readPageConfig(block, RESOURCES_HERO_DEFAULTS);
+
+  block.innerHTML = '';
+  block.classList.add('resources-hero');
 
   const hero = document.createElement('section');
   hero.className = 'rs-hero';
@@ -52,24 +46,17 @@ export default function decorate(block) {
 
   const eyebrow = document.createElement('p');
   eyebrow.className = 'rs-hero-eyebrow';
-  eyebrow.textContent = 'Resource Hub · Adobe Clubs';
+  eyebrow.textContent = cfg(config, 'eyebrow', RESOURCES_HERO_DEFAULTS.eyebrow);
+
+  const heading = document.createElement('h1');
+  heading.className = 'rs-hero-title';
+  heading.innerHTML = `${esc(cfg(config, 'title-line-1', RESOURCES_HERO_DEFAULTS['title-line-1']))}<br><span class="rs-hero-accent">${esc(cfg(config, 'title-accent', RESOURCES_HERO_DEFAULTS['title-accent']))}</span>`;
 
   const sub = document.createElement('p');
   sub.className = 'rs-hero-sub';
-
-  const h = contentEl?.querySelector('h1, h2');
-  const firstP = contentEl?.querySelector('p');
-  const heading = buildHeading(h);
-
-  if (firstP) {
-    sub.innerHTML = firstP.innerHTML;
-  } else {
-    sub.innerHTML = 'Articles for <strong>club leads and members</strong> — policies, tips, and stories from across the community.';
-  }
+  sub.innerHTML = buildDescription(config);
 
   content.append(eyebrow, heading, sub);
   hero.append(content);
-
-  block.textContent = '';
   block.append(hero);
 }

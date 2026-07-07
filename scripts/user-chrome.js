@@ -1,7 +1,7 @@
 /**
  * user-chrome.js — Shared logged-in nav tools + footer account links
  */
-import { loadCSS } from './aem.js';
+import { loadCSS, loadScript } from './aem.js';
 import { renderProfilePanel } from './profile-panel.js';
 
 const MOON_ICON = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>';
@@ -11,6 +11,8 @@ const GUEST_ACCOUNT_LINKS = [
   { label: 'Sign in', href: '/login' },
   { label: 'Sign up', href: '/login#signup' },
 ];
+
+let notificationsBootPromise = null;
 
 function getAuth() {
   return window.AdobeClubsAuth || {
@@ -38,6 +40,10 @@ function waitForAuth(maxMs = 5000) {
   });
 }
 
+function codeBase() {
+  return window.hlx?.codeBasePath || '';
+}
+
 function getNavTools() {
   return document.querySelector('#nav .nav-tools');
 }
@@ -49,6 +55,30 @@ function getInitials(name) {
     .slice(0, 2)
     .map((part) => part.charAt(0).toUpperCase())
     .join('') || 'U';
+}
+
+async function ensureNotifications() {
+  if (!getAuth().isAuthenticated?.()) return;
+  if (!notificationsBootPromise) {
+    notificationsBootPromise = (async () => {
+      const base = codeBase();
+      await Promise.all([
+        loadScript(`${base}/scripts/user-features.js`),
+        loadScript(`${base}/scripts/event-seats.js`),
+        loadScript(`${base}/scripts/notifications.js`),
+      ]);
+    })();
+  }
+  await notificationsBootPromise;
+  const init = () => {
+    window.AdobeNotifications?.initNavBell?.();
+    window.AdobeNotifications?.refreshNavUI?.();
+  };
+  if ('requestIdleCallback' in window) {
+    requestIdleCallback(init, { timeout: 2000 });
+  } else {
+    window.setTimeout(init, 0);
+  }
 }
 
 function wireThemeToggle(btn) {
@@ -105,55 +135,6 @@ function ensureThemeToggle(navTools) {
   }
   wireThemeToggle(btn);
   return btn;
-}
-
-function ensureBell(navTools) {
-  let wrap = navTools.querySelector('#notif-wrap');
-  if (!wrap) {
-    wrap = document.createElement('div');
-    wrap.className = 'notif-wrap';
-    wrap.id = 'notif-wrap';
-    wrap.innerHTML = `
-      <button type="button" class="notif-trigger" id="notif-trigger" aria-label="Notifications" aria-expanded="false" aria-controls="notif-panel">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/>
-          <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
-        </svg>
-        <span class="notif-badge" id="notif-badge" hidden>0</span>
-      </button>
-      <div class="notif-panel" id="notif-panel" hidden>
-        <div class="notif-panel-head">
-          <h2 class="notif-panel-title">Notifications</h2>
-        </div>
-        <div class="notif-panel-list" id="notif-panel-list">
-          <p class="notif-empty">No notifications yet.</p>
-        </div>
-      </div>
-    `;
-    navTools.insertBefore(wrap, navTools.firstChild);
-  }
-
-  if (wrap.dataset.bound === 'true') return wrap;
-
-  const trigger = wrap.querySelector('#notif-trigger');
-  const panel = wrap.querySelector('#notif-panel');
-
-  trigger?.addEventListener('click', (e) => {
-    e.stopPropagation();
-    const open = panel?.hidden;
-    if (panel) panel.hidden = !open;
-    trigger.setAttribute('aria-expanded', String(open));
-  });
-
-  document.addEventListener('click', (e) => {
-    if (!wrap.contains(e.target) && panel) {
-      panel.hidden = true;
-      trigger?.setAttribute('aria-expanded', 'false');
-    }
-  });
-
-  wrap.dataset.bound = 'true';
-  return wrap;
 }
 
 function setAvatarEl(el, initials, src) {
@@ -246,7 +227,7 @@ function findSignInControl(navTools) {
   return navTools?.querySelector('a.button, a.nav-signin, #nav-signin') || null;
 }
 
-function syncNavTools() {
+async function syncNavTools() {
   const navTools = getNavTools();
   if (!navTools) return;
 
@@ -259,12 +240,13 @@ function syncNavTools() {
 
   if (authed) {
     if (signIn) signIn.hidden = true;
-    ensureBell(navTools);
+    await ensureNotifications();
     ensureProfile(navTools);
     ensureThemeToggle(navTools);
   } else if (signIn) {
     signIn.hidden = false;
     signIn.href = getAuth().loginUrlWithNext?.() || '/login';
+    navTools.querySelector('#notif-wrap')?.remove();
   }
 }
 
@@ -299,6 +281,9 @@ export async function initUserChrome() {
     loadCSS(`${base}/styles/user-chrome.css`),
     loadCSS(`${base}/styles/user-features.css`),
   ]);
-  syncNavTools();
+  await syncNavTools();
   syncFooterAccount();
+  window.addEventListener('adobe-notifications-updated', () => {
+    window.AdobeNotifications?.refreshNavUI?.();
+  });
 }

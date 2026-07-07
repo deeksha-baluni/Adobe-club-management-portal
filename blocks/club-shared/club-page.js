@@ -57,16 +57,23 @@ export function getClubIdFromUrl() {
 export async function getClubData() {
   if (dataCache) return dataCache;
   if (!dataPending) {
-    const urls = ['/data/data.json', `${window.location.origin}/data/data.json`];
-    dataPending = (async () => {
-      for (const url of urls) {
-        try {
-          const res = await fetch(url);
-          if (res.ok) return res.json();
-        } catch (_) { /* try next */ }
-      }
-      throw new Error('Could not load /data/data.json');
-    })();
+    if (window.__adobeClubsDataPrefetch) {
+      dataPending = window.__adobeClubsDataPrefetch.then((data) => {
+        if (!data) throw new Error('Could not load /data/data.json');
+        return data;
+      });
+    } else {
+      const urls = ['/data/data.json', `${window.location.origin}/data/data.json`];
+      dataPending = (async () => {
+        for (const url of urls) {
+          try {
+            const res = await fetch(url);
+            if (res.ok) return res.json();
+          } catch (_) { /* try next */ }
+        }
+        throw new Error('Could not load /data/data.json');
+      })();
+    }
   }
   dataCache = await dataPending;
   return dataCache;

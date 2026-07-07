@@ -7,6 +7,7 @@ import {
   canPostRecapForClub,
   isEventPast,
 } from '../club-page.js';
+import { cfg } from '../block-config.js';
 import {
   buildRecapHtml,
   getRecapBody,
@@ -262,16 +263,18 @@ function wireForm(block, club, pastEvents) {
 }
 
 export function mountRecapsSection(block, ctx) {
-  const { club, events } = ctx;
+  const { club, events, pageConfig = {} } = ctx;
   const pastEvents = getPastClubEvents(club, events);
   const hasAnyRecaps = hasRecaps(pastEvents);
   const showCta = canPostRecapForClub(club.id);
   const hasWork = getEventsNeedingRecap(pastEvents).length > 0;
   const canPost = showCta && pastEvents.length > 0 && hasWork;
+  const title = cfg(pageConfig, 'section-recaps', 'Highlights from recent sessions');
+  const recapCta = cfg(pageConfig, 'recap-cta', 'Post a recap');
 
   block.innerHTML = `
     <div class="club-section-inner" id="club-recaps">
-      <h2 class="club-section-title">Highlights from recent sessions</h2>
+      <h2 class="club-section-title">${esc(title)}</h2>
       <div class="club-recap-panel">
         <div class="club-recap-grid${hasAnyRecaps ? '' : ' is-recap-empty'}" id="club-recap-grid">
           ${pastEvents.map((ev) => renderRecapCard(ev, club)).filter(Boolean).join('')}
@@ -279,7 +282,7 @@ export function mountRecapsSection(block, ctx) {
         </div>
         ${showCta ? `
           <div class="club-recap-foot">
-            <button type="button" class="club-recap-cta${hasWork ? ' club-recap-cta--active' : ''}" id="club-recap-cta"${hasWork ? '' : ' disabled'}>Post a recap</button>
+            <button type="button" class="club-recap-cta${hasWork ? ' club-recap-cta--active' : ''}" id="club-recap-cta"${hasWork ? '' : ' disabled'}>${esc(recapCta)}</button>
           </div>` : ''}
       </div>
     </div>`;
@@ -293,7 +296,15 @@ export function mountRecapsSection(block, ctx) {
   });
 }
 
-export function scrollToRecapsSection(block) {
-  if (window.location.hash !== '#club-recaps') return;
+export function applyRecapsDeepLink(block) {
+  const hash = window.location.hash || '';
+  if (!hash.startsWith('#club-recaps')) return;
   block.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  if (hash === '#club-recaps-create') {
+    openForm();
+  }
+}
+
+export function scrollToRecapsSection(block) {
+  applyRecapsDeepLink(block);
 }

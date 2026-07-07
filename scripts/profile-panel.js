@@ -2,6 +2,8 @@
  * profile-panel.js — OG-style profile drawer content for logged-in users.
  */
 
+import { loadScript } from './aem.js';
+
 const AVATAR_BASE = '/assets/images/avatar/';
 const AVAILABLE_AVATARS = [
   `${AVATAR_BASE}9434619.jpg`,
@@ -27,6 +29,31 @@ function esc(str) {
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;');
+}
+
+let clubRequestReady = null;
+
+function codeBase() {
+  return window.hlx?.codeBasePath || '';
+}
+
+function closeProfileDrawer() {
+  const overlay = document.getElementById('profile-overlay');
+  const trigger = document.querySelector('.nav-profile-trigger');
+  if (overlay) overlay.hidden = true;
+  if (trigger) trigger.setAttribute('aria-expanded', 'false');
+  document.body.classList.remove('profile-drawer-open');
+}
+
+function ensureClubRequestReady() {
+  if (window.AdobeClubRequest?.openCreateClubForm) return Promise.resolve();
+  if (!clubRequestReady) {
+    clubRequestReady = loadScript(`${codeBase()}/scripts/club-request-prompt.js`).catch((err) => {
+      clubRequestReady = null;
+      throw err;
+    });
+  }
+  return clubRequestReady;
 }
 
 function getAuth() {
@@ -197,14 +224,19 @@ function renderRsvpSection(stats, loggedIn) {
     <a class="profile-rsvp-link" href="/events?rsvp=mine">View all RSVP'd events (${events.length})</a>`;
 }
 
-function renderManageSection(isClubScoped = false) {
+function renderManageSection(isClubScoped = false, managedClubIds = []) {
+  const firstClubId = managedClubIds[0] || '';
+  const recapHref = isClubScoped && firstClubId
+    ? `/club?id=${encodeURIComponent(firstClubId)}#club-recaps-create`
+    : '/events#ev-grid-past';
+  const clubsHref = isClubScoped ? '/clubs?membership=my-managed' : '/clubs';
   return `
     <div class="profile-manage-list">
       <a class="profile-manage-item" href="/home"><span>${isClubScoped ? 'My club dashboard' : 'Admin dashboard'}</span><span>›</span></a>
-      <a class="profile-manage-item" href="/events"><span>Add an event</span><span>+</span></a>
-      <a class="profile-manage-item" href="/resources"><span>Add a resource</span><span>+</span></a>
-      <a class="profile-manage-item" href="/events"><span>Post an event recap</span><span>›</span></a>
-      <a class="profile-manage-item" href="/clubs"><span>${isClubScoped ? 'View my clubs' : 'Manage clubs'}</span><span>›</span></a>
+      <a class="profile-manage-item" href="/events#create-event"><span>Add an event</span><span>+</span></a>
+      <a class="profile-manage-item" href="/resources#create-article"><span>Add a resource</span><span>+</span></a>
+      <a class="profile-manage-item" href="${esc(recapHref)}"><span>Post an event recap</span><span>›</span></a>
+      <a class="profile-manage-item" href="${esc(clubsHref)}"><span>${isClubScoped ? 'View my clubs' : 'Manage clubs'}</span><span>›</span></a>
     </div>`;
 }
 
@@ -259,14 +291,14 @@ export async function renderProfilePanel({ trigger } = {}) {
         <p class="profile-card-copy profile-card-copy--meta">Signed in as ${roleLabel} · @${esc(identity.username || '')}</p>
         <p class="profile-stat"><strong>${stats.joinedClubs}</strong> clubs joined</p>
         <p class="profile-stat"><strong>${stats.joinedEvents}</strong> events joined</p>
-        <button type="button" class="profile-create-club" id="profile-create-club" disabled aria-disabled="true" title="Club proposals coming soon">+ Create a club</button>
+        <button type="button" class="profile-create-club" id="profile-create-club">+ Create a club</button>
       </div>
     </section>
     ${isAnyAdmin ? `
     <section class="profile-section">
       <h3>Manage</h3>
       <div class="profile-card">
-        ${renderManageSection(isClubAdmin && !isAdmin)}
+        ${renderManageSection(isClubAdmin && !isAdmin, auth.getManagedClubIds?.() || [])}
       </div>
     </section>` : ''}
     <section class="profile-section">
@@ -316,6 +348,16 @@ export async function renderProfilePanel({ trigger } = {}) {
   document.getElementById('profile-signout-btn')?.addEventListener('click', () => {
     auth.clearSession?.();
     window.location.href = '/?logout=1';
+  });
+
+  document.getElementById('profile-create-club')?.addEventListener('click', async () => {
+    closeProfileDrawer();
+    try {
+      await ensureClubRequestReady();
+      window.AdobeClubRequest?.openCreateClubForm?.();
+    } catch {
+      /* script failed to load */
+    }
   });
 
   content.querySelectorAll('.profile-avatar-option').forEach((btn) => {

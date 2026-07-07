@@ -3,6 +3,7 @@ import {
   getMeta,
   getActivityDesc,
 } from '../club-page.js';
+import { cfg } from '../block-config.js';
 
 const ACTIVITY_ICON_SVGS = [
   '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="5" r="1"/><path d="m9 20 3-6 3 6"/><path d="M6 8l6-3 6 3"/></svg>',
@@ -26,11 +27,12 @@ function renderGrid(activities, club) {
 }
 
 export function mountActivitiesSection(block, ctx) {
-  const { club } = ctx;
+  const { club, pageConfig = {} } = ctx;
   const meta = getMeta(club.id);
+  const title = cfg(pageConfig, 'section-activities', 'What this club does');
   block.innerHTML = `
     <div class="club-section-inner">
-      <h2 class="club-section-title">What this club does</h2>
+      <h2 class="club-section-title">${esc(title)}</h2>
       ${renderGrid(meta.activities, club)}
     </div>`;
 }

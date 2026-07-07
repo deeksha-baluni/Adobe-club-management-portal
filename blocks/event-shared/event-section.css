@@ -1,72 +1,126 @@
 @import url('./event-detail.css');
 
 /* Event detail page — reset EDS section chrome */
-main:has(.event-hero) {
+main:has(.event-hero, .page-hero--event) {
   background: var(--light-color, #f8f8f8);
 }
 
-main:has(.event-hero) > .section,
-main:has(.event-hero) > .section > div {
+main:has(.event-hero, .page-hero--event) > .section,
+main:has(.event-hero, .page-hero--event) > .section > div {
   margin: 0 !important;
   max-width: unset;
 }
 
-main:has(.event-hero) > .section:not(.dark) {
+main:has(.event-hero, .page-hero--event) > .section:not(.dark) {
   border-top: none !important;
   padding-top: 0 !important;
   padding-bottom: 0 !important;
 }
 
-/* Two-column grid: main content left, RSVP rail right */
-main:has(.event-hero) {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) 320px;
-  column-gap: 24px;
+/* Event detail shell — overrides default main/section layout */
+body.event-detail-page main,
+main.event-detail-page,
+main:has(.event-hero, .page-hero--event) {
+  display: block;
   max-width: var(--max-width, 1280px);
   margin: 0 auto;
   padding: 0 var(--section-padding-x, 40px) clamp(48px, 8vw, 72px);
+}
+
+main:has(.event-hero, .page-hero--event) > .section:has(.event-hero, .page-hero--event) > div,
+main:has(.event-hero, .page-hero--event) > .section:has(.event-list) > div {
+  width: 100%;
+  max-width: 100%;
+  padding: 0;
+}
+
+/* Hide raw da.live config rows until event-list JS runs */
+.event-list.block:not(:has(.event-list-body)) {
+  display: none;
+}
+
+/* Hero row: image + intro left, sticky RSVP right */
+.event-hero .ev-inner,
+.page-hero--event .ev-inner {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 320px;
+  grid-template-areas:
+    "back back"
+    "topbar topbar"
+    "hero rail"
+    "intro rail";
+  column-gap: 24px;
+  row-gap: 0;
   align-items: start;
-}
-
-main:has(.event-hero) > .section:has(.event-hero),
-main:has(.event-hero) > .section:has(.event-list) > div,
-main:has(.event-hero) > .section:has(.event-list) {
-  grid-column: 1;
   width: 100%;
-  min-width: 0;
+  max-width: 100%;
 }
 
-main:has(.event-hero) > .section:has(.event-list) {
-  display: contents;
+.event-hero .ev-back,
+.page-hero--event .ev-back {
+  grid-area: back;
 }
 
-main:has(.event-hero) > .section:has(.event-list) > div {
-  display: contents;
+.event-hero .event-page-topbar,
+.page-hero--event .event-page-topbar {
+  grid-area: topbar;
 }
 
-.event-list {
-  display: contents;
-}
-
-.event-list-body {
-  grid-column: 1;
+.event-hero .event-hero-stack,
+.page-hero--event .event-hero-stack {
+  grid-area: hero;
   width: 100%;
-  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
-.event-list-rail {
-  grid-column: 2;
-  grid-row: 1 / span 12;
-  align-self: start;
-  margin-top: calc(20px + 16px + 1.3em + 20px + 28px) !important;
+.event-hero .event-page-container,
+.page-hero--event .event-page-container {
+  grid-area: intro;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.event-hero .event-list-rail,
+.page-hero--event .event-list-rail {
+  grid-area: rail;
   position: sticky;
   top: calc(var(--nav-height, 55px) + 16px);
+  align-self: start;
   width: 100%;
   min-width: 0;
 }
 
-main:has(.event-hero) > .section:has(.event-hero) > div {
+/* Full-width content below hero row */
+.event-list-body {
   width: 100%;
+  margin-top: 24px;
+  background: #fff;
+  border: 1px solid #edebe9;
+  border-radius: 8px;
+  padding: 24px clamp(16px, 2.5vw, 28px) 28px;
+  box-sizing: border-box;
+}
+
+.event-list-body .ev-card-part {
+  background: transparent;
+  border: none;
+  padding: 0;
+}
+
+.event-list-body .ev-card-part--mid {
+  padding-bottom: 24px;
+}
+
+.event-list-body .ev-card-part--mid:last-child {
+  padding-bottom: 0;
+}
+
+.event-list-body .ev-card-part--tail {
+  border: none;
+  border-radius: 0;
+  padding-bottom: 0;
 }
 
 .recap-detail {
@@ -229,28 +283,32 @@ main:has(.event-hero) > .section:has(.event-hero) > div {
   color: var(--color-accent-hover, #0d66d0);
 }
 
-.event-hero .ev-inner {
-  width: 100%;
-  max-width: 100%;
-}
-
-.event-hero .event-hero-stack,
-.event-hero .event-page-container {
-  width: 100%;
-  max-width: 100%;
-  box-sizing: border-box;
-}
-
 .event-hero-stack {
   margin-bottom: 0;
 }
 
-.event-hero .event-hero-img {
+.event-hero .event-hero-img,
+.page-hero--event .event-hero-img {
   border: 1px solid #edebe9;
   border-bottom: none;
 }
 
-/* Connected white card across body sections */
+.event-hero .event-page-container,
+.page-hero--event .event-page-container {
+  padding-bottom: 24px;
+  background: #fff;
+  border: 1px solid #edebe9;
+  border-top: none;
+  border-radius: 0 0 8px 8px;
+}
+
+.event-hero .event-list-rail .event-page-right-rail,
+.page-hero--event .event-list-rail .event-page-right-rail {
+  width: 100%;
+  flex: none;
+}
+
+/* Legacy ev-card-part (intro only lives in hero now) */
 .ev-card-part {
   background: #fff;
   border-left: 1px solid #edebe9;
@@ -260,7 +318,7 @@ main:has(.event-hero) > .section:has(.event-hero) > div {
 
 .ev-card-part--head {
   border-top: none;
-  border-radius: 0 0 0 0;
+  border-radius: 0;
   padding-top: 0;
   padding-bottom: 0;
 }
@@ -271,13 +329,8 @@ main:has(.event-hero) > .section:has(.event-hero) > div {
   padding-bottom: 24px;
 }
 
-/* Gap between intro heading block and "About this event" */
 .event-list-about {
-  padding-top: 24px;
-}
-
-.event-hero .event-page-container {
-  padding-bottom: 24px;
+  padding-top: 0;
 }
 
 .ev-card-part--tail {
@@ -287,17 +340,27 @@ main:has(.event-hero) > .section:has(.event-hero) > div {
 }
 
 @media (max-width: 960px) {
-  main:has(.event-hero) {
-    display: block;
+  body.event-detail-page main,
+  main.event-detail-page,
+  main:has(.event-hero, .page-hero--event) {
     padding-left: var(--section-padding-x, 24px);
     padding-right: var(--section-padding-x, 24px);
   }
 
-  main:has(.event-hero) .event-list-rail {
+  .event-hero .ev-inner,
+  .page-hero--event .ev-inner {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "back"
+      "topbar"
+      "rail"
+      "hero"
+      "intro";
+  }
+
+  .event-hero .event-list-rail,
+  .page-hero--event .event-list-rail {
     position: static;
-    grid-row: auto;
-    grid-column: auto;
-    margin-top: 0 !important;
-    margin-bottom: 24px !important;
+    margin-bottom: 16px;
   }
 }

@@ -1,0 +1,332 @@
+/* Admin event creator — modal, FAB, toast (ported from adobe-clubs/events.css) */
+
+.ev-admin-add-btn {
+  position: fixed;
+  right: max(32px, env(safe-area-inset-right));
+  bottom: max(32px, env(safe-area-inset-bottom));
+  z-index: 620;
+  min-width: 156px;
+  height: 48px;
+  border: 1px solid var(--color-accent, #1473e6);
+  background: var(--color-accent, #1473e6);
+  color: #fff;
+  border-radius: 8px;
+  padding: 0 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  font-family: inherit;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  transition: background 0.18s, border-color 0.18s;
+}
+
+.ev-admin-add-btn:hover {
+  background: var(--color-accent-hover, #0d66d0);
+  border-color: var(--color-accent-hover, #0d66d0);
+}
+
+.ev-admin-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 650;
+  background: rgba(0, 0, 0, 0.48);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.28s ease, visibility 0.28s ease;
+}
+
+.ev-admin-modal.open {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+.ev-admin-modal.is-closing {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.ev-admin-modal-card {
+  width: min(760px, 100%);
+  max-height: 88vh;
+  overflow: auto;
+  border: 1px solid var(--color-border-default, #e8e8e8);
+  background: var(--background-color, #fff);
+  border-radius: 8px;
+  padding: 16px;
+  transform: scale(0.94) translateY(18px);
+  opacity: 0;
+  transition: transform 0.32s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.28s ease;
+}
+
+.ev-admin-modal.open .ev-admin-modal-card {
+  transform: scale(1) translateY(0);
+  opacity: 1;
+}
+
+.ev-admin-modal.is-closing .ev-admin-modal-card {
+  transform: scale(0.96) translateY(12px);
+  opacity: 0;
+}
+
+.ev-admin-toast {
+  position: fixed;
+  top: 96px;
+  right: max(24px, env(safe-area-inset-right));
+  z-index: 680;
+  min-width: min(320px, calc(100vw - 32px));
+  max-width: 380px;
+  padding: 14px 40px 16px 16px;
+  border-radius: 10px;
+  border: 1px solid var(--color-border-default, #e8e8e8);
+  background: var(--background-color, #fff);
+  color: var(--text-color, #2c2c2c);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  opacity: 0;
+  transform: translateY(-8px);
+  pointer-events: none;
+  transition: opacity 0.24s ease, transform 0.24s ease;
+}
+
+.ev-admin-toast-close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 28px;
+  height: 28px;
+  border: 1px solid var(--color-border-default, #e8e8e8);
+  border-radius: 50%;
+  background: var(--color-surface, #f5f5f5);
+  color: var(--color-text-secondary, #6e6e6e);
+  font-size: 14px;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  font-family: inherit;
+}
+
+.ev-admin-toast.open {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.ev-admin-toast-title {
+  margin: 0 0 6px;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.ev-admin-toast-hint {
+  margin: 0 0 12px;
+  font-size: 12.5px;
+  font-weight: 500;
+  line-height: 1.45;
+  color: var(--color-text-secondary, #6e6e6e);
+}
+
+.ev-admin-slack-btn {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid #611f69;
+  border-radius: 8px;
+  background: #611f69;
+  color: #fff;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.ev-admin-slack-btn[hidden] {
+  display: none;
+}
+
+.ev-admin-slack-note {
+  margin: 4px 0 0;
+  padding: 12px 14px;
+  border-radius: 8px;
+  border: 1px solid var(--color-border-default, #e8e8e8);
+  background: var(--light-color, #f8f8f8);
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--color-text-secondary, #6e6e6e);
+}
+
+.ev-admin-slack-note strong {
+  color: var(--text-color, #2c2c2c);
+  font-weight: 600;
+}
+
+.ev-admin-form-error,
+.ev-admin-field-error {
+  margin: 0;
+  color: var(--color-brand-red, #eb1000);
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.35;
+}
+
+.ev-admin-form-error {
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: rgba(235, 16, 0, 0.08);
+  border: 1px solid rgba(235, 16, 0, 0.25);
+}
+
+.ev-admin-field-error[hidden] {
+  display: none;
+}
+
+.ev-admin-date-field input[aria-invalid="true"] {
+  border-color: var(--color-brand-red, #eb1000);
+}
+
+.ev-admin-field-hint {
+  display: block;
+  margin-top: 4px;
+  font-size: 11px;
+  color: var(--color-text-secondary, #6e6e6e);
+}
+
+.ev-admin-location-wrap input:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.ev-admin-time-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 8px;
+}
+
+.ev-admin-time-label {
+  grid-column: 1 / -1;
+}
+
+.ev-admin-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.ev-admin-close {
+  border: 1px solid var(--color-border-default, #e8e8e8);
+  background: var(--color-surface, #f5f5f5);
+  color: var(--color-text-secondary, #6e6e6e);
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-family: inherit;
+  flex-shrink: 0;
+}
+
+.ev-admin-title {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-color, #2c2c2c);
+}
+
+.ev-admin-submit {
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 44px;
+  margin-top: 4px;
+  border: 1px solid var(--color-accent, #1473e6);
+  background: var(--color-accent, #1473e6);
+  color: #fff;
+  border-radius: 8px;
+  padding: 12px 16px;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.18s, border-color 0.18s;
+}
+
+.ev-admin-submit:hover {
+  background: var(--color-accent-hover, #0d66d0);
+  border-color: var(--color-accent-hover, #0d66d0);
+}
+
+.ev-admin-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.ev-admin-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.ev-admin-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-text-secondary, #6e6e6e);
+}
+
+.ev-admin-form input,
+.ev-admin-form textarea,
+.ev-admin-form select {
+  box-sizing: border-box;
+  width: 100%;
+  border: 1px solid var(--color-border-default, #e8e8e8);
+  background: var(--light-color, #f8f8f8);
+  color: var(--text-color, #2c2c2c);
+  border-radius: 8px;
+  padding: 8px 10px;
+  font-family: inherit;
+  font-size: 14px;
+}
+
+.field-required {
+  color: var(--color-brand-red, #eb1000);
+}
+
+@media (max-width: 640px) {
+  .ev-admin-add-btn {
+    right: max(12px, env(safe-area-inset-right));
+    bottom: max(12px, env(safe-area-inset-bottom));
+    min-width: 142px;
+    height: 44px;
+    font-size: 13px;
+  }
+
+  .ev-admin-modal {
+    align-items: flex-end;
+  }
+
+  .ev-admin-modal-card {
+    max-height: 92vh;
+  }
+
+  .ev-admin-grid {
+    grid-template-columns: 1fr;
+  }
+}

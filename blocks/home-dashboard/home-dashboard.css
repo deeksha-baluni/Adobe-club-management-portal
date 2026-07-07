@@ -18,6 +18,12 @@ body.user-home main > div {
   width: 100%;
 }
 
+main > .section:has(.home-dashboard) > div {
+  max-width: unset;
+  padding: 0;
+  margin: 0;
+}
+
 body.user-home .hm-dashboard {
   width: 100%;
   max-width: 100%;
@@ -26,39 +32,7 @@ body.user-home .hm-dashboard {
   box-sizing: border-box;
 }
 
-body.user-home .home-dashboard {
-  display: none;
-}
-
-/* ── Layout ── */
-.hm-header {
-  max-width: var(--max-width);
-  margin: 0 auto;
-  width: 100%;
-  padding: clamp(40px, 6vw, 64px) var(--section-padding-x) 0;
-  box-sizing: border-box;
-  min-width: 0;
-}
-
-.hm-welcome-row {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 20px;
-  flex-wrap: wrap;
-  padding-bottom: 24px;
-  border-bottom: 1px solid var(--color-border);
-}
-
-.hm-title {
-  font-size: clamp(28px, 4vw, 42px);
-  font-weight: 700;
-  letter-spacing: -0.02em;
-  color: var(--text-color);
-  line-height: 1.1;
-  margin: 0;
-}
-
+/* ── Dashboard sections ── */
 .hm-section {
   max-width: var(--max-width);
   margin: 0 auto;
@@ -379,6 +353,10 @@ body.user-home .uf-cal-grid {
   color: var(--color-text-secondary);
 }
 
+.hm-rsvp-empty .btn-primary {
+  width: 100%;
+}
+
 .hm-rsvp-more {
   margin: 12px 0 0;
   font-size: 13px;
@@ -607,7 +585,11 @@ body.user-home .uf-cal-grid {
 }
 
 /* ── Action buttons ── */
-.hm-dashboard .btn-primary {
+.hm-dashboard .btn-primary,
+.hm-dashboard a.btn-primary:any-link,
+.hm-dashboard a.btn-primary:any-link:hover,
+.hm-dashboard a.btn-primary:any-link:focus-visible,
+.hm-dashboard a.btn-primary:any-link:visited {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -625,7 +607,8 @@ body.user-home .uf-cal-grid {
   transition: background 0.18s, border-color 0.18s;
 }
 
-.hm-dashboard .btn-primary:hover {
+.hm-dashboard .btn-primary:hover,
+.hm-dashboard a.btn-primary:any-link:hover {
   background: var(--color-accent-hover);
   border-color: var(--color-accent-hover);
   color: #fff;

@@ -1,10 +1,47 @@
 /**
- * Home Dashboard — logged-in member home (OG home.html).
- * da.live: | Home Dashboard | (empty row)
+ * Home Dashboard — member home sections (recommended, calendar, events, clubs).
+ * da.live: key | value config rows; records from data.json.
  */
 import { loadCSS, loadScript } from '../../scripts/aem.js';
+import { readPageConfig, cfg, fillTemplate } from '../club-shared/block-config.js';
+import { getEventImageSrc } from '../club-shared/club-page.js';
 
-const DATA_PATH = '/data/data.json';
+export const HOME_DASHBOARD_DEFAULTS = {
+  'clubs-data': '/data/data.json',
+  'section-recommended-label': 'Recommended for you',
+  'section-recommended-title': 'Recommended for you',
+  'section-popular-title': 'Popular clubs',
+  'section-recommended-link': 'Browse all clubs →',
+  'section-recommended-href': '/clubs',
+  'quiz-prompt-strong': 'Get picks made for you.',
+  'quiz-prompt-text': "Tell us what you're into and we'll match clubs to your interests.",
+  'quiz-cta-text': 'Take the 1-minute quiz',
+  'rec-empty-text': 'We saved your interests. Browse clubs to find communities that fit you.',
+  'rec-empty-cta': 'Browse clubs',
+  'rec-empty-href': '/clubs',
+  'section-calendar-label': 'Your calendar',
+  'section-calendar-link': "View RSVP'd events →",
+  'section-calendar-href': '/events?rsvp=mine',
+  'cal-rsvps-title': "RSVP'd events",
+  'cal-empty-text': "No RSVP'd events yet.",
+  'cal-empty-link': 'Browse events →',
+  'cal-empty-href': '/events',
+  'cal-more-template': "{count} more RSVP'd event{plural} →",
+  'section-events-title': 'Upcoming events',
+  'section-events-link': 'See all events →',
+  'section-events-href': '/events',
+  'section-clubs-label': 'Your clubs',
+  'section-clubs-title': 'Your clubs',
+  'section-clubs-title-empty': 'Find your first club',
+  'section-clubs-link': 'Find more →',
+  'section-clubs-href': '/clubs',
+  'clubs-empty-text': "Browse what's available and join one that fits you",
+  'clubs-empty-cta': 'Explore clubs',
+  'clubs-empty-href': '/clubs',
+  'join-label': 'Join',
+  'joined-label': 'Joined',
+};
+
 const CLUB_IMG = '/assets/images/clubs/';
 const EVENT_IMG = '/assets/images/events/';
 const EVENT_FALLBACK = `${EVENT_IMG}evt-hero1.avif`;
@@ -13,6 +50,7 @@ const MONTHS = {
   JUL: 6, AUG: 7, SEP: 8, OCT: 9, NOV: 10, DEC: 11,
 };
 
+let PAGE_CONFIG = { ...HOME_DASHBOARD_DEFAULTS };
 let BASE_CLUBS = [];
 let EVENTS = [];
 let depsLoaded = false;
@@ -57,7 +95,9 @@ function isUpcoming(ev) {
 }
 
 function eventImage(ev) {
-  return ev?.id ? `${EVENT_IMG}${ev.id}.avif` : EVENT_FALLBACK;
+  return window.AdobeEventModal?.getEventImageSrc?.(ev)
+    || getEventImageSrc(ev)
+    || EVENT_FALLBACK;
 }
 
 function clubsForDisplay() {
@@ -69,7 +109,12 @@ function mergedEvents() {
 }
 
 async function loadData() {
-  const res = await fetch(DATA_PATH);
+  if (window.__adobeClubsDataPrefetch) {
+    const prefetched = await window.__adobeClubsDataPrefetch;
+    if (prefetched) return prefetched;
+  }
+  const path = cfg(PAGE_CONFIG, 'clubs-data', HOME_DASHBOARD_DEFAULTS['clubs-data']);
+  const res = await fetch(path);
   if (!res.ok) throw new Error('Could not load data.json');
   return res.json();
 }
@@ -81,7 +126,9 @@ function formatClubMemberLabel(count) {
 }
 
 function clubJoinLabel(clubId) {
-  return auth()?.isClubJoined?.(clubId) ? 'Joined' : 'Join';
+  return auth()?.isClubJoined?.(clubId)
+    ? cfg(PAGE_CONFIG, 'joined-label', 'Joined')
+    : cfg(PAGE_CONFIG, 'join-label', 'Join');
 }
 
 function clubCard(club) {
@@ -214,13 +261,6 @@ function initEventModal() {
   });
 }
 
-function renderGreeting() {
-  const user = auth()?.getCurrentUser?.();
-  const name = user?.displayName || user?.username || 'there';
-  const greeting = document.getElementById('hm-greeting');
-  if (greeting) greeting.textContent = `Welcome back, ${name}`;
-}
-
 function renderRecommended() {
   const root = document.getElementById('hm-recommended');
   const title = document.getElementById('hm-rec-title');
@@ -231,7 +271,9 @@ function renderRecommended() {
   const completed = features?.hasCompletedQuiz?.();
 
   if (completed) {
-    if (title) title.textContent = 'Recommended for you';
+    if (title) {
+      title.textContent = cfg(PAGE_CONFIG, 'section-recommended-title', HOME_DASHBOARD_DEFAULTS['section-recommended-title']);
+    }
     let recs = features.suggestClubs(clubs, 6) || [];
     if (!recs.length) {
       const weights = features.getInterestProfile?.()?.tagWeights || {};
@@ -251,20 +293,25 @@ function renderRecommended() {
       : '';
     const grid = recs.length
       ? `<div class="lp-clubs-grid">${recs.map(clubCard).join('')}</div>`
-      : `<div class="hm-prompt"><p>We saved your interests. Browse clubs to find communities that fit you.</p><a href="/clubs" class="btn-primary btn-sm">Browse clubs</a></div>`;
+      : `<div class="hm-prompt"><p>${esc(cfg(PAGE_CONFIG, 'rec-empty-text', HOME_DASHBOARD_DEFAULTS['rec-empty-text']))}</p><a href="${esc(cfg(PAGE_CONFIG, 'rec-empty-href', '/clubs'))}" class="btn-primary btn-sm">${esc(cfg(PAGE_CONFIG, 'rec-empty-cta', 'Browse clubs'))}</a></div>`;
     root.innerHTML = `${pills}${grid}`;
     wireHomeCardActions(root);
     return;
   }
 
-  if (title) title.textContent = 'Popular clubs';
+  if (title) {
+    title.textContent = cfg(PAGE_CONFIG, 'section-popular-title', HOME_DASHBOARD_DEFAULTS['section-popular-title']);
+  }
   const fallback = [...clubs]
     .sort((a, b) => (b.members || 0) - (a.members || 0))
     .slice(0, 6);
+  const promptStrong = cfg(PAGE_CONFIG, 'quiz-prompt-strong', HOME_DASHBOARD_DEFAULTS['quiz-prompt-strong']);
+  const promptText = cfg(PAGE_CONFIG, 'quiz-prompt-text', HOME_DASHBOARD_DEFAULTS['quiz-prompt-text']);
+  const quizCta = cfg(PAGE_CONFIG, 'quiz-cta-text', HOME_DASHBOARD_DEFAULTS['quiz-cta-text']);
   root.innerHTML = `
     <div class="hm-prompt">
-      <p><strong>Get picks made for you.</strong> Tell us what you're into and we'll match clubs to your interests.</p>
-      <button type="button" class="btn-primary btn-sm" id="hm-take-quiz">Take the 1-minute quiz</button>
+      <p><strong>${esc(promptStrong)}</strong> ${esc(promptText)}</p>
+      <button type="button" class="btn-primary btn-sm" id="hm-take-quiz">${esc(quizCta)}</button>
     </div>
     <div class="lp-clubs-grid">${fallback.map(clubCard).join('')}</div>
   `;
@@ -278,8 +325,14 @@ function renderCalendar() {
   const root = document.getElementById('hm-calendar');
   if (!root) return;
   const features = uf();
+  if (!features?.buildMiniCalendarHtml) {
+    root.innerHTML = '<div class="hm-cal-card hm-cal-card--loading" aria-busy="true"></div>';
+    return;
+  }
   const rsvpIds = auth()?.getRsvpedEvents?.() || [];
-  const rsvped = mergedEvents().filter((e) => rsvpIds.includes(e.id));
+  const rsvped = mergedEvents()
+    .filter((e) => rsvpIds.includes(e.id))
+    .filter(isUpcoming);
   const days = features?.getRsvpCalendarDays?.(rsvped) || [];
   const cal = features?.buildMiniCalendarHtml?.(days, 'uf-cal') || '';
   const sortedRsvps = [...rsvped].sort((a, b) => {
@@ -292,6 +345,8 @@ function renderCalendar() {
   });
   const visible = sortedRsvps.slice(0, 3);
   const extraCount = sortedRsvps.length - visible.length;
+  const calHref = esc(cfg(PAGE_CONFIG, 'section-calendar-href', '/events?rsvp=mine'));
+  const moreTemplate = cfg(PAGE_CONFIG, 'cal-more-template', HOME_DASHBOARD_DEFAULTS['cal-more-template']);
 
   const rsvpListHtml = visible.length
     ? `<ul class="hm-rsvp-list" role="list">${visible.map((ev) => `
@@ -302,17 +357,17 @@ function renderCalendar() {
             <span class="hm-rsvp-meta">${esc(ev.club)} · ${esc(ev.time)}</span>
           </a>
         </li>`).join('')}</ul>
-        ${extraCount > 0 ? `<p class="hm-rsvp-more"><a href="/events?rsvp=mine" class="hm-section-link">${extraCount} more RSVP'd event${extraCount === 1 ? '' : 's'} →</a></p>` : ''}`
+        ${extraCount > 0 ? `<p class="hm-rsvp-more"><a href="${calHref}" class="hm-section-link">${esc(fillTemplate(moreTemplate, { count: extraCount, plural: extraCount === 1 ? '' : 's' }))}</a></p>` : ''}`
     : `<div class="hm-rsvp-empty">
-        <p>No RSVP'd events yet.</p>
-        <a href="/events" class="hm-section-link">Browse events →</a>
+        <p>${esc(cfg(PAGE_CONFIG, 'cal-empty-text', HOME_DASHBOARD_DEFAULTS['cal-empty-text']))}</p>
+        <a href="${esc(cfg(PAGE_CONFIG, 'cal-empty-href', '/events'))}" class="btn-primary btn-sm">${esc(cfg(PAGE_CONFIG, 'cal-empty-link', HOME_DASHBOARD_DEFAULTS['cal-empty-link']))}</a>
       </div>`;
 
   root.innerHTML = `
     <div class="hm-cal-layout">
       <div class="hm-cal-card">${cal}</div>
       <aside class="hm-cal-rsvps" aria-label="Your RSVP'd events">
-        <h3 class="hm-cal-rsvps-title">RSVP'd events</h3>
+        <h3 class="hm-cal-rsvps-title">${esc(cfg(PAGE_CONFIG, 'cal-rsvps-title', HOME_DASHBOARD_DEFAULTS['cal-rsvps-title']))}</h3>
         ${rsvpListHtml}
       </aside>
     </div>
@@ -345,7 +400,11 @@ function syncYourClubsHighlight() {
   section.classList.toggle('hm-section--dark', isEmpty);
   const title = document.getElementById('hm-clubs-title');
   const link = document.getElementById('hm-clubs-link');
-  if (title) title.textContent = isEmpty ? 'Find your first club' : 'Your clubs';
+  if (title) {
+    title.textContent = isEmpty
+      ? cfg(PAGE_CONFIG, 'section-clubs-title-empty', HOME_DASHBOARD_DEFAULTS['section-clubs-title-empty'])
+      : cfg(PAGE_CONFIG, 'section-clubs-title', HOME_DASHBOARD_DEFAULTS['section-clubs-title']);
+  }
   if (link) link.hidden = isEmpty;
 }
 
@@ -357,9 +416,9 @@ function renderYourClubs() {
   if (!joined.length) {
     root.innerHTML = `
       <div class="hm-empty">
-        <p>Browse what's available and join one that fits you</p>
+        <p>${esc(cfg(PAGE_CONFIG, 'clubs-empty-text', HOME_DASHBOARD_DEFAULTS['clubs-empty-text']))}</p>
         <div class="lp-cta-actions">
-          <a href="/clubs" class="btn-primary">Explore clubs</a>
+          <a href="${esc(cfg(PAGE_CONFIG, 'clubs-empty-href', '/clubs'))}" class="btn-primary">${esc(cfg(PAGE_CONFIG, 'clubs-empty-cta', HOME_DASHBOARD_DEFAULTS['clubs-empty-cta']))}</a>
         </div>
       </div>`;
     syncYourClubsHighlight();
@@ -391,39 +450,49 @@ async function reloadPublishedHomeData() {
   }
 }
 
-function buildDashboardShell(main) {
-  main.innerHTML = `
+function buildDashboardShell(block) {
+  const recLabel = cfg(PAGE_CONFIG, 'section-recommended-label', HOME_DASHBOARD_DEFAULTS['section-recommended-label']);
+  const recTitle = cfg(PAGE_CONFIG, 'section-recommended-title', HOME_DASHBOARD_DEFAULTS['section-recommended-title']);
+  const recLink = cfg(PAGE_CONFIG, 'section-recommended-link', HOME_DASHBOARD_DEFAULTS['section-recommended-link']);
+  const recHref = cfg(PAGE_CONFIG, 'section-recommended-href', '/clubs');
+  const calLabel = cfg(PAGE_CONFIG, 'section-calendar-label', HOME_DASHBOARD_DEFAULTS['section-calendar-label']);
+  const calLink = cfg(PAGE_CONFIG, 'section-calendar-link', HOME_DASHBOARD_DEFAULTS['section-calendar-link']);
+  const calHref = cfg(PAGE_CONFIG, 'section-calendar-href', '/events?rsvp=mine');
+  const evTitle = cfg(PAGE_CONFIG, 'section-events-title', HOME_DASHBOARD_DEFAULTS['section-events-title']);
+  const evLink = cfg(PAGE_CONFIG, 'section-events-link', HOME_DASHBOARD_DEFAULTS['section-events-link']);
+  const evHref = cfg(PAGE_CONFIG, 'section-events-href', '/events');
+  const clubsLabel = cfg(PAGE_CONFIG, 'section-clubs-label', HOME_DASHBOARD_DEFAULTS['section-clubs-label']);
+  const clubsTitle = cfg(PAGE_CONFIG, 'section-clubs-title', HOME_DASHBOARD_DEFAULTS['section-clubs-title']);
+  const clubsLink = cfg(PAGE_CONFIG, 'section-clubs-link', HOME_DASHBOARD_DEFAULTS['section-clubs-link']);
+  const clubsHref = cfg(PAGE_CONFIG, 'section-clubs-href', '/clubs');
+
+  block.innerHTML = `
     <div class="hm-dashboard" id="hm-dashboard">
-      <div class="hm-header">
-        <div class="hm-welcome-row">
-          <h1 class="hm-title" id="hm-greeting">Welcome back</h1>
-        </div>
-      </div>
-      <section class="hm-section" aria-label="Recommended for you">
+      <section class="hm-section" aria-label="${esc(recLabel)}">
         <div class="hm-section-head">
-          <h2 id="hm-rec-title">Recommended for you</h2>
-          <a href="/clubs" class="hm-section-link">Browse all clubs →</a>
+          <h2 id="hm-rec-title">${esc(recTitle)}</h2>
+          <a href="${esc(recHref)}" class="hm-section-link">${esc(recLink)}</a>
         </div>
         <div id="hm-recommended"></div>
       </section>
-      <section class="hm-section" aria-label="Your calendar">
+      <section class="hm-section" aria-label="${esc(calLabel)}">
         <div class="hm-section-head">
-          <h2>Your calendar</h2>
-          <a href="/events?rsvp=mine" class="hm-section-link">View RSVP'd events →</a>
+          <h2>${esc(calLabel)}</h2>
+          <a href="${esc(calHref)}" class="hm-section-link">${esc(calLink)}</a>
         </div>
         <div id="hm-calendar"></div>
       </section>
-      <section class="hm-section" aria-label="Upcoming events">
+      <section class="hm-section" aria-label="${esc(evTitle)}">
         <div class="hm-section-head">
-          <h2>Upcoming events</h2>
-          <a href="/events" class="hm-section-link">See all events →</a>
+          <h2>${esc(evTitle)}</h2>
+          <a href="${esc(evHref)}" class="hm-section-link">${esc(evLink)}</a>
         </div>
         <div class="lp-events-grid" id="hm-events"></div>
       </section>
-      <section class="hm-section" aria-label="Your clubs">
+      <section class="hm-section" aria-label="${esc(clubsLabel)}">
         <div class="hm-section-head">
-          <h2 id="hm-clubs-title">Your clubs</h2>
-          <a href="/clubs" class="hm-section-link" id="hm-clubs-link">Find more →</a>
+          <h2 id="hm-clubs-title">${esc(clubsTitle)}</h2>
+          <a href="${esc(clubsHref)}" class="hm-section-link" id="hm-clubs-link">${esc(clubsLink)}</a>
         </div>
         <div id="hm-your-clubs"></div>
       </section>
@@ -434,31 +503,36 @@ function buildDashboardShell(main) {
 async function loadHomeDependencies() {
   if (depsLoaded) return;
   const base = codeBase();
-  const scripts = [
+  const criticalScripts = [
     `${base}/scripts/club-meta.js`,
     `${base}/scripts/user-features.js`,
-    `${base}/scripts/club-request-prompt.js`,
-    `${base}/scripts/join-modal.js`,
-    `${base}/scripts/interest-quiz.js`,
     `${base}/scripts/event-seats.js`,
     `${base}/scripts/event-modal.js`,
+    `${base}/scripts/join-modal.js`,
+  ];
+  const deferredScripts = [
+    `${base}/scripts/club-request-prompt.js`,
+    `${base}/scripts/interest-quiz.js`,
   ];
   const styles = [
     `${base}/styles/user-features.css`,
     `${base}/styles/join-modal.css`,
     `${base}/styles/event-modal.css`,
   ];
-  await Promise.all(styles.map((href) => loadCSS(href)));
-  // Load scripts sequentially so one failure does not block the dashboard shell.
-  await scripts.reduce(async (chain, src) => {
-    await chain;
-    try {
-      await loadScript(src);
-    } catch (err) {
-      // eslint-disable-next-line no-console
-      console.error(`home-dashboard: failed to load ${src}`, err);
-    }
-  }, Promise.resolve());
+  await Promise.all([
+    ...styles.map((href) => loadCSS(href)),
+    ...criticalScripts.map((src) => loadScript(src)),
+  ]);
+  const loadDeferred = () => {
+    deferredScripts.forEach((src) => {
+      loadScript(src).catch(() => {});
+    });
+  };
+  if ('requestIdleCallback' in window) {
+    requestIdleCallback(loadDeferred, { timeout: 2500 });
+  } else {
+    window.setTimeout(loadDeferred, 0);
+  }
   depsLoaded = true;
 }
 
@@ -496,7 +570,6 @@ function bindHomeEvents() {
 
 async function initDashboard() {
   syncYourClubsHighlight();
-  renderGreeting();
   await reloadPublishedHomeData();
   auth()?.onPublishedContentChange?.(reloadPublishedHomeData);
 }
@@ -504,8 +577,28 @@ async function initDashboard() {
 export default async function decorate(block) {
   if (!auth()?.isAuthenticated?.()) return;
 
-  const main = block.closest('main');
-  if (!main) return;
+  if (auth()?.isAnyAdmin?.()) {
+    const dedicatedAdminBlock = document.querySelector('main .admin-dashboard.block');
+    if (dedicatedAdminBlock && dedicatedAdminBlock !== block) {
+      block.innerHTML = '';
+      block.closest('.section')?.style.setProperty('display', 'none');
+      return;
+    }
+    const base = codeBase();
+    await loadCSS(`${base}/blocks/admin-dashboard/admin-dashboard.css`);
+    const { default: decorateAdmin } = await import('../admin-dashboard/admin-dashboard.js');
+    await decorateAdmin(block);
+    return;
+  }
+
+  PAGE_CONFIG = readPageConfig(block, HOME_DASHBOARD_DEFAULTS);
+  window.__homePageConfig = { ...(window.__homePageConfig || {}), dashboard: PAGE_CONFIG };
+
+  block.innerHTML = '';
+  block.classList.add('home-dashboard');
+  document.body.classList.add('user-home');
+
+  buildDashboardShell(block);
 
   const section = block.closest('.section');
   if (section) {
@@ -513,14 +606,16 @@ export default async function decorate(block) {
     section.dataset.sectionStatus = 'loaded';
   }
 
-  document.body.classList.add('user-home');
-  buildDashboardShell(main);
-
   try {
     await loadHomeDependencies();
-    window.AdobeInterestQuiz?.maybeShowFirstSignupPicker?.();
-    bindHomeEvents();
     await initDashboard();
+    const showQuiz = () => window.AdobeInterestQuiz?.maybeShowFirstSignupPicker?.();
+    if ('requestIdleCallback' in window) {
+      requestIdleCallback(showQuiz, { timeout: 3000 });
+    } else {
+      window.setTimeout(showQuiz, 500);
+    }
+    bindHomeEvents();
   } catch (err) {
     // eslint-disable-next-line no-console
     console.error('home-dashboard: init failed', err);

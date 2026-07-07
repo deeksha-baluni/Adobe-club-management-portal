@@ -1,30 +1,29 @@
 /* Shared styles for club page body blocks */
 
-main:has(.club-hero) {
+main:has(.page-hero--club, .club-hero) {
   background: var(--light-color, #f8f8f8);
 }
 
 /*
  * Reset global EDS section chrome on club detail page:
- * - styles.css gives main > div { margin: 40px 16px } (grey gap under nav)
  * - lazy-styles.css adds border-top + padding on non-first sections
  */
-main:has(.club-hero) > .section,
-main:has(.club-hero) > .section > div {
+main:has(.page-hero--club, .club-hero) > .section,
+main:has(.page-hero--club, .club-hero) > .section > div {
   margin: 0 !important;
   max-width: unset;
 }
 
-main:has(.club-hero) > .section:not(.dark) {
+main:has(.page-hero--club, .club-hero) > .section:not(.dark) {
   border-top: none !important;
   padding-top: 0 !important;
   padding-bottom: 0 !important;
 }
 
 /* Collapse empty breadcrumb / placeholder section above hero (da.live) */
-main:has(.club-hero) > .section:has(.page-breadcrumb),
-main:has(.club-hero) > .section:has(.breadcrumb),
-main:has(.club-hero) > .section:first-of-type:not(:has(.club-hero)):not(:has(.cta-banner)):not(:has(.club-list)) {
+main:has(.page-hero--club, .club-hero) > .section:has(.page-breadcrumb),
+main:has(.page-hero--club, .club-hero) > .section:has(.breadcrumb),
+main:has(.page-hero--club, .club-hero) > .section:first-of-type:not(:has(.page-hero--club)):not(:has(.club-hero)):not(:has(.cta-banner)):not(:has(.club-list)) {
   display: none !important;
 }
 
@@ -48,20 +47,28 @@ main:has(.club-hero) > .section:first-of-type:not(:has(.club-hero)):not(:has(.ct
   border-radius: 999px;
 }
 
-/* OG .club-detail-inner { gap: 72px } — each block contributes bottom spacing only */
+/*
+ * OG .club-detail-inner { gap: 72px }
+ * Split blocks (legacy): bottom padding per section.
+ * Consolidated club-list: flex gap on .club-list-inner.
+ */
 .club-section-inner {
   max-width: var(--max-width, 1280px);
   margin: 0 auto;
   padding: 0 var(--section-padding-x, 40px) 72px;
 }
 
+.club-list-inner .club-section-inner {
+  padding-bottom: 0;
+}
+
 /* OG .club-hero + .club-block { margin-top: 40px } */
-main > .section:has(.club-hero) + .section:has(.club-list) .club-list-section--activities .club-section-inner {
+main > .section:has(.page-hero--club) + .section:has(.club-list) .club-list-section--activities .club-section-inner,
+main > .section:has(.club-hero) + .section .club-section-inner {
   padding-top: 40px;
 }
 
-/* Below-fold club body */
-main:has(.club-hero) > .section:has(.club-list) {
+main:has(.page-hero--club, .club-hero) > .section:has(.club-list) {
   content-visibility: auto;
   contain-intrinsic-size: auto 480px;
 }
@@ -71,7 +78,8 @@ main:has(.club-hero) > .section:has(.club-list) {
     padding-bottom: 56px;
   }
 
-  main > .section:has(.club-hero) + .section:has(.club-list) .club-list-section--activities .club-section-inner {
+  main > .section:has(.page-hero--club) + .section:has(.club-list) .club-list-section--activities .club-section-inner,
+  main > .section:has(.club-hero) + .section .club-section-inner {
     padding-top: 32px;
   }
 }
@@ -81,7 +89,8 @@ main:has(.club-hero) > .section:has(.club-list) {
     padding-bottom: 48px;
   }
 
-  main > .section:has(.club-hero) + .section:has(.club-list) .club-list-section--activities .club-section-inner {
+  main > .section:has(.page-hero--club) + .section:has(.club-list) .club-list-section--activities .club-section-inner,
+  main > .section:has(.club-hero) + .section .club-section-inner {
     padding-top: 28px;
   }
 }

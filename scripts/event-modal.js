@@ -137,12 +137,17 @@ window.AdobeEventModal = (function () {
     return Boolean(ev?.membersOnly);
   }
 
+  const JOIN_CLUB_RSVP_LABEL = 'Join club to RSVP';
+
   function canRsvpToEvent(ev) {
-    if (clubContext && !getAuth().isClubJoined(clubContext.id)) return false;
-    if (!isMembersOnlyEvent(ev)) return true;
+    const auth = getAuth();
+    if (auth.isAdmin?.()) return true;
     const club = getEventClub(ev);
-    if (!club?.id) return true;
-    return getAuth().isClubJoined(club.id);
+    if (club?.id && auth.canManageClub?.(club.id)) return true;
+    if (clubContext && !auth.isClubJoined(clubContext.id)) return false;
+    if (!isMembersOnlyEvent(ev)) return true;
+    if (!club?.id) return false;
+    return auth.isClubJoined(club.id);
   }
 
   function isEventEligible(ev) {
@@ -166,10 +171,11 @@ window.AdobeEventModal = (function () {
       return { mode: 'rsvp', label: "RSVP'd", joined: true };
     }
     if (clubContext && !getAuth().isClubJoined(clubContext.id)) {
-      return { mode: 'join-club', label: 'Join club', joined: false, club: clubContext };
+      return { mode: 'join-club', label: JOIN_CLUB_RSVP_LABEL, joined: false, club: clubContext };
     }
     if (isMembersOnlyEvent(ev) && !canRsvpToEvent(ev)) {
-      return { mode: 'join-club', label: 'Join club', joined: false, club: getEventClub(ev) };
+      const club = getEventClub(ev) || clubContext;
+      return { mode: 'join-club', label: JOIN_CLUB_RSVP_LABEL, joined: false, club };
     }
     if (window.AdobeEventSeats?.isFull?.(ev)) {
       return { mode: 'seats-full', label: 'Seats full', joined: false, disabled: true };
@@ -359,7 +365,7 @@ window.AdobeEventModal = (function () {
     }
 
     if (state.mode === 'join-club') {
-      modalRsvp.textContent = 'Join club to RSVP';
+      modalRsvp.textContent = JOIN_CLUB_RSVP_LABEL;
     } else {
       modalRsvp.textContent = state.joined ? "RSVP'd" : 'RSVP for this event';
     }
@@ -453,7 +459,7 @@ window.AdobeEventModal = (function () {
     const state = getEventActionState(ev);
     if (state.mode === 'join-club') {
       const club = state.club || getEventClub(ev) || clubContext;
-      if (!club) return false;
+      if (!club?.id) return false;
       const joinedClub = window.AdobeJoinModal?.toggleClubJoinWithModal(club, { events: allEvents });
       if (joinedClub === null) return false;
       if (joinedClub) {
@@ -461,6 +467,7 @@ window.AdobeEventModal = (function () {
         renderEventModalExtras(ev);
         notifyStateChange(ev);
       }
+      if (btn) applyActionState(btn, ev);
       return joinedClub;
     }
 
@@ -477,6 +484,7 @@ window.AdobeEventModal = (function () {
     }
     refreshModalRsvp(ev);
     notifyStateChange(ev);
+    if (btn) applyActionState(btn, ev);
     return nowRsvped;
   }
 
@@ -635,9 +643,10 @@ window.AdobeEventModal = (function () {
     button.dataset.action = state.mode;
     if (state.club?.id) button.dataset.clubId = state.club.id;
     else button.removeAttribute('data-club-id');
+    const label = state.mode === 'join-club' ? JOIN_CLUB_RSVP_LABEL : state.label;
     const textEl = button.querySelector('.ev-poster-action-text');
-    if (textEl) textEl.textContent = state.label;
-    else button.textContent = state.label;
+    if (textEl) textEl.textContent = label;
+    else button.textContent = label;
   }
 
   function init({

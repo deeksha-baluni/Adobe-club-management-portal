@@ -1142,9 +1142,29 @@ body.cr-open {
 /* Two-column layout for paired short fields */
 .cr-row-2 {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   gap: 12px;
 }
+
+.cr-row-2 > .cr-field {
+  min-width: 0;
+}
+
+.cr-row-2 .cr-input {
+  box-sizing: border-box;
+  max-width: 100%;
+}
+
+.cr-row-2 .cr-input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+.cr-row-2 .cr-input[type="number"]::-webkit-outer-spin-button,
+.cr-row-2 .cr-input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
 @media (max-width: 480px) {
   .cr-row-2 { grid-template-columns: 1fr; }
 }
@@ -1153,14 +1173,14 @@ body.cr-open {
 .cr-input-prefix-wrap {
   display: flex;
   align-items: center;
-  border: 1px solid var(--border-default);
+  border: 1px solid #000;
   border-radius: var(--radius-sm);
   background: var(--bg-base);
   overflow: hidden;
 }
 .cr-input-prefix-wrap:focus-within {
   outline: 2px solid rgba(var(--accent-rgb), 0.35);
-  border-color: var(--accent);
+  border-color: #000;
 }
 .cr-input-prefix {
   flex-shrink: 0;
@@ -1215,6 +1235,11 @@ body.cr-open {
   color: var(--text-1);
 }
 
+.cr-label span[aria-hidden="true"] {
+  color: var(--red, #eb1000);
+  font-weight: 700;
+}
+
 .cr-label--sub {
   font-size: 12px;
   font-weight: 600;
@@ -1224,7 +1249,7 @@ body.cr-open {
 .cr-input {
   width: 100%;
   padding: 10px 12px;
-  border: 1px solid var(--border-default);
+  border: 1px solid #000;
   border-radius: var(--radius-sm);
   background: var(--bg-base);
   color: var(--text-1);
@@ -1243,7 +1268,7 @@ body.cr-open {
 
 .cr-input:focus {
   outline: 2px solid rgba(var(--accent-rgb), 0.35);
-  border-color: var(--accent);
+  border-color: #000;
 }
 
 .cr-error {

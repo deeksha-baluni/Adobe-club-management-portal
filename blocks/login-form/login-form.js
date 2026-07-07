@@ -1,36 +1,70 @@
 /**
  * Login Form block — two-panel auth page (image slider left, sign-in/sign-up right).
  *
- * da.live: empty block, all content is built by JS.
+ * da.live: key | value config rows (see LOGIN_FORM_DEFAULTS).
  *   | Login Form |
- *   | (empty)    |
+ *   | tab-login  | Login |
  *
  * Requires /scripts/auth-guard.js loaded before this block.
  */
+import { readPageConfig, cfg, fillTemplate } from '../club-shared/block-config.js';
 
-const SLIDE_1_CANDIDATES = [
-  '/assets/images/login/adobeimg.webp',
-  '/assets/images/login/img1.avif',
-];
-const SLIDE_2_CANDIDATES = [
-  '/assets/images/login/adobeimg2.webp',
-  '/assets/images/login/img2.avif',
-];
-const LOGO_FALLBACK = '/assets/images/logo/Adobe-Logo-Transparent-PNG.png';
+export const LOGIN_FORM_DEFAULTS = {
+  'slide-image-1': '/assets/images/login/adobeimg.webp, /assets/images/login/img1.avif',
+  'slide-image-2': '/assets/images/login/adobeimg2.webp, /assets/images/login/img2.avif',
+  'logo-fallback': '/assets/images/logo/Adobe-Logo-Transparent-PNG.png',
+  'redirect-authed': '/home',
+  'redirect-default': '/',
+  'tab-login': 'Login',
+  'tab-signup': 'Sign up',
+  'heading-login': 'Login to Adobe Clubs',
+  'heading-signup': 'Create your account',
+  'subtitle-login': 'Welcome back. Sign in to continue.',
+  'subtitle-signup': 'Join Adobe Clubs. Your data stays on this device.',
+  'signin-identity-label': 'Username or Email',
+  'signin-identity-placeholder': 'user or user@adobe.com',
+  'signin-password-label': 'Password',
+  'signin-password-placeholder': 'Enter your password',
+  'signin-submit': 'Login',
+  'signup-username-label': 'Username',
+  'signup-username-placeholder': 'e.g. priya.sharma',
+  'signup-email-label': 'Email',
+  'signup-email-placeholder': 'firstname.lastname@adobe.com',
+  'signup-password-label': 'Password',
+  'signup-password-placeholder': 'At least 6 characters',
+  'signup-submit': 'Create account',
+  'signup-company': 'Adobe Inc.',
+  'switch-to-signup-prefix': "Don't have an account?",
+  'switch-to-signup-link': 'Sign up',
+  'switch-to-login-prefix': 'Already have an account?',
+  'switch-to-login-link': 'Log in',
+  'error-auth-load': 'Auth module failed to load. Refresh the page.',
+  'error-signin-identity-empty': 'Please enter username or email.',
+  'error-signin-password-empty': 'Please enter your password.',
+  'error-signin-invalid': 'Invalid username/email or password.',
+  'error-signin-generic': 'Could not sign in.',
+  'error-signup-username-empty': 'Choose a username.',
+  'error-signup-email-empty': 'Enter your email.',
+  'error-signup-password-short': 'Password must be at least 6 characters.',
+  'error-signup-generic': 'Could not create account.',
+  'success-signin-template': 'Welcome, {name}.',
+  'success-signup': 'Account created. Welcome to Adobe Clubs!',
+};
+
+let PAGE_CONFIG = { ...LOGIN_FORM_DEFAULTS };
 
 function getAuth() {
   return window.AdobeClubsAuth;
 }
 
-function getNextPath() {
-  try {
-    const next = new URLSearchParams(window.location.search).get('next');
-    if (next && !/^https?:\/\//i.test(next) && !next.startsWith('//') && !next.includes('login')) {
-      return next;
-    }
-  } catch { /* ignore */ }
-  if (getAuth()?.isAuthenticated?.()) return '/home';
-  return '/';
+function parseImageCandidates(value, fallbacks = []) {
+  if (!value) return [...fallbacks];
+  const parts = String(value).split(',').map((s) => s.trim()).filter(Boolean);
+  return parts.length ? parts : [...fallbacks];
+}
+
+function getNextPath(config = PAGE_CONFIG) {
+  return cfg(config, 'redirect-authed', LOGIN_FORM_DEFAULTS['redirect-authed']);
 }
 
 // ── Image slider helpers ──────────────────────────────────────────
@@ -50,7 +84,7 @@ function firstExistingImage(candidates) {
   });
 }
 
-function buildVisualPanel() {
+function buildVisualPanel(config) {
   const panel = document.createElement('div');
   panel.className = 'auth-visual-panel';
 
@@ -78,7 +112,7 @@ function buildVisualPanel() {
   dotsRoot.setAttribute('role', 'group');
   dotsRoot.setAttribute('aria-label', 'Slide controls');
 
-  for (let i = 0; i < 2; i++) {
+  for (let i = 0; i < 2; i += 1) {
     const dot = document.createElement('button');
     dot.type = 'button';
     dot.className = 'auth-dot';
@@ -90,10 +124,12 @@ function buildVisualPanel() {
 
   slider.append(slide1, slide2, overlay, dotsRoot);
   panel.append(slider);
+
+  initSlider(panel, config);
   return panel;
 }
 
-function initSlider(panel) {
+function initSlider(panel, config) {
   const slide1 = panel.querySelector('#auth-slide-1');
   const slide2 = panel.querySelector('#auth-slide-2');
   const dots = panel.querySelectorAll('.auth-dot');
@@ -139,15 +175,18 @@ function initSlider(panel) {
   panel.addEventListener('mouseenter', stop);
   panel.addEventListener('mouseleave', start);
 
-  // Load images
+  const slide1Candidates = parseImageCandidates(cfg(config, 'slide-image-1'));
+  const slide2Candidates = parseImageCandidates(cfg(config, 'slide-image-2'));
+  const logoFallback = cfg(config, 'logo-fallback', LOGIN_FORM_DEFAULTS['logo-fallback']);
+
   Promise.all([
-    firstExistingImage(SLIDE_1_CANDIDATES),
-    firstExistingImage(SLIDE_2_CANDIDATES),
+    firstExistingImage(slide1Candidates),
+    firstExistingImage(slide2Candidates),
   ]).then(([src1, src2]) => {
     if (src1) {
       slide1.src = src1;
     } else {
-      slide1.src = LOGO_FALLBACK;
+      slide1.src = logoFallback;
       slide1.style.objectFit = 'contain';
       slide1.style.background = '#211d2f';
       slide1.style.padding = '42px';
@@ -182,7 +221,7 @@ function buildField({ id, label, type = 'text', placeholder, autocomplete, error
   input.type = type;
   input.id = id;
   input.name = id;
-  input.className = 'auth-input' + (hasToggle ? '' : ' auth-input--plain');
+  input.className = `auth-input${hasToggle ? '' : ' auth-input--plain'}`;
   input.placeholder = placeholder || '';
   if (autocomplete) input.autocomplete = autocomplete;
   input.required = true;
@@ -195,7 +234,7 @@ function buildField({ id, label, type = 'text', placeholder, autocomplete, error
     btn.className = 'auth-toggle-pw';
     btn.setAttribute('aria-label', 'Show password');
     btn.setAttribute('data-toggle-for', id);
-    btn.innerHTML = `<svg class="auth-eye" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>`;
+    btn.innerHTML = '<svg class="auth-eye" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>';
     btn.addEventListener('click', () => {
       const isHidden = input.type === 'password';
       input.type = isHidden ? 'text' : 'password';
@@ -229,7 +268,7 @@ function setFieldError(inputId, errorId, message) {
   }
 }
 
-function buildSigninPanel() {
+function buildSigninPanel(config) {
   const panel = document.createElement('div');
   panel.className = 'auth-panel';
   panel.id = 'signin-panel';
@@ -240,21 +279,36 @@ function buildSigninPanel() {
   form.noValidate = true;
 
   form.append(
-    buildField({ id: 'signin-identity', label: 'Username or Email', type: 'text', placeholder: 'user or user@adobe.com', autocomplete: 'username', errorId: 'signin-identity-error' }),
-    buildField({ id: 'signin-password', label: 'Password', type: 'password', placeholder: 'Enter your password', autocomplete: 'current-password', errorId: 'signin-password-error', hasToggle: true }),
+    buildField({
+      id: 'signin-identity',
+      label: cfg(config, 'signin-identity-label', LOGIN_FORM_DEFAULTS['signin-identity-label']),
+      type: 'text',
+      placeholder: cfg(config, 'signin-identity-placeholder', LOGIN_FORM_DEFAULTS['signin-identity-placeholder']),
+      autocomplete: 'username',
+      errorId: 'signin-identity-error',
+    }),
+    buildField({
+      id: 'signin-password',
+      label: cfg(config, 'signin-password-label', LOGIN_FORM_DEFAULTS['signin-password-label']),
+      type: 'password',
+      placeholder: cfg(config, 'signin-password-placeholder', LOGIN_FORM_DEFAULTS['signin-password-placeholder']),
+      autocomplete: 'current-password',
+      errorId: 'signin-password-error',
+      hasToggle: true,
+    }),
   );
 
   const btn = document.createElement('button');
   btn.type = 'submit';
   btn.className = 'auth-btn auth-btn--primary';
-  btn.textContent = 'Login';
+  btn.textContent = cfg(config, 'signin-submit', LOGIN_FORM_DEFAULTS['signin-submit']);
 
   form.append(btn);
   panel.append(form);
   return panel;
 }
 
-function buildSignupPanel() {
+function buildSignupPanel(config) {
   const panel = document.createElement('div');
   panel.className = 'auth-panel';
   panel.id = 'signup-panel';
@@ -265,29 +319,50 @@ function buildSignupPanel() {
   form.noValidate = true;
 
   form.append(
-    buildField({ id: 'signup-username', label: 'Username', type: 'text', placeholder: 'e.g. priya.sharma', autocomplete: 'username', errorId: 'signup-username-error' }),
-    buildField({ id: 'signup-email', label: 'Email', type: 'email', placeholder: 'firstname.lastname@adobe.com', autocomplete: 'email', errorId: 'signup-email-error' }),
-    buildField({ id: 'signup-password', label: 'Password', type: 'password', placeholder: 'At least 6 characters', autocomplete: 'new-password', errorId: 'signup-password-error', hasToggle: true }),
+    buildField({
+      id: 'signup-username',
+      label: cfg(config, 'signup-username-label', LOGIN_FORM_DEFAULTS['signup-username-label']),
+      type: 'text',
+      placeholder: cfg(config, 'signup-username-placeholder', LOGIN_FORM_DEFAULTS['signup-username-placeholder']),
+      autocomplete: 'username',
+      errorId: 'signup-username-error',
+    }),
+    buildField({
+      id: 'signup-email',
+      label: cfg(config, 'signup-email-label', LOGIN_FORM_DEFAULTS['signup-email-label']),
+      type: 'email',
+      placeholder: cfg(config, 'signup-email-placeholder', LOGIN_FORM_DEFAULTS['signup-email-placeholder']),
+      autocomplete: 'email',
+      errorId: 'signup-email-error',
+    }),
+    buildField({
+      id: 'signup-password',
+      label: cfg(config, 'signup-password-label', LOGIN_FORM_DEFAULTS['signup-password-label']),
+      type: 'password',
+      placeholder: cfg(config, 'signup-password-placeholder', LOGIN_FORM_DEFAULTS['signup-password-placeholder']),
+      autocomplete: 'new-password',
+      errorId: 'signup-password-error',
+      hasToggle: true,
+    }),
   );
 
   const btn = document.createElement('button');
   btn.type = 'submit';
   btn.className = 'auth-btn auth-btn--primary';
-  btn.textContent = 'Create account';
+  btn.textContent = cfg(config, 'signup-submit', LOGIN_FORM_DEFAULTS['signup-submit']);
 
   form.append(btn);
   panel.append(form);
   return panel;
 }
 
-function buildFormPanel() {
+function buildFormPanel(config) {
   const panel = document.createElement('div');
   panel.className = 'auth-form-panel';
 
   const inner = document.createElement('div');
   inner.className = 'auth-form-inner';
 
-  // Tabs
   const tabs = document.createElement('div');
   tabs.className = 'auth-tabs';
   tabs.setAttribute('role', 'tablist');
@@ -298,7 +373,7 @@ function buildFormPanel() {
   tabLogin.id = 'auth-tab-login';
   tabLogin.setAttribute('role', 'tab');
   tabLogin.setAttribute('aria-selected', 'true');
-  tabLogin.textContent = 'Login';
+  tabLogin.textContent = cfg(config, 'tab-login', LOGIN_FORM_DEFAULTS['tab-login']);
 
   const tabSignup = document.createElement('button');
   tabSignup.type = 'button';
@@ -306,50 +381,57 @@ function buildFormPanel() {
   tabSignup.id = 'auth-tab-signup';
   tabSignup.setAttribute('role', 'tab');
   tabSignup.setAttribute('aria-selected', 'false');
-  tabSignup.textContent = 'Sign up';
+  tabSignup.textContent = cfg(config, 'tab-signup', LOGIN_FORM_DEFAULTS['tab-signup']);
 
   tabs.append(tabLogin, tabSignup);
 
-  // Heading
   const heading = document.createElement('h1');
   heading.className = 'auth-heading';
   heading.id = 'auth-panel-title';
-  heading.textContent = 'Login to Adobe Clubs';
+  heading.textContent = cfg(config, 'heading-login', LOGIN_FORM_DEFAULTS['heading-login']);
 
-  // Alert
-  const alert = document.createElement('div');
+  const subtitle = document.createElement('p');
+  subtitle.className = 'auth-subtitle';
+  subtitle.id = 'auth-panel-subtitle';
+  subtitle.textContent = cfg(config, 'subtitle-login', LOGIN_FORM_DEFAULTS['subtitle-login']);
+
+  const panelsWrap = document.createElement('div');
+  panelsWrap.className = 'auth-panels-wrapper';
+  panelsWrap.append(buildSigninPanel(config), buildSignupPanel(config));
+
+  const switchRow = document.createElement('p');
+  switchRow.className = 'auth-signup-row';
+  switchRow.id = 'auth-switch-row';
+
+  inner.append(tabs, heading, subtitle, panelsWrap, switchRow);
+  panel.append(inner);
+  return panel;
+}
+
+function ensureAuthAlert() {
+  let alert = document.getElementById('auth-alert');
+  if (alert) return alert;
+
+  alert = document.createElement('div');
   alert.className = 'auth-alert';
   alert.id = 'auth-alert';
   alert.setAttribute('role', 'alert');
   alert.setAttribute('aria-live', 'polite');
   alert.hidden = true;
-
-  // Panels wrapper
-  const panelsWrap = document.createElement('div');
-  panelsWrap.className = 'auth-panels-wrapper';
-  const signinPanel = buildSigninPanel();
-  const signupPanel = buildSignupPanel();
-  panelsWrap.append(signinPanel, signupPanel);
-
-  // Switch row
-  const switchRow = document.createElement('p');
-  switchRow.className = 'auth-signup-row';
-  switchRow.id = 'auth-switch-row';
-
-  inner.append(tabs, heading, alert, panelsWrap, switchRow);
-  panel.append(inner);
-  return panel;
+  document.body.append(alert);
+  return alert;
 }
 
 // ── Mode switching ────────────────────────────────────────────────
 
-function setAuthMode(mode) {
+function setAuthMode(mode, config = PAGE_CONFIG) {
   const isLogin = mode === 'login';
   const tabLogin = document.getElementById('auth-tab-login');
   const tabSignup = document.getElementById('auth-tab-signup');
   const signinPanel = document.getElementById('signin-panel');
   const signupPanel = document.getElementById('signup-panel');
   const title = document.getElementById('auth-panel-title');
+  const subtitle = document.getElementById('auth-panel-subtitle');
   const switchRow = document.getElementById('auth-switch-row');
   const alertEl = document.getElementById('auth-alert');
 
@@ -360,14 +442,29 @@ function setAuthMode(mode) {
   signinPanel?.classList.toggle('is-active', isLogin);
   signupPanel?.classList.toggle('is-active', !isLogin);
 
-  if (title) title.textContent = isLogin ? 'Login to Adobe Clubs' : 'Create your account';
+  if (title) {
+    title.textContent = isLogin
+      ? cfg(config, 'heading-login', LOGIN_FORM_DEFAULTS['heading-login'])
+      : cfg(config, 'heading-signup', LOGIN_FORM_DEFAULTS['heading-signup']);
+  }
+
+  if (subtitle) {
+    subtitle.textContent = isLogin
+      ? cfg(config, 'subtitle-login', LOGIN_FORM_DEFAULTS['subtitle-login'])
+      : cfg(config, 'subtitle-signup', LOGIN_FORM_DEFAULTS['subtitle-signup']);
+  }
 
   if (switchRow) {
+    const signupPrefix = cfg(config, 'switch-to-signup-prefix', LOGIN_FORM_DEFAULTS['switch-to-signup-prefix']);
+    const signupLink = cfg(config, 'switch-to-signup-link', LOGIN_FORM_DEFAULTS['switch-to-signup-link']);
+    const loginPrefix = cfg(config, 'switch-to-login-prefix', LOGIN_FORM_DEFAULTS['switch-to-login-prefix']);
+    const loginLink = cfg(config, 'switch-to-login-link', LOGIN_FORM_DEFAULTS['switch-to-login-link']);
+
     switchRow.innerHTML = isLogin
-      ? `Don&apos;t have an account? <button type="button" class="auth-signup-link" id="auth-switch-to-signup">Sign up</button>`
-      : `Already have an account? <button type="button" class="auth-signup-link" id="auth-switch-to-login">Log in</button>`;
-    document.getElementById('auth-switch-to-signup')?.addEventListener('click', () => setAuthMode('signup'));
-    document.getElementById('auth-switch-to-login')?.addEventListener('click', () => setAuthMode('login'));
+      ? `${signupPrefix} <button type="button" class="auth-signup-link" id="auth-switch-to-signup">${signupLink}</button>`
+      : `${loginPrefix} <button type="button" class="auth-signup-link" id="auth-switch-to-login">${loginLink}</button>`;
+    document.getElementById('auth-switch-to-signup')?.addEventListener('click', () => setAuthMode('signup', config));
+    document.getElementById('auth-switch-to-login')?.addEventListener('click', () => setAuthMode('login', config));
   }
 
   if (alertEl) { alertEl.hidden = true; alertEl.textContent = ''; }
@@ -383,12 +480,12 @@ function showAlert(message, type) {
   el.dataset.type = type || 'error';
 }
 
-function redirectAfterAuth(message) {
+function redirectAfterAuth(message, config = PAGE_CONFIG) {
   showAlert(message, 'success');
-  setTimeout(() => { window.location.href = getNextPath(); }, 700);
+  setTimeout(() => { window.location.href = getNextPath(config); }, 700);
 }
 
-function bindSignin() {
+function bindSignin(config = PAGE_CONFIG) {
   const form = document.getElementById('signin-form');
   if (!form) return;
 
@@ -398,33 +495,52 @@ function bindSignin() {
     if (alertEl) { alertEl.hidden = true; }
 
     const auth = getAuth();
-    if (!auth) { showAlert('Auth module failed to load. Refresh the page.', 'error'); return; }
+    if (!auth) {
+      showAlert(cfg(config, 'error-auth-load', LOGIN_FORM_DEFAULTS['error-auth-load']), 'error');
+      return;
+    }
 
     const identity = document.getElementById('signin-identity')?.value?.trim() || '';
     const password = document.getElementById('signin-password')?.value || '';
 
-    if (!identity) { setFieldError('signin-identity', 'signin-identity-error', 'Please enter username or email.'); return; }
-    if (identity.includes('@') && !auth.isAdobeEmail(identity)) { setFieldError('signin-identity', 'signin-identity-error', auth.ADOBE_EMAIL_ERROR || 'Email must end with @adobe.com.'); return; }
+    if (!identity) {
+      setFieldError('signin-identity', 'signin-identity-error', cfg(config, 'error-signin-identity-empty', LOGIN_FORM_DEFAULTS['error-signin-identity-empty']));
+      return;
+    }
+    if (identity.includes('@') && !auth.isAdobeEmail(identity)) {
+      setFieldError('signin-identity', 'signin-identity-error', auth.ADOBE_EMAIL_ERROR || 'Email must end with @adobe.com.');
+      return;
+    }
     setFieldError('signin-identity', 'signin-identity-error', '');
 
-    if (!password) { setFieldError('signin-password', 'signin-password-error', 'Please enter your password.'); return; }
+    if (!password) {
+      setFieldError('signin-password', 'signin-password-error', cfg(config, 'error-signin-password-empty', LOGIN_FORM_DEFAULTS['error-signin-password-empty']));
+      return;
+    }
     setFieldError('signin-password', 'signin-password-error', '');
 
     try {
       await auth.loadAuthConfig();
       const account = await auth.authenticate(identity, password);
-      if (!account) { showAlert('Invalid username/email or password.', 'error'); return; }
+      if (!account) {
+        showAlert(cfg(config, 'error-signin-invalid', LOGIN_FORM_DEFAULTS['error-signin-invalid']), 'error');
+        return;
+      }
       auth.createSession(account);
       try { sessionStorage.removeItem('theme'); localStorage.removeItem('theme'); } catch { /* */ }
       document.documentElement.setAttribute('data-theme', 'light');
-      redirectAfterAuth(`Welcome, ${account.displayName || account.username}.`);
+      const welcome = fillTemplate(
+        cfg(config, 'success-signin-template', LOGIN_FORM_DEFAULTS['success-signin-template']),
+        { name: account.displayName || account.username },
+      );
+      redirectAfterAuth(welcome, config);
     } catch (err) {
-      showAlert(err.message || 'Could not sign in.', 'error');
+      showAlert(err.message || cfg(config, 'error-signin-generic', LOGIN_FORM_DEFAULTS['error-signin-generic']), 'error');
     }
   });
 }
 
-function bindSignup() {
+function bindSignup(config = PAGE_CONFIG) {
   const form = document.getElementById('signup-form');
   if (!form) return;
 
@@ -434,7 +550,10 @@ function bindSignup() {
     if (alertEl) { alertEl.hidden = true; }
 
     const auth = getAuth();
-    if (!auth) { showAlert('Auth module failed to load. Refresh the page.', 'error'); return; }
+    if (!auth) {
+      showAlert(cfg(config, 'error-auth-load', LOGIN_FORM_DEFAULTS['error-auth-load']), 'error');
+      return;
+    }
 
     const username = document.getElementById('signup-username')?.value?.trim() || '';
     const email = document.getElementById('signup-email')?.value?.trim() || '';
@@ -442,22 +561,36 @@ function bindSignup() {
 
     let valid = true;
 
-    if (!username) { setFieldError('signup-username', 'signup-username-error', 'Choose a username.'); valid = false; }
-    else setFieldError('signup-username', 'signup-username-error', '');
+    if (!username) {
+      setFieldError('signup-username', 'signup-username-error', cfg(config, 'error-signup-username-empty', LOGIN_FORM_DEFAULTS['error-signup-username-empty']));
+      valid = false;
+    } else setFieldError('signup-username', 'signup-username-error', '');
 
-    if (!email) { setFieldError('signup-email', 'signup-email-error', 'Enter your email.'); valid = false; }
-    else if (!auth.isAdobeEmail(email)) { setFieldError('signup-email', 'signup-email-error', auth.ADOBE_EMAIL_ERROR || 'Email must end with @adobe.com.'); valid = false; }
-    else setFieldError('signup-email', 'signup-email-error', '');
+    if (!email) {
+      setFieldError('signup-email', 'signup-email-error', cfg(config, 'error-signup-email-empty', LOGIN_FORM_DEFAULTS['error-signup-email-empty']));
+      valid = false;
+    } else if (!auth.isAdobeEmail(email)) {
+      setFieldError('signup-email', 'signup-email-error', auth.ADOBE_EMAIL_ERROR || 'Email must end with @adobe.com.');
+      valid = false;
+    } else setFieldError('signup-email', 'signup-email-error', '');
 
-    if (password.length < 6) { setFieldError('signup-password', 'signup-password-error', 'Password must be at least 6 characters.'); valid = false; }
-    else setFieldError('signup-password', 'signup-password-error', '');
+    if (password.length < 6) {
+      setFieldError('signup-password', 'signup-password-error', cfg(config, 'error-signup-password-short', LOGIN_FORM_DEFAULTS['error-signup-password-short']));
+      valid = false;
+    } else setFieldError('signup-password', 'signup-password-error', '');
 
     if (!valid) return;
 
     try {
-      const result = auth.registerUser({ username, email, password, displayName: username, company: 'Adobe Inc.' });
+      const result = auth.registerUser({
+        username,
+        email,
+        password,
+        displayName: username,
+        company: cfg(config, 'signup-company', LOGIN_FORM_DEFAULTS['signup-company']),
+      });
       if (!result?.ok) {
-        showAlert(result?.error || 'Could not create account.', 'error');
+        showAlert(result?.error || cfg(config, 'error-signup-generic', LOGIN_FORM_DEFAULTS['error-signup-generic']), 'error');
         return;
       }
       auth.createSession({
@@ -469,9 +602,9 @@ function bindSignup() {
       }, { isNewSignup: true });
       try { sessionStorage.removeItem('theme'); localStorage.removeItem('theme'); } catch { /* */ }
       document.documentElement.setAttribute('data-theme', 'light');
-      redirectAfterAuth('Account created. Welcome to Adobe Clubs!');
+      redirectAfterAuth(cfg(config, 'success-signup', LOGIN_FORM_DEFAULTS['success-signup']), config);
     } catch (err) {
-      showAlert(err.message || 'Could not create account.', 'error');
+      showAlert(err.message || cfg(config, 'error-signup-generic', LOGIN_FORM_DEFAULTS['error-signup-generic']), 'error');
     }
   });
 }
@@ -490,42 +623,38 @@ async function loadAuthGuard() {
 }
 
 export default async function decorate(block) {
+  const config = readPageConfig(block, LOGIN_FORM_DEFAULTS);
+  PAGE_CONFIG = config;
+
   await loadAuthGuard();
 
   const auth = getAuth();
   if (auth?.isAuthenticated()) {
-    window.location.href = getNextPath();
+    window.location.href = getNextPath(config);
     return;
   }
 
-  // Full-viewport shell
+  block.innerHTML = '';
+  block.classList.add('login-form');
+
   const shell = document.createElement('div');
   shell.className = 'auth-shell';
+  shell.append(buildVisualPanel(config), buildFormPanel(config));
 
-  const visual = buildVisualPanel();
-  const formPanel = buildFormPanel();
-
-  shell.append(visual, formPanel);
-  block.textContent = '';
   block.append(shell);
   document.body.classList.add('auth-page');
+  ensureAuthAlert();
 
-  // Wire up mode tabs
-  document.getElementById('auth-tab-login')?.addEventListener('click', () => setAuthMode('login'));
-  document.getElementById('auth-tab-signup')?.addEventListener('click', () => setAuthMode('signup'));
+  document.getElementById('auth-tab-login')?.addEventListener('click', () => setAuthMode('login', config));
+  document.getElementById('auth-tab-signup')?.addEventListener('click', () => setAuthMode('signup', config));
 
-  // Hash-based initial mode
   const initialMode = window.location.hash === '#signup' ? 'signup' : 'login';
-  setAuthMode(initialMode);
+  setAuthMode(initialMode, config);
 
   window.addEventListener('hashchange', () => {
-    setAuthMode(window.location.hash === '#signup' ? 'signup' : 'login');
+    setAuthMode(window.location.hash === '#signup' ? 'signup' : 'login', config);
   });
 
-  // Bind form submissions
-  bindSignin();
-  bindSignup();
-
-  // Start image slider
-  initSlider(visual);
+  bindSignin(config);
+  bindSignup(config);
 }

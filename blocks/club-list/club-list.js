@@ -1,22 +1,45 @@
 /**
- * Club List block — consolidated club body sections.
- *
- * da.live `/club` page:
- *   | Metadata   |
- *   | Club Hero  |  (separate block)
- *   | Club List  |  (empty — renders activities, events, recaps, team, CTA)
+ * Club List — consolidated club body sections.
+ * da.live: key | value config rows; club data from JSON.
  */
-
 import {
   initClubPage,
   bindClubJoinSync,
   loadScript,
 } from '../club-shared/club-page.js';
+import { readPageConfig } from '../club-shared/block-config.js';
 import { mountActivitiesSection } from '../club-shared/sections/activities-section.js';
 import { mountEventsSection } from '../club-shared/sections/events-section.js';
-import { mountRecapsSection, scrollToRecapsSection } from '../club-shared/sections/recaps-section.js';
+import { mountRecapsSection, applyRecapsDeepLink } from '../club-shared/sections/recaps-section.js';
 import { mountTeamSection } from '../club-shared/sections/team-section.js';
 import { mountCtaSection } from '../club-shared/sections/cta-section.js';
+
+export const CLUB_LIST_DEFAULTS = {
+  'clubs-data': '/data/data.json',
+  'detail-event-base': '/event',
+  'section-activities': 'What this club does',
+  'section-events': 'Find your next {tag} event',
+  'section-recaps': 'Highlights from recent sessions',
+  'section-team': 'Meet the dedicated team',
+  'events-empty': 'No upcoming events for this club yet.',
+  'events-day-empty': 'No events available for this day.',
+  'filter-all-dates': 'All dates',
+  'filter-today': 'Today',
+  'filter-tomorrow': 'Tomorrow',
+  'filter-this-week': 'This week',
+  'rsvp-label': 'RSVP',
+  'rsvpd-label': "RSVP'd",
+  'members-only-label': 'Members only',
+  'recap-cta': 'Post a recap',
+  'team-join-template': 'Join our community at {name}.',
+  'cta-title-template': 'Start participating, meet new people, and join your first {tag} event today',
+  'cta-perk-1': 'Nearby events',
+  'cta-perk-2': 'Easy to join',
+  'cta-perk-3': 'Real community',
+  'cta-perk-4': 'All skill levels',
+  'join-label': 'Join',
+  'joined-label': 'Joined',
+};
 
 async function ensureRecapDeps() {
   const base = window.hlx?.codeBasePath || '';
@@ -30,6 +53,8 @@ function createSection(className) {
 }
 
 export default async function decorate(block) {
+  const pageConfig = readPageConfig(block, CLUB_LIST_DEFAULTS);
+
   block.innerHTML = '';
   block.classList.add('club-list');
 
@@ -43,6 +68,7 @@ export default async function decorate(block) {
   }
   if (ctx.error) return;
 
+  ctx.pageConfig = pageConfig;
   const { club } = ctx;
   await ensureRecapDeps();
 
@@ -71,9 +97,11 @@ export default async function decorate(block) {
     block.querySelectorAll('[data-club-join]').forEach((btn) => {
       btn.classList.toggle('is-joined', e.detail.joined);
       const suffix = btn.dataset.joinSuffix || '';
+      const joinedLabel = pageConfig['joined-label'] || CLUB_LIST_DEFAULTS['joined-label'];
+      const joinLabel = pageConfig['join-label'] || CLUB_LIST_DEFAULTS['join-label'];
       btn.textContent = suffix
-        ? `${e.detail.joined ? 'Joined' : 'Join'} ${suffix}`
-        : (e.detail.joined ? 'Joined' : 'Join');
+        ? `${e.detail.joined ? joinedLabel : joinLabel} ${suffix}`
+        : (e.detail.joined ? joinedLabel : joinLabel);
     });
   });
 
@@ -84,5 +112,8 @@ export default async function decorate(block) {
   ]);
 
   const recapsSection = inner.querySelector('.club-list-section--recaps');
-  if (recapsSection) scrollToRecapsSection(recapsSection);
+  if (recapsSection) {
+    applyRecapsDeepLink(recapsSection);
+    window.addEventListener('hashchange', () => applyRecapsDeepLink(recapsSection));
+  }
 }

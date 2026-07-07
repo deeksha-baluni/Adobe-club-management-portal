@@ -93,6 +93,8 @@
 body {
   display: none;
   margin: 0;
+  overflow-x: clip;
+  max-width: 100%;
   background-color: var(--background-color);
   color: var(--text-color);
   font-family: var(--body-font-family);
@@ -104,8 +106,19 @@ body.appear {
   display: block;
 }
 
+/* Guest index: compute layout before reveal to reduce CLS */
+body.guest-index {
+  display: block;
+  visibility: hidden;
+}
+
+body.guest-index.appear {
+  visibility: visible;
+}
+
 /* Scrollbar — matches OG global.css */
 html {
+  overflow-x: clip;
   overflow-y: scroll;
   scrollbar-gutter: stable;
   scroll-padding-top: var(--nav-height);
@@ -135,7 +148,7 @@ html {
   background: rgba(255, 255, 255, 0.22);
 }
 
-header {
+body > header {
   position: sticky;
   top: 0;
   z-index: 200;
@@ -144,12 +157,12 @@ header {
   isolation: isolate;
 }
 
-header .header,
+body > header .header,
 footer .footer {
   visibility: hidden;
 }
 
-header .header[data-block-status="loaded"],
+body > header .header[data-block-status="loaded"],
 footer .footer[data-block-status="loaded"] {
   visibility: visible;
 }
@@ -355,6 +368,11 @@ main img {
 }
 
 /* sections */
+main {
+  overflow-x: clip;
+  max-width: 100%;
+}
+
 main > .section {
   margin: 0;
 }

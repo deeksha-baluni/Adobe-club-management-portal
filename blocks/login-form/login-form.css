@@ -1,5 +1,10 @@
 /* ── Login Form block — full-viewport two-panel auth (no nav/footer) ── */
 
+/* Hide raw da.live config rows until login-form JS runs */
+.login-form.block:not(:has(.auth-shell)) {
+  display: none;
+}
+
 body.auth-page {
   overflow: hidden;
   height: 100dvh;
@@ -139,6 +144,7 @@ body.auth-page .section:has(.login-form) > div,
 
 .auth-form-inner {
   width: min(460px, 100%);
+  margin-top: -20px;
 }
 
 /* ── Tabs ── */
@@ -176,6 +182,13 @@ body.auth-page .section:has(.login-form) > div,
   letter-spacing: -0.015em;
   font-weight: 700;
   color: #20202a;
+}
+
+.auth-subtitle {
+  margin: 0 0 14px;
+  font-size: 14px;
+  line-height: 1.45;
+  color: rgba(32, 32, 42, 0.62);
 }
 
 /* ── Alert toast ── */
@@ -382,6 +395,7 @@ body.auth-page .section:has(.login-form) > div,
   }
 
   .auth-form-panel {
+    justify-content: center;
     padding: 24px;
     border-left: none;
     border-top: 1px solid rgba(0, 0, 0, 0.10);

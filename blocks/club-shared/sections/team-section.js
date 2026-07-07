@@ -3,6 +3,7 @@ import {
   getJoinLabel,
   wireClubJoinButton,
 } from '../club-page.js';
+import { cfg, fillTemplate } from '../block-config.js';
 
 const TEAM_IMAGE_BASE = '/assets/images/club_details/team_images/';
 const TEAM_IMAGE_FILES = [
@@ -58,25 +59,30 @@ function renderMember(member) {
     </article>`;
 }
 
-function renderJoinCard(club, joinLabel, isAdmin) {
+function renderJoinCard(club, joinLabel, isAdmin, pageConfig) {
+  const copy = fillTemplate(
+    cfg(pageConfig, 'team-join-template', 'Join our community at {name}.'),
+    { name: club.name },
+  );
   return `
     <article class="ct-card ct-card--join">
-      <p>Join our community at ${esc(club.name)}.</p>
+      <p>${esc(copy)}</p>
       <button type="button" class="ct-join-btn${joinLabel.startsWith('Joined') ? ' is-joined' : ''}" data-club-join data-join-suffix="→"${isAdmin ? ' disabled' : ''}>${esc(joinLabel)} →</button>
     </article>`;
 }
 
 export function mountTeamSection(block, ctx) {
-  const { club } = ctx;
+  const { club, pageConfig = {} } = ctx;
   const joinLabel = getJoinLabel(club);
   const isAdmin = joinLabel === 'Admin only';
   const members = getTeamMembers(club.id);
   const cards = members.map(renderMember);
-  cards.splice(Math.min(2, cards.length), 0, renderJoinCard(club, joinLabel, isAdmin));
+  cards.splice(Math.min(2, cards.length), 0, renderJoinCard(club, joinLabel, isAdmin, pageConfig));
+  const title = cfg(pageConfig, 'section-team', 'Meet the dedicated team');
 
   block.innerHTML = `
     <div class="club-section-inner" id="club-team">
-      <h2 class="club-section-title">Meet the dedicated team</h2>
+      <h2 class="club-section-title">${esc(title)}</h2>
       <div class="ct-grid">${cards.join('')}</div>
     </div>`;
 

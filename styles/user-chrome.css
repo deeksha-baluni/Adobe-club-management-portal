@@ -95,8 +95,12 @@ body.is-authenticated header nav .nav-tools .nav-signin {
 }
 
 .notif-panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
   padding: 14px 16px;
-  border-bottom: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border-default);
 }
 
 .notif-panel-title {
@@ -105,15 +109,131 @@ body.is-authenticated header nav .nav-tools .nav-signin {
   font-weight: 700;
 }
 
-.notif-panel-list {
-  padding: 16px;
-  overflow-y: auto;
-}
-
 .notif-empty {
   margin: 0;
+  padding: 24px 16px;
   font-size: 14px;
+  line-height: 1.55;
   color: var(--color-text-secondary);
+  text-align: center;
+}
+
+.notif-panel-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.notif-panel-action {
+  border: none;
+  background: none;
+  padding: 0;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-brand-red);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.notif-panel-action--clear {
+  color: var(--color-text-secondary);
+}
+
+.notif-panel-list {
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 0;
+}
+
+.notif-join-hint {
+  padding: 12px 16px;
+  border-top: 1px solid var(--color-border-default);
+  font-size: 12px;
+}
+
+.notif-item-row {
+  display: flex;
+  align-items: stretch;
+  border-bottom: 1px solid var(--color-border-default);
+}
+
+.notif-item-row:last-child {
+  border-bottom: none;
+}
+
+.notif-item-row.is-read {
+  opacity: 0.72;
+}
+
+.notif-item-row:hover {
+  background: var(--color-bg-subtle, rgba(0, 0, 0, 0.03));
+}
+
+.notif-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+  min-width: 0;
+  padding: 14px 8px 14px 16px;
+  text-decoration: none;
+  color: inherit;
+}
+
+.notif-dismiss {
+  flex-shrink: 0;
+  align-self: center;
+  width: 28px;
+  height: 28px;
+  margin-right: 10px;
+  border: 1px solid transparent;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--color-text-secondary);
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.notif-dismiss:hover {
+  background: var(--color-bg-subtle, rgba(0, 0, 0, 0.05));
+  color: var(--text-color);
+}
+
+.notif-item-type {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-brand-red);
+}
+
+.notif-item-message {
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--text-color);
+}
+
+.notif-error-toast {
+  position: fixed;
+  top: 96px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 700;
+  max-width: min(92vw, 420px);
+  padding: 12px 16px;
+  border-radius: 8px;
+  border: 1px solid var(--color-brand-red);
+  background: var(--background-color);
+  color: var(--color-brand-red);
+  font-size: 14px;
+  font-weight: 600;
+  text-align: center;
+  box-shadow: var(--shadow-l);
+}
+
+.notif-error-toast[hidden] {
+  display: none;
 }
 
 /* Theme toggle */
@@ -499,7 +619,11 @@ body.profile-drawer-open {
   text-decoration: underline;
 }
 
-.profile-rsvp-btn {
+.profile-rsvp-btn,
+a.profile-rsvp-btn:any-link,
+a.profile-rsvp-btn:any-link:hover,
+a.profile-rsvp-btn:any-link:focus-visible,
+a.profile-rsvp-btn:any-link:visited {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -515,7 +639,8 @@ body.profile-drawer-open {
   text-decoration: none;
 }
 
-.profile-rsvp-btn:hover {
+.profile-rsvp-btn:hover,
+a.profile-rsvp-btn:any-link:hover {
   background: var(--color-accent-hover);
   border-color: var(--color-accent-hover);
   color: #fff;
@@ -617,17 +742,18 @@ body.profile-drawer-open {
   min-height: 40px;
   padding: 0 14px;
   border-radius: 8px;
-  border: 1px dashed var(--color-border-default);
+  border: 1px solid var(--accent, #1473e6);
   background: transparent;
-  color: var(--color-text-secondary);
+  color: var(--accent, #1473e6);
   font-size: 14px;
   font-weight: 600;
-  cursor: not-allowed;
-  opacity: 0.72;
+  cursor: pointer;
+  transition: background 0.18s, color 0.18s;
 }
 
-.profile-create-club:disabled {
-  pointer-events: none;
+.profile-create-club:hover {
+  background: var(--accent, #1473e6);
+  color: #fff;
 }
 
 .cr-btn--primary:disabled {

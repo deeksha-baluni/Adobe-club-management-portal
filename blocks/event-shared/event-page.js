@@ -3,6 +3,7 @@
  */
 
 import { esc, getAuth, getClubData, loadScript } from '../club-shared/club-page.js';
+import { cfg } from '../club-shared/block-config.js';
 import {
   getRecapBody,
   normalizeEventRecap,
@@ -25,6 +26,7 @@ const IMAGE_BASES = {
 };
 
 let eventPageInit = null;
+let eventScriptsInit = null;
 let eventCtxCache = null;
 
 export function getEventIdFromUrl() {
@@ -41,7 +43,6 @@ export function eventPageUrl(id) {
 
 export async function loadEventScripts() {
   await Promise.all([
-    loadScript('/scripts/auth-guard.js'),
     loadScript('/scripts/user-features.js'),
     loadScript('/scripts/event-seats.js'),
     loadScript('/scripts/event-modal.js'),
@@ -169,12 +170,13 @@ export function hasEventRecap(ev) {
   return Boolean(data.summary?.trim()) || data.highlights.length > 0;
 }
 
-export function buildRecapSectionHtml(ev, club) {
+export function buildRecapSectionHtml(ev, club, pageConfig = {}) {
   if (!isPast(ev) || !hasEventRecap(ev)) return '';
   const recap = getEventRecap(ev);
+  const recapTitle = pageConfig['section-recap'] || 'Event recap';
   return `
     <section class="event-recap-section" id="recap" aria-label="Event recap">
-      <h3 class="event-recap-heading">Event recap</h3>
+      <h3 class="event-recap-heading">${esc(recapTitle)}</h3>
       <div class="event-recap-body">
         ${buildRecapHtml(recap, ev, club)}
       </div>
@@ -260,12 +262,26 @@ async function resolveEventContext() {
   return { event, eventId, club, allClubs, events, data };
 }
 
-export async function initEventPage() {
-  if (eventPageInit) return eventPageInit;
-  eventPageInit = (async () => {
-    await loadEventScripts();
-    const ctx = await resolveEventContext();
-    if (!ctx.error) {
+export async function getEventPageContext() {
+  if (eventCtxCache) return eventCtxCache;
+  if (!eventPageInit) {
+    eventPageInit = resolveEventContext().then((ctx) => {
+      eventCtxCache = ctx;
+      if (!ctx.error) {
+        document.title = `${ctx.event.title} — Adobe Clubs`;
+      }
+      return ctx;
+    });
+  }
+  return eventPageInit;
+}
+
+export async function ensureEventScripts() {
+  const ctx = await getEventPageContext();
+  if (ctx.error) return ctx;
+  if (!eventScriptsInit) {
+    eventScriptsInit = (async () => {
+      await loadEventScripts();
       window.AdobeEventSeats?.init?.(ctx.events);
       window.AdobeEventModal?.setEvents?.(ctx.events);
       window.AdobeEventModal?.init?.({
@@ -277,12 +293,16 @@ export async function initEventPage() {
           }
         },
       });
-      document.title = `${ctx.event.title} — Adobe Clubs`;
-    }
-    eventCtxCache = ctx;
-    return ctx;
-  })();
-  return eventPageInit;
+    })();
+  }
+  await eventScriptsInit;
+  return ctx;
+}
+
+export async function initEventPage() {
+  const ctx = await getEventPageContext();
+  if (!ctx.error) await ensureEventScripts();
+  return ctx;
 }
 
 export function getEventContext() {
@@ -299,12 +319,14 @@ export function renderNotFound(block) {
   document.title = 'Event not found — Adobe Clubs';
 }
 
-export function refreshRegisterButton(ev) {
-  const btn = document.getElementById('registration_button');
+export function refreshRegisterButton(ev, button) {
+  const btn = button || document.getElementById('registration_button');
   if (!btn || !ev) return;
 
+  const pageConfig = window.__eventPageConfig || {};
+
   if (isPast(ev)) {
-    btn.textContent = 'Event ended';
+    btn.textContent = cfg(pageConfig, 'rsvp-ended-label', 'Event ended');
     btn.disabled = true;
     btn.classList.add('event-register-btn--muted');
     btn.onclick = null;
@@ -321,18 +343,18 @@ export function refreshRegisterButton(ev) {
   btn.classList.toggle('is-seats-full', state.mode === 'seats-full');
 
   if (state.mode === 'seats-full') {
-    btn.textContent = 'Seats full';
+    btn.textContent = cfg(pageConfig, 'seats-full-label', 'Seats full');
     btn.disabled = true;
     btn.onclick = null;
     return;
   }
 
   if (state.mode === 'join-club') {
-    btn.textContent = 'Join club to RSVP';
+    btn.textContent = cfg(pageConfig, 'join-club-rsvp-label', 'Join club to RSVP');
   } else if (state.joined) {
     btn.textContent = "RSVP'd";
   } else {
-    btn.textContent = 'RSVP';
+    btn.textContent = cfg(pageConfig, 'rsvp-label', 'RSVP');
   }
 
   btn.onclick = () => {
@@ -343,7 +365,7 @@ export function refreshRegisterButton(ev) {
       return;
     }
     window.AdobeEventModal?.handleRsvpClick?.(ev, btn);
-    refreshRegisterButton(ev);
+    refreshRegisterButton(ev, btn);
   };
 }
 
@@ -382,6 +404,7 @@ export function bindEventPageListeners(ev) {
   window.addEventListener('adobe-event-page-rsvp-changed', refresh);
   getAuth().onPublishedContentChange?.(() => {
     eventPageInit = null;
+    eventScriptsInit = null;
     eventCtxCache = null;
     window.location.reload();
   });

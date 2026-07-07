@@ -497,6 +497,7 @@
       const profile = getUserProfile(username) || { username };
       saveUserProfile(username, { ...profile, joinedClubs: next, updatedAt: Date.now() });
     }
+    window.dispatchEvent(new CustomEvent('adobe-club-members-changed', { detail: { clubId } }));
     return !wasJoined;
   }
 
@@ -645,6 +646,31 @@
     return readAllCustomArticles();
   }
 
+  function parseEventDateForFilter(ev) {
+    const MONTH_INDEX = { JAN: 0, FEB: 1, MAR: 2, APR: 3, MAY: 4, JUN: 5, JUL: 6, AUG: 7, SEP: 8, OCT: 9, NOV: 10, DEC: 11 };
+    if (!ev?.month || !ev?.day || ev.day === '—') return null;
+    const month = MONTH_INDEX[String(ev.month).toUpperCase()];
+    const day = parseInt(ev.day, 10);
+    if (month == null || Number.isNaN(day)) return null;
+    const d = new Date(new Date().getFullYear(), month, day);
+    d.setHours(0, 0, 0, 0);
+    return d;
+  }
+
+  /** Drop past events older than one month; keep upcoming and recent past. */
+  function filterStalePastEvents(events = []) {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const cutoff = new Date(today);
+    cutoff.setMonth(cutoff.getMonth() - 1);
+    return events.filter((ev) => {
+      const dt = parseEventDateForFilter(ev);
+      if (!dt) return true;
+      if (dt >= today) return true;
+      return dt >= cutoff;
+    });
+  }
+
   function mergePublishedEvents(baseEvents = []) {
     const deleted = readDeletedIds(DELETED_EVENTS_KEY);
     const overrides = readOverrides(EVENT_OVERRIDES_KEY);
@@ -657,7 +683,8 @@
       byId.set(id, { ...(byId.get(id) || {}), ...patch, id });
     });
     const merged = mergeRecapsIntoEvents([...byId.values()]);
-    return window.AdobeUserFeatures?.mergePublishedRecaps?.(merged) || merged;
+    const withRecaps = window.AdobeUserFeatures?.mergePublishedRecaps?.(merged) || merged;
+    return filterStalePastEvents(withRecaps);
   }
 
   function mergePublishedArticles(baseArticles = []) {
@@ -816,10 +843,11 @@
 
   function addCustomArticle(article) {
     const username = getActiveUsername();
-    if (!username) return;
+    if (!username) return false;
     const payload = { ...article, createdBy: username };
     writeArray(CUSTOM_ARTICLES_KEY, [...readAllCustomArticles(), payload]);
     notifyPublishedContentChanged({ type: 'article', id: payload.id, action: 'create' });
+    return true;
   }
 
   function getAvatar() {

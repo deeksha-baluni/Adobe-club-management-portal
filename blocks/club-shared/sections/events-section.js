@@ -9,6 +9,21 @@ import {
   formatEventDate,
   parseEventDate,
 } from '../club-page.js';
+import { cfg, fillTemplate } from '../block-config.js';
+
+function getLabels(pageConfig) {
+  return {
+    rsvp: cfg(pageConfig, 'rsvp-label', 'RSVP'),
+    rsvpd: cfg(pageConfig, 'rsvpd-label', "RSVP'd"),
+    membersOnly: cfg(pageConfig, 'members-only-label', 'Members only'),
+    eventsEmpty: cfg(pageConfig, 'events-empty', 'No upcoming events for this club yet.'),
+    eventsDayEmpty: cfg(pageConfig, 'events-day-empty', 'No events available for this day.'),
+    filterAll: cfg(pageConfig, 'filter-all-dates', 'All dates'),
+    filterToday: cfg(pageConfig, 'filter-today', 'Today'),
+    filterTomorrow: cfg(pageConfig, 'filter-tomorrow', 'Tomorrow'),
+    filterWeek: cfg(pageConfig, 'filter-this-week', 'This week'),
+  };
+}
 
 function getEventDateFilter(ev) {
   const eventDate = parseEventDate(ev);
@@ -28,19 +43,19 @@ function getEventDateFilter(ev) {
   return 'later';
 }
 
-function getClubEventActionState(ev, club) {
+function getClubEventActionState(ev, club, labels) {
   if (!getAuth().isAuthenticated()) {
-    return { label: 'RSVP', joined: false, membersOnly: false };
+    return { label: labels.rsvp, joined: false, membersOnly: false };
   }
   if (!getAuth().isClubJoined(club.id)) {
-    return { label: 'Members only', joined: false, membersOnly: true };
+    return { label: labels.membersOnly, joined: false, membersOnly: true };
   }
   const rsvped = getAuth().isEventRsvped?.(ev.id);
-  return { label: rsvped ? "RSVP'd" : 'RSVP', joined: Boolean(rsvped), membersOnly: false };
+  return { label: rsvped ? labels.rsvpd : labels.rsvp, joined: Boolean(rsvped), membersOnly: false };
 }
 
-function renderAction(ev, club) {
-  const state = getClubEventActionState(ev, club);
+function renderAction(ev, club, labels) {
+  const state = getClubEventActionState(ev, club, labels);
   if (state.membersOnly) {
     return `<span class="ce-rsvp ce-rsvp--members-only" aria-label="Members only event">${esc(state.label)}</span>`;
   }
@@ -73,7 +88,7 @@ function renderEmpty(message, visible) {
   </p>`;
 }
 
-function renderCards(events, club, imagePool) {
+function renderCards(events, club, imagePool, labels) {
   const cards = events.map((ev, i) => {
     const imgSrc = getEventImageSrc(ev) || pickClubImage(imagePool, i + 1, club);
     return `
@@ -83,25 +98,25 @@ function renderCards(events, club, imagePool) {
         </div>
         <div class="ce-card-foot">
           ${renderCardMeta(ev)}
-          <div class="ce-card-action">${renderAction(ev, club)}</div>
+          <div class="ce-card-action">${renderAction(ev, club, labels)}</div>
         </div>
       </article>`;
   }).join('');
-  const emptyMsg = events.length ? 'No events available for this day.' : 'No upcoming events for this club yet.';
+  const emptyMsg = events.length ? labels.eventsDayEmpty : labels.eventsEmpty;
   return `${cards}${renderEmpty(emptyMsg, !events.length)}`;
 }
 
-function refreshActions(block, club, upcomingEvents) {
+function refreshActions(block, club, upcomingEvents, labels) {
   block.querySelectorAll('.ce-card[data-event-id]').forEach((card) => {
     const ev = upcomingEvents.find((item) => item.id === card.dataset.eventId);
     if (!ev) return;
     const actionWrap = card.querySelector('.ce-card-action');
-    if (actionWrap) actionWrap.innerHTML = renderAction(ev, club);
+    if (actionWrap) actionWrap.innerHTML = renderAction(ev, club, labels);
   });
-  wireRsvp(block, club, upcomingEvents);
+  wireRsvp(block, club, upcomingEvents, labels);
 }
 
-function wireRsvp(block, club, upcomingEvents) {
+function wireRsvp(block, club, upcomingEvents, labels) {
   block.querySelectorAll('.ce-rsvp[data-event-id]').forEach((btn) => {
     const clone = btn.cloneNode(true);
     btn.replaceWith(clone);
@@ -115,17 +130,17 @@ function wireRsvp(block, club, upcomingEvents) {
       const ev = upcomingEvents.find((item) => item.id === clone.dataset.eventId);
       if (!ev || !getAuth().isClubJoined(club.id)) return;
       getAuth().toggleEventRsvp?.(ev.id);
-      refreshActions(block, club, upcomingEvents);
+      refreshActions(block, club, upcomingEvents, labels);
     });
   });
 }
 
-function wireCards(block, club, upcomingEvents) {
-  wireRsvp(block, club, upcomingEvents);
+function wireCards(block, club, upcomingEvents, labels, eventBase) {
+  wireRsvp(block, club, upcomingEvents, labels);
   block.querySelectorAll('.ce-card[data-event-id]').forEach((card) => {
     const open = () => {
       const id = card.dataset.eventId;
-      if (id) window.location.href = `/event?id=${encodeURIComponent(id)}`;
+      if (id) window.location.href = `${eventBase}?id=${encodeURIComponent(id)}`;
     };
     card.addEventListener('click', (e) => {
       if (e.target.closest('.ce-rsvp[data-event-id]')) return;
@@ -141,7 +156,7 @@ function wireCards(block, club, upcomingEvents) {
   });
 }
 
-function wireFilters(block) {
+function wireFilters(block, labels) {
   const filterBar = block.querySelector('#ce-filters');
   const grid = block.querySelector('#ce-grid');
   if (!filterBar || !grid) return;
@@ -166,7 +181,7 @@ function wireFilters(block) {
       if (match) visible += 1;
     });
     if (emptyMsg) {
-      emptyMsg.querySelector('span').textContent = 'No events available for this day.';
+      emptyMsg.querySelector('span').textContent = labels.eventsDayEmpty;
       emptyMsg.hidden = visible !== 0;
     }
     grid.classList.toggle('is-filter-empty', visible === 0);
@@ -181,27 +196,34 @@ function wireFilters(block) {
 }
 
 export function mountEventsSection(block, ctx) {
-  const { club, events, gallery } = ctx;
+  const { club, events, gallery, pageConfig = {} } = ctx;
+  const labels = getLabels(pageConfig);
+  const eventBase = cfg(pageConfig, 'detail-event-base', '/event').replace(/\/$/, '');
+  const sectionTitle = fillTemplate(
+    cfg(pageConfig, 'section-events', 'Find your next {tag} event'),
+    { tag: (club.tag || '').toLowerCase() },
+  );
+
   window.__clubPageEvents = events;
   const upcomingEvents = getUpcomingClubEvents(club, events);
   const imagePool = getClubImagePool(club, gallery);
 
   block.innerHTML = `
     <div class="club-section-inner" id="club-events">
-      <h2 class="club-section-title">Find your next ${esc(club.tag.toLowerCase())} event</h2>
+      <h2 class="club-section-title">${esc(sectionTitle)}</h2>
       <div class="ce-filters" id="ce-filters">
-        <button type="button" class="ce-chip is-active" data-date-filter="all">All dates</button>
-        <button type="button" class="ce-chip" data-date-filter="today">Today</button>
-        <button type="button" class="ce-chip" data-date-filter="tomorrow">Tomorrow</button>
-        <button type="button" class="ce-chip" data-date-filter="week">This week</button>
+        <button type="button" class="ce-chip is-active" data-date-filter="all">${esc(labels.filterAll)}</button>
+        <button type="button" class="ce-chip" data-date-filter="today">${esc(labels.filterToday)}</button>
+        <button type="button" class="ce-chip" data-date-filter="tomorrow">${esc(labels.filterTomorrow)}</button>
+        <button type="button" class="ce-chip" data-date-filter="week">${esc(labels.filterWeek)}</button>
       </div>
-      <div class="ce-grid${upcomingEvents.length ? '' : ' is-filter-empty'}" id="ce-grid">${renderCards(upcomingEvents, club, imagePool)}</div>
+      <div class="ce-grid${upcomingEvents.length ? '' : ' is-filter-empty'}" id="ce-grid">${renderCards(upcomingEvents, club, imagePool, labels)}</div>
     </div>`;
 
-  wireFilters(block);
-  wireCards(block, club, upcomingEvents);
-  window.__clubEventsRefresh = () => refreshActions(block, club, upcomingEvents);
+  wireFilters(block, labels);
+  wireCards(block, club, upcomingEvents, labels, eventBase);
+  window.__clubEventsRefresh = () => refreshActions(block, club, upcomingEvents, labels);
   window.addEventListener('adobe-club-join-changed', (e) => {
-    if (e.detail?.clubId === club.id) refreshActions(block, club, upcomingEvents);
+    if (e.detail?.clubId === club.id) refreshActions(block, club, upcomingEvents, labels);
   });
 }

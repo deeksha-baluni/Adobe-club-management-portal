@@ -580,6 +580,12 @@ function decorateBlocks(main) {
  * @returns {Promise}
  */
 async function loadHeader(header) {
+  if (!header) return null;
+  const existing = header.querySelector(':scope > .header');
+  if (existing) {
+    await loadBlock(existing);
+    return existing;
+  }
   const headerBlock = buildBlock('header', '');
   header.append(headerBlock);
   decorateBlock(headerBlock);
@@ -592,6 +598,12 @@ async function loadHeader(header) {
  * @returns {Promise}
  */
 async function loadFooter(footer) {
+  if (!footer) return null;
+  const existing = footer.querySelector(':scope > .footer');
+  if (existing) {
+    await loadBlock(existing);
+    return existing;
+  }
   const footerBlock = buildBlock('footer', '');
   footer.append(footerBlock);
   decorateBlock(footerBlock);
@@ -607,6 +619,8 @@ async function waitForFirstImage(section) {
   await new Promise((resolve) => {
     if (lcpCandidate && !lcpCandidate.complete) {
       lcpCandidate.setAttribute('loading', 'eager');
+      lcpCandidate.setAttribute('decoding', 'async');
+      if ('fetchPriority' in lcpCandidate) lcpCandidate.fetchPriority = 'high';
       lcpCandidate.addEventListener('load', resolve);
       lcpCandidate.addEventListener('error', resolve);
     } else {

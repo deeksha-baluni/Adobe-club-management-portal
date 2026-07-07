@@ -322,33 +322,18 @@ header nav .nav-sections ul > li a:hover {
     height: var(--nav-height);
     padding: 0 14px;
     font-size: 15px;
+    font-weight: 500;
     letter-spacing: -0.01em;
     white-space: nowrap;
     position: relative;
     box-sizing: border-box;
-  }
-
-  header nav .nav-sections ul > li a::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 14px;
-    right: 14px;
-    height: 2px;
-    background: var(--color-brand-red);
-    opacity: 0;
-    transition: opacity 0.15s;
+    border-bottom: 2px solid transparent;
   }
 
   header nav .nav-sections ul > li a[aria-current],
   header nav .nav-sections ul > li a.active {
     color: var(--text-color);
-    font-weight: 600;
-  }
-
-  header nav .nav-sections ul > li a[aria-current]::after,
-  header nav .nav-sections ul > li a.active::after {
-    opacity: 1;
+    border-bottom-color: var(--color-brand-red);
   }
 }
 

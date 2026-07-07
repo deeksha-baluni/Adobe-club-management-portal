@@ -249,13 +249,20 @@ body.ev-modal-open {
   transition: background 0.18s, border-color 0.18s;
 }
 
-.ev-modal-rsvp:hover {
+.ev-modal-rsvp:hover:not(.is-joined):not(.is-join-club):not(.is-seats-full):not(:disabled) {
   background: var(--color-accent-hover, #0d66d0);
   border-color: var(--color-accent-hover, #0d66d0);
+  color: #fff;
 }
 
 .ev-modal-rsvp.is-joined {
   background: transparent;
+  border-color: #c8c6c4;
+  color: #505050;
+}
+
+.ev-modal-rsvp.is-joined:hover:not(:disabled) {
+  background: rgba(0, 0, 0, 0.04);
   border-color: #c8c6c4;
   color: #505050;
 }

@@ -16,7 +16,10 @@
         "displayName": "Lens & Creatives Lead",
         "company": "Adobe Inc.",
         "role": "clubAdmin",
-        "manages": ["adobe-lens", "adobe-creatives"]
+        "manages": [
+          "adobe-lens",
+          "adobe-creatives"
+        ]
       },
       {
         "username": "tech.admin",
@@ -25,7 +28,10 @@
         "displayName": "Dev & Games Lead",
         "company": "Adobe Inc.",
         "role": "clubAdmin",
-        "manages": ["dev-guild", "board-games"]
+        "manages": [
+          "dev-guild",
+          "board-games"
+        ]
       },
       {
         "username": "sport.admin",
@@ -34,7 +40,10 @@
         "displayName": "Sports & Green Lead",
         "company": "Adobe Inc.",
         "role": "clubAdmin",
-        "manages": ["sportzone", "green-adobe"]
+        "manages": [
+          "sportzone",
+          "green-adobe"
+        ]
       },
       {
         "username": "social.admin",
@@ -43,7 +52,11 @@
         "displayName": "Community Clubs Lead",
         "company": "Adobe Inc.",
         "role": "clubAdmin",
-        "manages": ["food-brew", "book-club", "volunteering-club"]
+        "manages": [
+          "food-brew",
+          "book-club",
+          "volunteering-club"
+        ]
       },
       {
         "username": "wellness.admin",
@@ -52,7 +65,9 @@
         "displayName": "Wellbeing Lead",
         "company": "Adobe Inc.",
         "role": "clubAdmin",
-        "manages": ["mental-health"]
+        "manages": [
+          "mental-health"
+        ]
       }
     ]
   },
@@ -60,38 +75,17 @@
     "initials": "AJ",
     "name": "Arjun J.",
     "role": "member",
-    "joinedClubs": ["adobe-lens", "dev-guild"]
+    "joinedClubs": [
+      "adobe-lens",
+      "dev-guild"
+    ]
   },
   "stats": {
     "clubs": 10,
     "members": "540+",
-    "events": 13
+    "events": 11
   },
   "events": [
-    {
-      "id": "evt-1",
-      "clubId": "adobe-lens",
-      "membersOnly": true,
-      "month": "JUN",
-      "day": "4",
-      "title": "Photography Walk — MG Road",
-      "club": "Adobe Lens Club",
-      "time": "9:00 AM",
-      "type": "In-person",
-      "location": "MG Road, Bengaluru",
-      "spotsLeft": 12,
-      "desc": "Join fellow photographers for a 2-hour street photography walk along MG Road. All skill levels welcome — bring your camera or phone. We'll review shots together over chai at the end.",
-      "recap": {
-        "summary": "Eighteen members met at Trinity Circle for a two-hour street photography walk along MG Road. We split into pairs for candid portraits, practiced framing in harsh midday light, and regrouped at a café for a relaxed critique session over chai. Several members tried long-exposure experiments at the metro crossing for the first time.",
-        "highlights": [
-          "Candid street portraits near Trinity Circle",
-          "Mini critique session over chai at the end",
-          "Top shots featured in the club gallery this week"
-        ],
-        "attendanceCount": 18,
-        "attendance": "18 members"
-      }
-    },
     {
       "id": "evt-2",
       "clubId": "adobe-creatives",
@@ -117,116 +111,11 @@
       }
     },
     {
-      "id": "evt-3",
-      "clubId": "dev-guild",
-      "month": "JUN",
-      "day": "12",
-      "title": "Hackathon Kickoff 2025",
-      "club": "Dev Guild",
-      "time": "10:00 AM",
-      "type": "In-person",
-      "location": "Tower B · Floor 4",
-      "spotsLeft": 30,
-      "desc": "The Dev Guild's annual hackathon kicks off with team formation, problem-statement reveals, and a kick-off talk from a guest engineer. 48 hours of building, mentorship, and snacks ahead."
-    },
-    {
-      "id": "evt-4",
-      "clubId": "sportzone",
-      "month": "JUN",
-      "day": "18",
-      "title": "Cricket League — Round 2",
-      "club": "SportZone",
-      "time": "5:30 PM",
-      "type": "In-person",
-      "location": "Adobe Sports Ground",
-      "spotsLeft": 2,
-      "desc": "Round 2 of the inter-department cricket league. Come cheer for your team or fill an open spot on the roster. Light refreshments provided after the match."
-    },
-    {
-      "id": "evt-5",
-      "clubId": "adobe-creatives",
-      "membersOnly": true,
-      "month": "JUN",
-      "day": "22",
-      "title": "Portfolio Showcase Night",
-      "club": "Adobe Creatives",
-      "time": "6:00 PM",
-      "type": "In-person",
-      "location": "Amphitheatre · Ground Floor",
-      "spotsLeft": 50,
-      "desc": "Designers and illustrators from across the office share their personal projects, side hustles, and experimental work. An open evening of inspiration, critique, and conversation."
-    },
-    {
-      "id": "evt-6",
-      "clubId": "food-brew",
-      "month": "JUN",
-      "day": "25",
-      "title": "Cuisine of the Month — Kerala Special",
-      "club": "Food & Brew Club",
-      "time": "12:30 PM",
-      "type": "In-person",
-      "location": "Cafeteria · Level 2",
-      "spotsLeft": 24,
-      "desc": "This month we're exploring Kerala cuisine. Members bring home-cooked dishes, share recipes, and vote on their favourite. A fun, flavourful lunch break that celebrates our diversity."
-    },
-    {
-      "id": "evt-7",
-      "clubId": "book-club",
-      "month": "JUN",
-      "day": "28",
-      "title": "June Read — Atomic Habits Discussion",
-      "club": "Book Club",
-      "time": "5:00 PM",
-      "type": "In-person",
-      "location": "Library Pod · Floor 3",
-      "spotsLeft": 18,
-      "desc": "Our June pick is Atomic Habits by James Clear. Come ready to discuss your key takeaways, habits you've tried, and which idea challenged you most. No prep required — drop in and listen."
-    },
-    {
-      "id": "evt-8",
-      "clubId": "board-games",
-      "membersOnly": true,
-      "month": "JUL",
-      "day": "3",
-      "title": "Strategy Tournament — Settlers of Catan",
-      "club": "Board Games & Tabletop",
-      "time": "6:00 PM",
-      "type": "In-person",
-      "location": "Recreation Room · B1",
-      "spotsLeft": 16,
-      "desc": "Our most competitive night of the quarter — a Settlers of Catan tournament with a rolling bracket. Beginner tables available. Winner takes the Guild Trophy for July."
-    },
-    {
-      "id": "evt-9",
-      "clubId": "green-adobe",
-      "month": "JUL",
-      "day": "6",
-      "title": "Campus Clean-up Drive",
-      "club": "Green Adobe",
-      "time": "8:30 AM",
-      "type": "In-person",
-      "location": "Adobe Campus · Main Gate",
-      "spotsLeft": 40,
-      "desc": "A 90-minute campus clean-up to kick off our zero-waste July challenge. Gloves and bags provided. We'll also do a quick audit of single-use plastics in the office and share findings."
-    },
-    {
-      "id": "evt-10",
-      "clubId": "mental-health",
-      "month": "JUL",
-      "day": "10",
-      "title": "Burnout & Balance — Open Circle",
-      "club": "Mental Health & Peer Support",
-      "time": "1:00 PM",
-      "type": "Virtual",
-      "location": "Google Meet · Link on Slack",
-      "spotsLeft": 35,
-      "desc": "A safe, informal conversation circle about work stress and burnout. Facilitated by a trained peer supporter. You can share, listen, or just be present — no pressure either way."
-    },
-    {
       "id": "evt-11",
       "clubId": "sportzone",
+      "membersOnly": true,
       "month": "JUN",
-      "day": "8",
+      "day": "10",
       "title": "Wellness Run — Campus Loop",
       "club": "SportZone",
       "time": "7:00 AM",
@@ -249,7 +138,7 @@
       "id": "evt-12",
       "clubId": "dev-guild",
       "month": "JUN",
-      "day": "9",
+      "day": "18",
       "title": "Lightning Talks — June Edition",
       "club": "Dev Guild",
       "time": "4:00 PM",
@@ -259,27 +148,113 @@
       "desc": "Five-minute talks on side projects, tooling tips, and lessons learned. Sign up at the door or just listen in."
     },
     {
-      "id": "evt-13",
-      "clubId": "food-brew",
+      "id": "evt-3",
+      "clubId": "dev-guild",
+      "membersOnly": true,
       "month": "JUN",
+      "day": "24",
+      "title": "Hackathon Kickoff 2026",
+      "club": "Dev Guild",
+      "time": "10:00 AM",
+      "type": "In-person",
+      "location": "Tower B · Floor 4",
+      "spotsLeft": 30,
+      "desc": "The Dev Guild's annual hackathon kicks off with team formation, problem-statement reveals, and a kick-off talk from a guest engineer. 48 hours of building, mentorship, and snacks ahead."
+    },
+    {
+      "id": "evt-9",
+      "clubId": "green-adobe",
+      "month": "JUL",
+      "day": "1",
+      "title": "Campus Clean-up Drive",
+      "club": "Green Adobe",
+      "time": "8:30 AM",
+      "type": "In-person",
+      "location": "Adobe Campus · Main Gate",
+      "spotsLeft": 40,
+      "desc": "A 90-minute campus clean-up to kick off our zero-waste July challenge. Gloves and bags provided. We'll also do a quick audit of single-use plastics in the office and share findings."
+    },
+    {
+      "id": "evt-8",
+      "clubId": "board-games",
+      "membersOnly": true,
+      "month": "JUL",
       "day": "5",
-      "title": "South Indian Breakfast Potluck",
+      "title": "Strategy Tournament — Settlers of Catan",
+      "club": "Board Games & Tabletop",
+      "time": "6:00 PM",
+      "type": "In-person",
+      "location": "Recreation Room · B1",
+      "spotsLeft": 16,
+      "desc": "Our most competitive night of the quarter — a Settlers of Catan tournament with a rolling bracket. Beginner tables available. Winner takes the Guild Trophy for July."
+    },
+    {
+      "id": "evt-10",
+      "clubId": "mental-health",
+      "membersOnly": true,
+      "month": "JUL",
+      "day": "10",
+      "title": "Burnout & Balance — Open Circle",
+      "club": "Mental Health & Peer Support",
+      "time": "1:00 PM",
+      "type": "Virtual",
+      "location": "Google Meet · Link on Slack",
+      "spotsLeft": 35,
+      "desc": "A safe, informal conversation circle about work stress and burnout. Facilitated by a trained peer supporter. You can share, listen, or just be present — no pressure either way."
+    },
+    {
+      "id": "evt-4",
+      "clubId": "sportzone",
+      "month": "JUL",
+      "day": "14",
+      "title": "Cricket League — Round 2",
+      "club": "SportZone",
+      "time": "5:30 PM",
+      "type": "In-person",
+      "location": "Adobe Sports Ground",
+      "spotsLeft": 2,
+      "desc": "Round 2 of the inter-department cricket league. Come cheer for your team or fill an open spot on the roster. Light refreshments provided after the match."
+    },
+    {
+      "id": "evt-5",
+      "clubId": "adobe-creatives",
+      "membersOnly": true,
+      "month": "JUL",
+      "day": "18",
+      "title": "Portfolio Showcase Night",
+      "club": "Adobe Creatives",
+      "time": "6:00 PM",
+      "type": "In-person",
+      "location": "Amphitheatre · Ground Floor",
+      "spotsLeft": 50,
+      "desc": "Designers and illustrators from across the office share their personal projects, side hustles, and experimental work. An open evening of inspiration, critique, and conversation."
+    },
+    {
+      "id": "evt-6",
+      "clubId": "food-brew",
+      "month": "JUL",
+      "day": "25",
+      "title": "Cuisine of the Month — Kerala Special",
       "club": "Food & Brew Club",
-      "time": "9:30 AM",
+      "time": "12:30 PM",
       "type": "In-person",
       "location": "Cafeteria · Level 2",
-      "spotsLeft": 0,
-      "desc": "Members brought idli, dosa, filter coffee, and chutney. Recipe cards swapped and a blind taste test crowned the best sambar.",
-      "recap": {
-        "summary": "More than thirty home-cooked dishes filled the cafeteria tables for our South Indian breakfast potluck. Members swapped recipe cards, shared family variations for filter coffee and chutney, and ran a blind taste test to crown the best sambar of the morning.",
-        "highlights": [
-          "Standout entries included neer dosa and Mysore pak",
-          "Recipe cards swapped at every table",
-          "Blind sambar taste test with a tie-breaker round"
-        ],
-        "attendanceCount": 34,
-        "attendance": "34 members"
-      }
+      "spotsLeft": 24,
+      "desc": "This month we're exploring Kerala cuisine. Members bring home-cooked dishes, share recipes, and vote on their favourite. A fun, flavourful lunch break that celebrates our diversity."
+    },
+    {
+      "id": "evt-7",
+      "clubId": "book-club",
+      "membersOnly": true,
+      "month": "AUG",
+      "day": "2",
+      "title": "June Read — Atomic Habits Discussion",
+      "club": "Book Club",
+      "time": "5:00 PM",
+      "type": "In-person",
+      "location": "Library Pod · Floor 3",
+      "spotsLeft": 18,
+      "desc": "Our June pick is Atomic Habits by James Clear. Come ready to discuss your key takeaways, habits you've tried, and which idea challenged you most. No prep required — drop in and listen."
     }
   ],
   "clubs": [
@@ -294,9 +269,21 @@
       "image": "adobe-lens.avif",
       "slackChannel": "#adobe-lens",
       "slackUrl": "https://adobe.enterprise.slack.com/channels/adobe-lens",
-      "similar": ["adobe-creatives", "green-adobe"],
+      "similar": [
+        "adobe-creatives",
+        "green-adobe"
+      ],
       "desc": "Capture Bengaluru through a lens. Weekly shoots, editing tips, and photo walks for all skill levels.",
-      "tags": ["photography", "picture", "image", "photo", "camera", "lens", "shoot", "creative"]
+      "tags": [
+        "photography",
+        "picture",
+        "image",
+        "photo",
+        "camera",
+        "lens",
+        "shoot",
+        "creative"
+      ]
     },
     {
       "id": "dev-guild",
@@ -309,9 +296,21 @@
       "image": "dev-guild.avif",
       "slackChannel": "#dev-guild",
       "slackUrl": "https://adobe.enterprise.slack.com/channels/dev-guild",
-      "similar": ["adobe-creatives", "board-games"],
+      "similar": [
+        "adobe-creatives",
+        "board-games"
+      ],
       "desc": "Hackathons, side projects, and engineering culture for builders at Adobe.",
-      "tags": ["code", "engineering", "hackathon", "tech", "developer", "programming", "software", "build"]
+      "tags": [
+        "code",
+        "engineering",
+        "hackathon",
+        "tech",
+        "developer",
+        "programming",
+        "software",
+        "build"
+      ]
     },
     {
       "id": "sportzone",
@@ -324,9 +323,21 @@
       "image": "sportzone.avif",
       "slackChannel": "#sportzone",
       "slackUrl": "https://adobe.enterprise.slack.com/channels/sportzone",
-      "similar": ["mental-health", "green-adobe"],
+      "similar": [
+        "mental-health",
+        "green-adobe"
+      ],
       "desc": "Cricket, football, badminton leagues and wellness activities across floors.",
-      "tags": ["sports", "cricket", "football", "badminton", "fitness", "wellness", "athletics", "team"]
+      "tags": [
+        "sports",
+        "cricket",
+        "football",
+        "badminton",
+        "fitness",
+        "wellness",
+        "athletics",
+        "team"
+      ]
     },
     {
       "id": "adobe-creatives",
@@ -339,9 +350,21 @@
       "image": "adobe-creatives.avif",
       "slackChannel": "#adobe-creatives",
       "slackUrl": "https://adobe.enterprise.slack.com/channels/adobe-creatives",
-      "similar": ["adobe-lens", "dev-guild"],
+      "similar": [
+        "adobe-lens",
+        "dev-guild"
+      ],
       "desc": "Design jams, portfolio showcases, and creative experiments for designers.",
-      "tags": ["design", "creative", "ui", "figma", "portfolio", "art", "visual", "genai"]
+      "tags": [
+        "design",
+        "creative",
+        "ui",
+        "figma",
+        "portfolio",
+        "art",
+        "visual",
+        "genai"
+      ]
     },
     {
       "id": "food-brew",
@@ -354,9 +377,21 @@
       "image": "food.avif",
       "slackChannel": "#food-and-brew",
       "slackUrl": "https://adobe.enterprise.slack.com/channels/food-and-brew",
-      "similar": ["book-club", "volunteering-club"],
+      "similar": [
+        "book-club",
+        "volunteering-club"
+      ],
       "desc": "Lunch potlucks, cuisine-of-the-month tastings, blind taste tests, cooking challenges, and restaurant discovery walks.",
-      "tags": ["food", "cuisine", "cooking", "lunch", "tasting", "brew", "restaurant", "potluck"]
+      "tags": [
+        "food",
+        "cuisine",
+        "cooking",
+        "lunch",
+        "tasting",
+        "brew",
+        "restaurant",
+        "potluck"
+      ]
     },
     {
       "id": "book-club",
@@ -369,9 +404,20 @@
       "image": "readers.avif",
       "slackChannel": "#book-club",
       "slackUrl": "https://adobe.enterprise.slack.com/channels/book-club",
-      "similar": ["board-games", "food-brew"],
+      "similar": [
+        "board-games",
+        "food-brew"
+      ],
       "desc": "Monthly reads, author spotlights, genre rotations across fiction, non-fiction, and tech, plus writing workshops.",
-      "tags": ["books", "reading", "literature", "writing", "author", "fiction", "nonfiction"]
+      "tags": [
+        "books",
+        "reading",
+        "literature",
+        "writing",
+        "author",
+        "fiction",
+        "nonfiction"
+      ]
     },
     {
       "id": "board-games",
@@ -384,9 +430,20 @@
       "image": "games.avif",
       "slackChannel": "#board-games",
       "slackUrl": "https://adobe.enterprise.slack.com/channels/board-games",
-      "similar": ["dev-guild", "book-club"],
+      "similar": [
+        "dev-guild",
+        "book-club"
+      ],
       "desc": "Weekly game nights, strategy tournaments, D&D campaigns, game design workshops, and a community game library swap.",
-      "tags": ["games", "tabletop", "dnd", "strategy", "board", "tournament", "unplugged"]
+      "tags": [
+        "games",
+        "tabletop",
+        "dnd",
+        "strategy",
+        "board",
+        "tournament",
+        "unplugged"
+      ]
     },
     {
       "id": "green-adobe",
@@ -399,9 +456,20 @@
       "image": "green-adobe.avif",
       "slackChannel": "#green-adobe",
       "slackUrl": "https://adobe.enterprise.slack.com/channels/green-adobe",
-      "similar": ["volunteering-club", "sportzone"],
+      "similar": [
+        "volunteering-club",
+        "sportzone"
+      ],
       "desc": "Campus clean-ups, sustainability audits, zero-waste challenges, tree planting drives, and eco-product swaps.",
-      "tags": ["sustainability", "eco", "green", "environment", "zero-waste", "climate", "volunteer"]
+      "tags": [
+        "sustainability",
+        "eco",
+        "green",
+        "environment",
+        "zero-waste",
+        "climate",
+        "volunteer"
+      ]
     },
     {
       "id": "volunteering-club",
@@ -414,9 +482,20 @@
       "image": "volunteer.avif",
       "slackChannel": "#volunteering",
       "slackUrl": "https://adobe.enterprise.slack.com/channels/volunteering",
-      "similar": ["green-adobe", "food-brew"],
+      "similar": [
+        "green-adobe",
+        "food-brew"
+      ],
       "desc": "NGO partnership events, skills-based volunteering, fundraiser runs, teaching visits, and community coding camps.",
-      "tags": ["volunteer", "community", "charity", "giving", "ngo", "impact", "service"]
+      "tags": [
+        "volunteer",
+        "community",
+        "charity",
+        "giving",
+        "ngo",
+        "impact",
+        "service"
+      ]
     },
     {
       "id": "mental-health",
@@ -429,9 +508,20 @@
       "image": "wellbeing.avif",
       "slackChannel": "#peer-support",
       "slackUrl": "https://adobe.enterprise.slack.com/channels/peer-support",
-      "similar": ["sportzone", "volunteering-club"],
+      "similar": [
+        "sportzone",
+        "volunteering-club"
+      ],
       "desc": "Conversation circles, burnout awareness sessions, journalling workshops, and stress management talks.",
-      "tags": ["wellbeing", "mental health", "wellness", "burnout", "support", "peer", "balance"]
+      "tags": [
+        "wellbeing",
+        "mental health",
+        "wellness",
+        "burnout",
+        "support",
+        "peer",
+        "balance"
+      ]
     }
   ],
   "feed": [
@@ -631,23 +721,185 @@
     }
   ],
   "gallery": [
-    { "id": "gal-1",  "base": "clubs",  "image": "adobe-lens.avif",      "ratio": "tall",   "title": "Golden hour on MG Road",           "club": "Adobe Lens Club",              "photographer": "Priya M.",   "date": "Jun 2025" },
-    { "id": "gal-2",  "base": "events", "image": "evt-hero7.avif",       "ratio": "short",  "title": "Hackathon whiteboard session",     "club": "Dev Guild",                    "photographer": "Arjun K.",   "date": "Jun 2025" },
-    { "id": "gal-3",  "base": "clubs",  "image": "dev-guild.avif",       "ratio": "medium", "title": "Late-night coding sprint",         "club": "Dev Guild",                    "photographer": "Rahul S.",   "date": "May 2025" },
-    { "id": "gal-4",  "base": "events", "image": "evt-hero3.avif",       "ratio": "tall",   "title": "Portfolio showcase crowd",         "club": "Adobe Creatives",              "photographer": "Meera T.",   "date": "May 2025" },
-    { "id": "gal-5",  "base": "clubs",  "image": "sportzone.avif",       "ratio": "square", "title": "Cricket league finals",            "club": "SportZone",                    "photographer": "Vikram P.",  "date": "May 2025" },
-    { "id": "gal-6",  "base": "events", "image": "evt-hero1.avif",       "ratio": "medium", "title": "Street photography walk",          "club": "Adobe Lens Club",              "photographer": "Anita R.",   "date": "Jun 2025" },
-    { "id": "gal-7",  "base": "clubs",  "image": "adobe-creatives.avif", "ratio": "tall",   "title": "Design jam sketches",              "club": "Adobe Creatives",              "photographer": "Kavya N.",   "date": "Apr 2025" },
-    { "id": "gal-8",  "base": "events", "image": "evt-hero5.avif",       "ratio": "short",  "title": "Potluck table spread",             "club": "Food & Brew Club",             "photographer": "Deepak L.",  "date": "May 2025" },
-    { "id": "gal-9",  "base": "clubs",  "image": "food.avif",            "ratio": "medium", "title": "Blind taste test reactions",       "club": "Food & Brew Club",             "photographer": "Sneha G.",   "date": "Apr 2025" },
-    { "id": "gal-10", "base": "events", "image": "evt-hero9.avif",       "ratio": "tall",   "title": "Board game tournament",            "club": "Board Games & Tabletop",       "photographer": "Nikhil B.",  "date": "May 2025" },
-    { "id": "gal-11", "base": "clubs",  "image": "games.avif",           "ratio": "square", "title": "D&D campaign night",               "club": "Board Games & Tabletop",       "photographer": "Isha V.",    "date": "Apr 2025" },
-    { "id": "gal-12", "base": "events", "image": "evt-hero11.avif",      "ratio": "medium", "title": "Campus clean-up drive",            "club": "Green Adobe",                  "photographer": "Rohan D.",   "date": "Apr 2025" },
-    { "id": "gal-13", "base": "clubs",  "image": "green-adobe.avif",     "ratio": "short",  "title": "Tree planting morning",            "club": "Green Adobe",                  "photographer": "Lakshmi A.", "date": "Mar 2025" },
-    { "id": "gal-14", "base": "events", "image": "evt-hero2.avif",       "ratio": "tall",   "title": "GenAI design sprint teams",        "club": "Adobe Creatives",              "photographer": "Tarun H.",   "date": "Jun 2025" },
-    { "id": "gal-15", "base": "clubs",  "image": "readers.avif",         "ratio": "medium", "title": "Monthly book discussion",          "club": "Book Club",                    "photographer": "Divya C.",   "date": "May 2025" },
-    { "id": "gal-16", "base": "events", "image": "evt-hero8.avif",       "ratio": "square", "title": "Peer support circle",              "club": "Mental Health & Peer Support", "photographer": "Admin",      "date": "Apr 2025" },
-    { "id": "gal-17", "base": "clubs",  "image": "volunteer.avif",       "ratio": "tall",   "title": "NGO teaching visit",               "club": "Volunteering Club",            "photographer": "Amir F.",    "date": "Mar 2025" },
-    { "id": "gal-18", "base": "events", "image": "evt-hero4.avif",       "ratio": "short",  "title": "Cricket league round 2",           "club": "SportZone",                    "photographer": "Vikram P.",  "date": "Jun 2025" }
+    {
+      "id": "gal-1",
+      "base": "clubs",
+      "image": "adobe-lens.avif",
+      "ratio": "tall",
+      "title": "Golden hour on MG Road",
+      "club": "Adobe Lens Club",
+      "photographer": "Priya M.",
+      "date": "Jun 2025"
+    },
+    {
+      "id": "gal-2",
+      "base": "events",
+      "image": "evt-hero7.avif",
+      "ratio": "short",
+      "title": "Hackathon whiteboard session",
+      "club": "Dev Guild",
+      "photographer": "Arjun K.",
+      "date": "Jun 2025"
+    },
+    {
+      "id": "gal-3",
+      "base": "clubs",
+      "image": "dev-guild.avif",
+      "ratio": "medium",
+      "title": "Late-night coding sprint",
+      "club": "Dev Guild",
+      "photographer": "Rahul S.",
+      "date": "May 2025"
+    },
+    {
+      "id": "gal-4",
+      "base": "events",
+      "image": "evt-hero3.avif",
+      "ratio": "tall",
+      "title": "Portfolio showcase crowd",
+      "club": "Adobe Creatives",
+      "photographer": "Meera T.",
+      "date": "May 2025"
+    },
+    {
+      "id": "gal-5",
+      "base": "clubs",
+      "image": "sportzone.avif",
+      "ratio": "square",
+      "title": "Cricket league finals",
+      "club": "SportZone",
+      "photographer": "Vikram P.",
+      "date": "May 2025"
+    },
+    {
+      "id": "gal-6",
+      "base": "events",
+      "image": "evt-hero1.avif",
+      "ratio": "medium",
+      "title": "Street photography walk",
+      "club": "Adobe Lens Club",
+      "photographer": "Anita R.",
+      "date": "Jun 2025"
+    },
+    {
+      "id": "gal-7",
+      "base": "clubs",
+      "image": "adobe-creatives.avif",
+      "ratio": "tall",
+      "title": "Design jam sketches",
+      "club": "Adobe Creatives",
+      "photographer": "Kavya N.",
+      "date": "Apr 2025"
+    },
+    {
+      "id": "gal-8",
+      "base": "events",
+      "image": "evt-hero5.avif",
+      "ratio": "short",
+      "title": "Potluck table spread",
+      "club": "Food & Brew Club",
+      "photographer": "Deepak L.",
+      "date": "May 2025"
+    },
+    {
+      "id": "gal-9",
+      "base": "clubs",
+      "image": "food.avif",
+      "ratio": "medium",
+      "title": "Blind taste test reactions",
+      "club": "Food & Brew Club",
+      "photographer": "Sneha G.",
+      "date": "Apr 2025"
+    },
+    {
+      "id": "gal-10",
+      "base": "events",
+      "image": "evt-hero9.avif",
+      "ratio": "tall",
+      "title": "Board game tournament",
+      "club": "Board Games & Tabletop",
+      "photographer": "Nikhil B.",
+      "date": "May 2025"
+    },
+    {
+      "id": "gal-11",
+      "base": "clubs",
+      "image": "games.avif",
+      "ratio": "square",
+      "title": "D&D campaign night",
+      "club": "Board Games & Tabletop",
+      "photographer": "Isha V.",
+      "date": "Apr 2025"
+    },
+    {
+      "id": "gal-12",
+      "base": "events",
+      "image": "evt-hero11.avif",
+      "ratio": "medium",
+      "title": "Campus clean-up drive",
+      "club": "Green Adobe",
+      "photographer": "Rohan D.",
+      "date": "Apr 2025"
+    },
+    {
+      "id": "gal-13",
+      "base": "clubs",
+      "image": "green-adobe.avif",
+      "ratio": "short",
+      "title": "Tree planting morning",
+      "club": "Green Adobe",
+      "photographer": "Lakshmi A.",
+      "date": "Mar 2025"
+    },
+    {
+      "id": "gal-14",
+      "base": "events",
+      "image": "evt-hero2.avif",
+      "ratio": "tall",
+      "title": "GenAI design sprint teams",
+      "club": "Adobe Creatives",
+      "photographer": "Tarun H.",
+      "date": "Jun 2025"
+    },
+    {
+      "id": "gal-15",
+      "base": "clubs",
+      "image": "readers.avif",
+      "ratio": "medium",
+      "title": "Monthly book discussion",
+      "club": "Book Club",
+      "photographer": "Divya C.",
+      "date": "May 2025"
+    },
+    {
+      "id": "gal-16",
+      "base": "events",
+      "image": "evt-hero8.avif",
+      "ratio": "square",
+      "title": "Peer support circle",
+      "club": "Mental Health & Peer Support",
+      "photographer": "Admin",
+      "date": "Apr 2025"
+    },
+    {
+      "id": "gal-17",
+      "base": "clubs",
+      "image": "volunteer.avif",
+      "ratio": "tall",
+      "title": "NGO teaching visit",
+      "club": "Volunteering Club",
+      "photographer": "Amir F.",
+      "date": "Mar 2025"
+    },
+    {
+      "id": "gal-18",
+      "base": "events",
+      "image": "evt-hero4.avif",
+      "ratio": "short",
+      "title": "Cricket league round 2",
+      "club": "SportZone",
+      "photographer": "Vikram P.",
+      "date": "Jun 2025"
+    }
   ]
 }
