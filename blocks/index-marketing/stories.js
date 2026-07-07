@@ -1,11 +1,8 @@
 /**
  * Mount member stories section inside index-marketing.
  */
-import { createOptimizedPicture } from '../../scripts/aem.js';
 import { isGuestIndexPath } from '../club-shared/image-priority.js';
 import { buildSectionHead } from '../club-shared/marketing-head.js';
-
-const CARD_WIDTHS = [{ width: '750' }];
 
 function optimizeStoryImage(wrap, src, alt = '') {
   wrap.className = 'story-card-image';
@@ -13,12 +10,15 @@ function optimizeStoryImage(wrap, src, alt = '') {
     wrap.classList.add('story-card-image--empty');
     return;
   }
-  const picture = createOptimizedPicture(src, alt, false, CARD_WIDTHS);
-  const img = picture.querySelector('img');
-  if (img && isGuestIndexPath() && 'fetchPriority' in img) {
+  const img = document.createElement('img');
+  img.src = src;
+  img.alt = alt;
+  img.loading = 'lazy';
+  img.decoding = 'async';
+  if (isGuestIndexPath() && 'fetchPriority' in img) {
     img.fetchPriority = 'low';
   }
-  wrap.append(picture);
+  wrap.append(img);
 }
 
 function mountStoryFromRow(row) {
@@ -34,36 +34,13 @@ function mountStoryFromRow(row) {
 
   const textCell = row.textCell;
   if (textCell) {
-    const heading = textCell.querySelector('h1, h2, h3, h4, h5, h6');
-    const strong = textCell.querySelector('strong');
-
-    if (heading) {
-      while (textCell.firstElementChild) {
-        body.append(textCell.firstElementChild);
-      }
-    } else if (strong) {
-      const h3 = document.createElement('h3');
-      h3.textContent = strong.textContent.trim();
-      body.append(h3);
-
-      const remainder = textCell.cloneNode(true);
-      remainder.querySelector('strong')?.remove();
-      remainder.querySelector('br')?.remove();
-      const copy = remainder.textContent.trim();
-      if (copy) {
-        const p = document.createElement('p');
-        p.textContent = copy;
-        body.append(p);
-      }
-    } else {
-      while (textCell.firstElementChild) {
-        body.append(textCell.firstElementChild);
-      }
-      if (!body.textContent.trim() && textCell.textContent.trim()) {
-        const p = document.createElement('p');
-        p.textContent = textCell.textContent.trim();
-        body.append(p);
-      }
+    while (textCell.firstElementChild) {
+      body.append(textCell.firstElementChild);
+    }
+    if (!body.children.length && textCell.textContent.trim()) {
+      const p = document.createElement('p');
+      p.textContent = textCell.textContent.trim();
+      body.append(p);
     }
   }
 
@@ -82,9 +59,9 @@ function mountStoryFromItem(item) {
   body.className = 'story-card-body';
 
   if (item.title) {
-    const h3 = document.createElement('h3');
-    h3.textContent = item.title;
-    body.append(h3);
+    const heading = document.createElement('h3');
+    heading.textContent = item.title;
+    body.append(heading);
   }
   if (item.body) {
     const p = document.createElement('p');
@@ -109,16 +86,16 @@ export function mountStoriesSection(parent, data, { standalone = false, skipHead
     }));
   }
 
-  const ul = document.createElement('ul');
-  ul.className = 'stories-grid';
+  const grid = document.createElement('ul');
+  grid.className = 'stories-grid';
 
   if (data.rows?.length) {
-    data.rows.forEach((row) => ul.append(mountStoryFromRow(row)));
+    data.rows.forEach((row) => grid.append(mountStoryFromRow(row)));
   } else {
-    data.items.forEach((item) => ul.append(mountStoryFromItem(item)));
+    data.items.forEach((item) => grid.append(mountStoryFromItem(item)));
   }
 
-  section.append(ul);
+  section.append(grid);
   parent.append(section);
   return section;
 }

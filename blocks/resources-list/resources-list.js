@@ -4,6 +4,8 @@
  */
 import { loadScript } from '../../scripts/aem.js';
 import { readPageConfig, cfg } from '../club-shared/block-config.js';
+import { resolveClubAssetUrl, CLUB_STOCK_FALLBACK_POOL, CLUB_PICKER_OPTIONS } from '../club-shared/club-images.js';
+import { EVENT_HERO_IMAGE_OPTIONS } from '../club-shared/event-images.js';
 
 export const RESOURCES_LIST_DEFAULTS = {
   'clubs-data': '/data/data.json',
@@ -31,11 +33,11 @@ const ARTICLE_MIN_EXCERPT = 20;
 const ARTICLE_MIN_BODY = 120;
 
 const IMG_BASES = {
-  clubs: '/assets/images/clubs/',
-  events: '/assets/images/events/',
+  clubs: '/assets/images/clubs/compressed-clubs/',
+  events: '/assets/images/events/compressed-events/',
   index: '/assets/images/index/',
 };
-const IMG_FALLBACK = '/assets/images/clubs/clubs-hero1.avif';
+const IMG_FALLBACK = CLUB_STOCK_FALLBACK_POOL[0];
 const ORGANISATION_ID = 'organisation';
 const ORG_AUTHOR_PATTERN = /clubs admin|finance|people team|hr ·|internal comms|events team/i;
 const IMAGE_TO_CLUB_ID = {
@@ -51,21 +53,8 @@ const IMAGE_TO_CLUB_ID = {
   wellbeing: 'mental-health',
 };
 const ARTICLE_IMAGE_OPTIONS = [
-  { label: 'Photography & visual arts', value: 'clubs/adobe-lens.avif' },
-  { label: 'Creative design & illustration', value: 'clubs/adobe-creatives.avif' },
-  { label: 'Tech, coding & engineering', value: 'clubs/dev-guild.avif' },
-  { label: 'Sports, fitness & recreation', value: 'clubs/sportzone.avif' },
-  { label: 'Reading, books & knowledge', value: 'clubs/readers.avif' },
-  { label: 'Games, strategy & fun', value: 'clubs/games.avif' },
-  { label: 'Nature, green & eco efforts', value: 'clubs/green-adobe.avif' },
-  { label: 'Community service & volunteering', value: 'clubs/volunteer.avif' },
-  { label: 'Mental health & wellbeing', value: 'clubs/wellbeing.avif' },
-  { label: 'Food culture & tasting', value: 'clubs/food.avif' },
-  { label: 'Outdoor walk / street gathering', value: 'events/evt-hero1.avif' },
-  { label: 'Team collaboration / brainstorm', value: 'events/evt-hero2.avif' },
-  { label: 'Live showcase / audience moment', value: 'events/evt-hero3.avif' },
-  { label: 'Workshop / whiteboard session', value: 'events/evt-hero7.avif' },
-  { label: 'Group discussion / open circle', value: 'events/evt-hero8.avif' },
+  ...CLUB_PICKER_OPTIONS,
+  ...EVENT_HERO_IMAGE_OPTIONS,
   { label: 'Club culture & community vibe', value: 'clubs/clubs-hero1.avif' },
   { label: 'High energy / crowd moment', value: 'clubs/clubs-hero3.avif' },
   { label: 'Team at work (group visual)', value: 'index/dev-grp.avif' },
@@ -187,12 +176,9 @@ function loadArticles(baseArticles) {
 }
 
 function getImageSrc(article) {
-  if (article.imagePath) {
-    const [base, ...rest] = article.imagePath.split('/');
-    return `${IMG_BASES[base] || IMG_BASES.clubs}${rest.join('/')}`;
-  }
+  if (article.imagePath) return resolveClubAssetUrl(article.imagePath);
   if (article.base && article.image) {
-    return `${IMG_BASES[article.base] || IMG_BASES.clubs}${article.image}`;
+    return resolveClubAssetUrl(`${article.base}/${article.image}`);
   }
   return IMG_FALLBACK;
 }
@@ -311,6 +297,10 @@ function canManageArticle(art) {
   return Boolean(art?.clubId && auth.canManageClub?.(art.clubId));
 }
 
+function canFeatureArticles() {
+  return Boolean(getAuth().isAdmin?.());
+}
+
 function closeAllResourceCardMenus() {
   document.querySelectorAll('.rs-card-menu.is-open').forEach((menu) => {
     menu.classList.remove('is-open');
@@ -357,6 +347,20 @@ function appendAdminArticleMenu(visual, art) {
     closeAllResourceCardMenus();
     window.__resourcesAdmin?.openEdit?.(art.id);
   });
+
+  if (canFeatureArticles()) {
+    const featureBtn = document.createElement('button');
+    featureBtn.type = 'button';
+    featureBtn.className = 'rs-card-menu-item';
+    featureBtn.setAttribute('role', 'menuitem');
+    featureBtn.textContent = art.featured ? 'Remove featured' : 'Mark as featured';
+    featureBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      closeAllResourceCardMenus();
+      window.__resourcesAdmin?.setFeatured?.(art.id, !art.featured);
+    });
+    panel.append(featureBtn);
+  }
 
   const deleteBtn = document.createElement('button');
   deleteBtn.type = 'button';
@@ -817,6 +821,7 @@ function injectAdminCreator() {
   if (!auth.isAnyAdmin?.()) return;
 
   const isClubScoped = auth.isClubAdmin?.() && !auth.isAdmin?.();
+  const canFeature = auth.isAdmin?.();
   const managedIds = auth.getManagedClubIds?.() || [];
   const creatorClubs = isClubScoped
     ? ALL_CLUBS.filter((c) => managedIds.includes(c.id))
@@ -878,7 +883,11 @@ function injectAdminCreator() {
             ${ARTICLE_IMAGE_OPTIONS.map((opt) => `<option value="${esc(opt.value)}">${esc(opt.label)}</option>`).join('')}
           </select>
         </label>
-        <label class="rs-admin-inline"><input type="checkbox" name="featured" /> <span>Featured</span></label>
+        ${canFeature ? `
+        <label class="rs-admin-checkbox">
+          <input type="checkbox" name="featured" />
+          <span>Featured article</span>
+        </label>` : ''}
         <button type="submit" class="rs-admin-submit">Create Article</button>
       </form>
     </div>`;
@@ -905,6 +914,8 @@ function injectAdminCreator() {
     if (modalTitle) modalTitle.textContent = 'Create Article';
     if (submitBtn) submitBtn.textContent = 'Create Article';
     form?.reset();
+    if (form?.category) form.category.disabled = false;
+    if (form?.clubId) form.clubId.disabled = false;
     refreshArticleFieldCounters(form);
   };
 
@@ -927,15 +938,22 @@ function injectAdminCreator() {
     readTimeInput?.setCustomValidity('');
 
     const imagePath = String(fd.get('imagePath') || '').trim();
-    const clubId = String(fd.get('clubId') || '').trim();
+    const existingArticle = editingArticleId
+      ? ALL_ARTICLES.find((item) => item.id === editingArticleId)
+      : null;
+    const clubId = editingArticleId
+      ? String(existingArticle?.clubId || ORGANISATION_ID).trim()
+      : String(fd.get('clubId') || '').trim();
     const clubSelect = form.querySelector('[name="clubId"]');
     const clubName = clubId === ORGANISATION_ID
       ? undefined
-      : (clubSelect?.selectedOptions?.[0]?.textContent || '').trim();
+      : (clubSelect?.selectedOptions?.[0]?.textContent || existingArticle?.clubName || '').trim();
 
     const article = {
       id: editingArticleId || `art-custom-${Date.now()}`,
-      category: String(fd.get('category') || '').trim(),
+      category: editingArticleId
+        ? String(existingArticle?.category || '').trim()
+        : String(fd.get('category') || '').trim(),
       title: String(fd.get('title') || '').trim(),
       excerpt: String(fd.get('excerpt') || '').trim(),
       body: String(fd.get('body') || '').trim(),
@@ -944,7 +962,9 @@ function injectAdminCreator() {
         ? (ALL_ARTICLES.find((item) => item.id === editingArticleId)?.date || publishedDate())
         : publishedDate(),
       readTime: `${readMinutes} min read`,
-      featured: Boolean(fd.get('featured')),
+      featured: canFeatureArticles()
+        ? Boolean(fd.get('featured'))
+        : (editingArticleId ? Boolean(existingArticle?.featured) : false),
       accent: '#eb1000',
       clubId,
       clubName: clubName || undefined,
@@ -1006,6 +1026,8 @@ function injectAdminCreator() {
       if (submitBtn) submitBtn.textContent = 'Save changes';
       form.category.value = art.category || '';
       form.clubId.value = art.clubId || ORGANISATION_ID;
+      form.category.disabled = true;
+      form.clubId.disabled = true;
       form.title.value = art.title || '';
       form.author.value = art.author || '';
       if (readTimeInput) readTimeInput.value = parseReadTimeMinutes(art.readTime);
@@ -1017,6 +1039,26 @@ function injectAdminCreator() {
       if (form.featured) form.featured.checked = Boolean(art.featured);
       refreshArticleFieldCounters(form);
       setOpen(true);
+    },
+    setFeatured(articleId, featured) {
+      if (!canFeatureArticles()) return;
+      const art = ALL_ARTICLES.find((item) => item.id === articleId);
+      if (!art) return;
+      const auth = getAuth();
+      const clubId = art.clubId || ORGANISATION_ID;
+      const clubName = art.clubName;
+      const updated = { ...art, featured: Boolean(featured) };
+      const saved = auth.savePublishedArticle?.(updated, {
+        title: updated.title,
+        clubId,
+        clubName,
+      }) !== false;
+      if (!saved) {
+        showAdminToast(cfg(PAGE_CONFIG, 'admin-toast-error', RESOURCES_LIST_DEFAULTS['admin-toast-error']));
+        return;
+      }
+      showAdminToast(featured ? 'Article marked as featured' : 'Article removed from featured');
+      reloadArticles();
     },
     deleteArticle(articleId) {
       const art = ALL_ARTICLES.find((item) => item.id === articleId);

@@ -4,7 +4,11 @@
  */
 import { loadCSS, loadScript } from '../../scripts/aem.js';
 import { readPageConfig, cfg, fillTemplate } from '../club-shared/block-config.js';
-import { getEventImageSrc } from '../club-shared/club-page.js';
+import {
+  getEventImageSrc,
+  COMPRESSED_EVENTS_BASE,
+} from '../club-shared/event-images.js';
+import { getClubImageSrc } from '../club-shared/club-images.js';
 
 export const HOME_DASHBOARD_DEFAULTS = {
   'clubs-data': '/data/data.json',
@@ -42,9 +46,7 @@ export const HOME_DASHBOARD_DEFAULTS = {
   'joined-label': 'Joined',
 };
 
-const CLUB_IMG = '/assets/images/clubs/';
-const EVENT_IMG = '/assets/images/events/';
-const EVENT_FALLBACK = `${EVENT_IMG}evt-hero1.avif`;
+const EVENT_FALLBACK = `${COMPRESSED_EVENTS_BASE}evt-hero.avif`;
 const MONTHS = {
   JAN: 0, FEB: 1, MAR: 2, APR: 3, MAY: 4, JUN: 5,
   JUL: 6, AUG: 7, SEP: 8, OCT: 9, NOV: 10, DEC: 11,
@@ -138,7 +140,7 @@ function clubCard(club) {
     <div class="lp-club-card lp-club-card--action">
       <a class="lp-card-link" href="/club?id=${esc(club.id)}">
         <div class="lp-club-thumb">
-          <img src="${CLUB_IMG}${esc(club.image || `${club.id}.avif`)}" alt="" loading="lazy" decoding="async" />
+          <img src="${esc(getClubImageSrc(club))}" alt="" loading="lazy" decoding="async" />
         </div>
         <div class="lp-club-body">
           <span class="lp-club-tag">${esc(club.tag)}</span>
@@ -199,7 +201,7 @@ function wireClubJoinButtons(root) {
       if (!club) return;
       if (auth()?.getAdminOf?.().includes(clubId)) return;
       const joined = window.AdobeJoinModal?.toggleClubJoinWithModal(club, { events: mergedEvents() })
-        ?? auth()?.toggleClubJoin(clubId);
+        ?? auth()?.toggleClubJoin(clubId, { events: mergedEvents() });
       if (joined === null) return;
       document.querySelectorAll(`.cb-poster-join[data-club-id="${CSS.escape(clubId)}"]`).forEach((el) => {
         syncClubJoinButton(el, clubId);

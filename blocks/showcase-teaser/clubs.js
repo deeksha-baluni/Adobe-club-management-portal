@@ -3,10 +3,9 @@
  */
 import { fetchAppData, getAuth, redirectToLogin } from '../club-shared/fetch-app-data.js';
 import { setMarketingImage } from '../club-shared/image-priority.js';
+import { getClubImageSrc, CLUB_STOCK_FALLBACK_POOL } from '../club-shared/club-images.js';
 import { buildSectionHead } from '../club-shared/marketing-head.js';
 import { cfg } from '../club-shared/block-config.js';
-
-const CLUB_IMG_PATH = '/assets/images/clubs/';
 
 export const CLUBS_DEFAULTS = {
   preset: 'clubs',
@@ -34,10 +33,9 @@ function buildClubCard(club) {
     img.alt = '';
     img.width = 400;
     img.height = 300;
-    setMarketingImage(img, `${CLUB_IMG_PATH}${club.image}`);
+    setMarketingImage(img, getClubImageSrc(club));
     img.onerror = () => {
-      img.remove();
-      thumb.style.background = club.iconBg || 'var(--color-surface)';
+      if (CLUB_STOCK_FALLBACK_POOL[0]) img.src = CLUB_STOCK_FALLBACK_POOL[0];
     };
     thumb.append(img);
   } else {

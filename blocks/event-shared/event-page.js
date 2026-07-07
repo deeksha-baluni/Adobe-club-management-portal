@@ -2,7 +2,12 @@
  * Shared utilities for event detail page blocks.
  */
 
-import { esc, getAuth, getClubData, loadScript } from '../club-shared/club-page.js';
+import { esc, getAuth, getClubData, loadScript, preloadHeroImage } from '../club-shared/club-page.js';
+import { getClubImageSrc } from '../club-shared/club-images.js';
+import {
+  getEventImageSrc,
+  EVENT_STOCK_FALLBACK_POOL,
+} from '../club-shared/event-images.js';
 import { cfg } from '../club-shared/block-config.js';
 import {
   getRecapBody,
@@ -20,8 +25,8 @@ const WEEKDAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Frida
 const MONTHS_FULL = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
 const IMAGE_BASES = {
-  clubs: '/assets/images/clubs/',
-  events: '/assets/images/events/',
+  clubs: '/assets/images/clubs/compressed-clubs/',
+  events: '/assets/images/events/compressed-events/',
   index: '/assets/images/index/',
 };
 
@@ -82,15 +87,16 @@ export function getEventClub(ev, allClubs) {
   }) || null;
 }
 
-export function getClubImageSrc(club) {
-  if (!club) return '';
-  const file = club.image || `${club.id || 'clubs-hero1'}.avif`;
-  return `${IMAGE_BASES.clubs}${file}`;
+export { getClubImageSrc } from '../club-shared/club-images.js';
+export { getEventImageSrc } from '../club-shared/event-images.js';
+
+export function prefetchEventHeroImage(evOrId) {
+  const ev = typeof evOrId === 'string' ? { id: evOrId } : evOrId;
+  preloadHeroImage(getEventImageSrc(ev));
 }
 
-export function getEventImageSrc(ev) {
-  return window.AdobeEventModal?.getEventImageSrc?.(ev)
-    || `${IMAGE_BASES.events}${ev?.id || 'evt-hero1'}.avif`;
+export function isMembersOnlyEvent(ev) {
+  return Boolean(ev?.membersOnly);
 }
 
 export function wireImageFallback(img, seed = '') {
@@ -103,11 +109,8 @@ export function wireImageFallback(img, seed = '') {
       img.onerror = null;
       return;
     }
-    const pool = [
-      `${IMAGE_BASES.events}evt-hero1.avif`,
-      `${IMAGE_BASES.events}evt-hero2.avif`,
-      `${IMAGE_BASES.events}evt-hero3.avif`,
-    ];
+    const pool = EVENT_STOCK_FALLBACK_POOL;
+    if (!pool.length) return;
     img.src = pool[attempts % pool.length];
   });
 }
@@ -146,7 +149,7 @@ export function getLocationLabel(ev) {
 }
 
 export function getAccessLabel(ev) {
-  return window.AdobeEventModal?.isMembersOnlyEvent?.(ev)
+  return isMembersOnlyEvent(ev)
     ? 'Members only — join the hosting club to RSVP.'
     : 'Anyone can view and join.';
 }
@@ -194,7 +197,7 @@ export function buildAboutHtml(ev, club) {
   const dateLabel = formatEventLongDate(ev);
   const locationLabel = getLocationLabel(ev);
   const virtual = isVirtualEvent(ev);
-  const membersOnly = window.AdobeEventModal?.isMembersOnlyEvent?.(ev);
+  const membersOnly = isMembersOnlyEvent(ev);
   const parts = [];
 
   if (desc) {
@@ -299,9 +302,9 @@ export async function ensureEventScripts() {
   return ctx;
 }
 
-export async function initEventPage() {
+export async function initEventPage({ loadScripts = false } = {}) {
   const ctx = await getEventPageContext();
-  if (!ctx.error) await ensureEventScripts();
+  if (!ctx.error && loadScripts) await ensureEventScripts();
   return ctx;
 }
 

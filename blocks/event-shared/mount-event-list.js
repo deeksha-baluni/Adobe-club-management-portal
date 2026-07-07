@@ -1,41 +1,40 @@
 /**
  * Event List body mount — shared by event-list block and page-hero fallback.
  */
-import { initEventPage } from './event-page.js';
+import {
+  getEventPageContext,
+  ensureEventScripts,
+  refreshRegisterButton,
+  bindEventPageListeners,
+} from './event-page.js';
 import { readPageConfig } from '../club-shared/block-config.js';
-import { refreshRegisterButton } from './event-page.js';
 import { mountRsvpSection } from './sections/rsvp-section.js';
 import { mountAboutSection } from './sections/about-section.js';
 import { mountDetailsSection } from './sections/details-section.js';
 import { mountOrganizerSection } from './sections/organizer-section.js';
 
+function scheduleIdle(fn, timeout = 2000) {
+  if (typeof requestIdleCallback === 'function') {
+    requestIdleCallback(fn, { timeout });
+  } else {
+    window.setTimeout(fn, 1);
+  }
+}
+
 /** Move RSVP rail into page-hero grid (hero + sticky rail share one row). */
 function attachEventRailToHero(rail) {
-  const markEventPage = () => {
-    document.body.classList.add('event-detail-page');
-    document.querySelector('main')?.classList.add('event-detail-page');
-  };
-
   const attach = () => {
     const evInner = document.querySelector('.event-hero .ev-inner, .page-hero--event .ev-inner');
     if (!evInner) return false;
-    const existing = evInner.querySelector('.event-list-rail');
+    evInner.querySelector('.event-list-rail--placeholder')?.remove();
+    const existing = evInner.querySelector('.event-list-rail:not(.event-list-rail--placeholder)');
     if (existing && existing !== rail) existing.remove();
     evInner.appendChild(rail);
-    markEventPage();
     return true;
   };
 
   if (attach()) return;
-
   document.addEventListener('event-hero-ready', () => { attach(); }, { once: true });
-
-  const target = document.querySelector('main') || document.body;
-  const observer = new MutationObserver(() => {
-    if (attach()) observer.disconnect();
-  });
-  observer.observe(target, { childList: true, subtree: true });
-  setTimeout(() => observer.disconnect(), 15000);
 }
 
 export const EVENT_LIST_DEFAULTS = {
@@ -64,7 +63,6 @@ export default async function mountEventListBlock(block) {
   }
   if (block.dataset.eventListMounted === 'pending') return;
 
-  // Sync guard — page-hero and event-list sections load in parallel
   block.dataset.eventListMounted = 'pending';
 
   const pageConfig = readPageConfig(block, EVENT_LIST_DEFAULTS);
@@ -74,7 +72,7 @@ export default async function mountEventListBlock(block) {
 
   let ctx;
   try {
-    ctx = await initEventPage();
+    ctx = await getEventPageContext();
   } catch (err) {
     // eslint-disable-next-line no-console
     console.error('[event-list]', err);
@@ -101,6 +99,17 @@ export default async function mountEventListBlock(block) {
 
   block.appendChild(body);
   attachEventRailToHero(rail);
-  refreshRegisterButton(ctx.event, rail.querySelector('#registration_button'));
   block.dataset.eventListMounted = 'true';
+
+  scheduleIdle(() => {
+    ensureEventScripts()
+      .then(() => {
+        refreshRegisterButton(ctx.event, rail.querySelector('#registration_button'));
+        bindEventPageListeners(ctx.event);
+      })
+      .catch((err) => {
+        // eslint-disable-next-line no-console
+        console.error('[event-list] RSVP scripts', err);
+      });
+  }, 2500);
 }

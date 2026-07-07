@@ -4,28 +4,11 @@
 'use strict';
 
 (function () {
-  const EVENT_IMAGE_OPTIONS = [
-    { label: 'Outdoor walk / street gathering', value: 'events/evt-hero1.avif' },
-    { label: 'Team collaboration / brainstorm', value: 'events/evt-hero2.avif' },
-    { label: 'Live showcase / audience moment', value: 'events/evt-hero3.avif' },
-    { label: 'Sports & active competition', value: 'events/evt-hero4.avif' },
-    { label: 'Food, social & casual hangout', value: 'events/evt-hero5.avif' },
-    { label: 'Evening celebration / networking', value: 'events/evt-hero6.avif' },
-    { label: 'Workshop / whiteboard session', value: 'events/evt-hero7.avif' },
-    { label: 'Group discussion / open circle', value: 'events/evt-hero8.avif' },
-    { label: 'Wellness & peer support', value: 'events/evt-hero9.avif' },
-    { label: 'Campus clean-up / sustainability', value: 'events/evt-hero11.avif' },
-    { label: 'Photography & visual arts', value: 'clubs/adobe-lens.avif' },
-    { label: 'Creative design & illustration', value: 'clubs/adobe-creatives.avif' },
-    { label: 'Tech, coding & engineering', value: 'clubs/dev-guild.avif' },
-    { label: 'Sports, fitness & recreation', value: 'clubs/sportzone.avif' },
-    { label: 'Reading, books & knowledge', value: 'clubs/readers.avif' },
-    { label: 'Games, strategy & fun', value: 'clubs/games.avif' },
-    { label: 'Nature, green & eco efforts', value: 'clubs/green-adobe.avif' },
-    { label: 'Community service & volunteering', value: 'clubs/volunteer.avif' },
-    { label: 'Mental health & wellbeing', value: 'clubs/wellbeing.avif' },
-    { label: 'Food culture & tasting', value: 'clubs/food.avif' },
-  ];
+  function getEventImageOptions() {
+    const events = window.AdobeEventImages?.EVENT_HERO_IMAGE_OPTIONS || [];
+    const clubs = window.AdobeClubImages?.CLUB_PICKER_OPTIONS || [];
+    return [...events, ...clubs];
+  }
 
   let pageCtx = null;
   let mounted = false;
@@ -296,7 +279,7 @@
           <label><span>Description <span class="field-required" aria-hidden="true">*</span></span><textarea required name="desc" rows="4" maxlength="800"></textarea></label>
           <label><span>Image <span class="field-required" aria-hidden="true">*</span></span>
             <select name="imagePath" required>
-              ${EVENT_IMAGE_OPTIONS.map((opt) => `<option value="${esc(opt.value)}">${esc(opt.label)}</option>`).join('')}
+              ${getEventImageOptions().map((opt) => `<option value="${esc(opt.value)}">${esc(opt.label)}</option>`).join('')}
             </select>
           </label>
           <p class="ev-admin-slack-note">After you create the event, use <strong>Post on Slack</strong> to share an RSVP link and invite people to join clubs on Adobe Clubs.</p>

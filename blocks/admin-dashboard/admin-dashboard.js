@@ -5,6 +5,7 @@
 import { loadCSS, loadScript } from '../../scripts/aem.js';
 import { readPageConfig, cfg, fillTemplate } from '../club-shared/block-config.js';
 import { getEventImageSrc } from '../club-shared/club-page.js';
+import { getClubImageSrc } from '../club-shared/club-images.js';
 
 export const ADMIN_DASHBOARD_DEFAULTS = {
   'clubs-data': '/data/data.json',
@@ -54,7 +55,6 @@ const ICONS = {
   requests: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg>',
 };
 
-const CLUB_IMG = '/assets/images/clubs/';
 let PAGE_CONFIG = { ...ADMIN_DASHBOARD_DEFAULTS };
 let DATA = null;
 let depsLoaded = false;
@@ -211,7 +211,7 @@ function eventHref(id) {
 }
 
 function clubImageSrc(club) {
-  return club?.image ? `${CLUB_IMG}${club.image}` : null;
+  return club?.image ? getClubImageSrc(club) : null;
 }
 
 function eventCardImageSrc(ev, club) {
@@ -225,16 +225,8 @@ function formatDateShort(ev) {
   return `${m.charAt(0).toUpperCase()}${m.slice(1).toLowerCase()} ${d}`;
 }
 
-function memberDeltaThisWeek(clubIds) {
-  try {
-    const raw = JSON.parse(localStorage.getItem('adobeClubsMemberDeltas') || '{}');
-    return Object.entries(raw).reduce((sum, [id, v]) => {
-      if (clubIds && !clubIds.includes(id)) return sum;
-      return sum + (Number(v) > 0 ? Number(v) : 0);
-    }, 0);
-  } catch {
-    return 0;
-  }
+function memberDeltaThisMonth(clubIds) {
+  return auth()?.getMonthMemberNet?.(clubIds) ?? 0;
 }
 
 function reservedSeats(ev) {
@@ -269,15 +261,17 @@ function timeAgo(ms) {
   return days < 7 ? `${days}d ago` : `${Math.floor(days / 7)}w ago`;
 }
 
-function statCard({ label, value, sub, icon, variant, subUp }) {
+function statCard({ label, value, sub, icon, variant, subDelta }) {
   const cls = variant ? ` adm-stat--${variant}` : '';
+  const delta = Number(subDelta) > 0 ? Number(subDelta) : 0;
+  const subCls = delta > 0 ? ' adm-stat-sub--up' : '';
   return `
     <div class="adm-stat${cls}">
       <span class="adm-stat-ic">${icon}</span>
       <div class="adm-stat-text">
         <span class="adm-stat-label">${esc(label)}</span>
         <span class="adm-stat-value">${esc(value)}</span>
-        ${sub ? `<span class="adm-stat-sub${subUp ? ' adm-stat-sub--up' : ''}">${esc(sub)}</span>` : ''}
+        ${sub ? `<span class="adm-stat-sub${subCls}">${esc(sub)}</span>` : ''}
       </div>
     </div>`;
 }
@@ -652,7 +646,7 @@ function buildDashboardHtml(data) {
 
   const upcoming = events.filter(isUpcoming).sort((a, b) => (parseDate(a)?.getTime() || 0) - (parseDate(b)?.getTime() || 0));
   const nextEvent = upcoming[0];
-  const weekDelta = memberDeltaThisWeek(overall ? null : ids);
+  const monthDelta = memberDeltaThisMonth(overall ? null : ids);
 
   let rsvpTotal = 0;
   let rsvpEvents = 0;
@@ -697,9 +691,10 @@ function buildDashboardHtml(data) {
     statCard({
       label: overall ? 'Total members' : 'Members',
       value: totalMembers.toLocaleString('en-US'),
-      sub: weekDelta > 0 ? `+${weekDelta} this week` : (overall ? 'Across all clubs' : 'Across your clubs'),
+      sub: monthDelta > 0 ? `+${monthDelta} this month` : (overall ? 'Across all clubs' : 'Across your clubs'),
       icon: ICONS.members,
-      subUp: weekDelta > 0,
+      variant: 'members',
+      subDelta: monthDelta,
     }),
     statCard({
       label: 'Upcoming events',
@@ -808,13 +803,14 @@ function buildDashboardHtml(data) {
             <div class="adm-agenda">${renderAgenda(upcoming, clubs)}</div>
           </section>
 
+          ${overall ? `
           <section class="adm-panel" aria-label="${esc(activityTitle)}">
             <div class="adm-panel-head">
               <h2 class="adm-panel-title">${esc(activityTitle)}</h2>
               <span class="adm-chip">${esc(cfg(PAGE_CONFIG, 'chip-audit', ADMIN_DASHBOARD_DEFAULTS['chip-audit']))}</span>
             </div>
             <div class="adm-activity">${renderActivity(activityEmpty, { overall, managedIds: ids })}</div>
-          </section>
+          </section>` : ''}
         </aside>
       </div>
     </div>`;

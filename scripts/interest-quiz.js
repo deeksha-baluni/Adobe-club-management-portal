@@ -183,7 +183,7 @@
           <li class="uf-quiz-club-card" role="listitem">
             <a href="/club?id=${esc(club.id)}" class="uf-quiz-club-link">
               <div class="uf-quiz-club-img">
-                <img src="${IMAGE_BASE}${esc(club.image || club.id + '.jpg')}" alt="" loading="lazy" decoding="async">
+                <img src="${esc(window.AdobeClubImages?.getClubImageSrc?.(club) || `${codeBase()}/assets/images/clubs/compressed-clubs/${club.image || club.id + '.avif'}`)}" alt="" loading="lazy" decoding="async">
               </div>
               <div class="uf-quiz-club-body">
                 <span class="uf-quiz-club-tag">${esc(club.tag)}</span>

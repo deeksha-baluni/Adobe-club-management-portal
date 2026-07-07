@@ -13,6 +13,9 @@ import {
   buildBlock,
 } from './aem.js';
 import { preloadLcpImage } from '../blocks/club-shared/image-priority.js';
+import { resolveEventIdUrl } from '../blocks/club-shared/event-images.js';
+import '../blocks/club-shared/club-images.js';
+import '../blocks/club-shared/event-images.js';
 
 /**
  * load fonts.css and set a session storage flag
@@ -304,6 +307,7 @@ export function decorateMain(main) {
   migrateLegacyMarketingBlocks(main);
   ensureGuestFeaturedClubs(main);
   prepareGuestIndexHero(main);
+  prepareEventDetailEarly();
   decorateBlocks(main);
   decorateButtons(main);
 }
@@ -320,13 +324,14 @@ async function loadEager(doc) {
   const onGuestIndex = main
     && normalizePath(window.location.pathname) === '/'
     && main.querySelector('.landing-hero');
+  const onEventDetail = normalizePath(window.location.pathname) === '/event';
 
   if (onGuestIndex && isSessionAuthenticated()) {
     window.location.replace('/home');
     return;
   }
 
-  if (!onGuestIndex) {
+  if (!onGuestIndex && !onEventDetail) {
     await loadScript(`${window.hlx?.codeBasePath || ''}/scripts/auth-guard.js`);
     if (handleAuthRouting(doc)) return;
   } else {
@@ -338,12 +343,13 @@ async function loadEager(doc) {
 
     const authPage = isAuthPage(doc);
     const guestIndex = isGuestIndexPage(main);
+    const eventDetail = isEventDetailPage(main);
 
-    if (!guestIndex) {
+    if (!guestIndex && !eventDetail) {
       prefetchRouteAssets(main);
     }
 
-    if (!authPage && !guestIndex) {
+    if (!authPage && !guestIndex && !eventDetail) {
       const header = doc.querySelector('header');
       if (header && !isHeaderReady(header)) {
         await loadHeader(header);
@@ -352,11 +358,24 @@ async function loadEager(doc) {
 
     if (guestIndex) {
       const header = doc.querySelector('header');
-      if (!authPage && header && !isHeaderReady(header)) {
-        await loadHeader(header);
-      }
+      const headerPromise = !authPage && header && !isHeaderReady(header)
+        ? loadHeader(header)
+        : Promise.resolve();
       prefetchRouteAssets(main);
-      await loadGuestIndex(main);
+      await Promise.all([
+        headerPromise,
+        loadGuestIndex(main),
+      ]);
+    } else if (eventDetail) {
+      const header = doc.querySelector('header');
+      const headerPromise = !authPage && header && !isHeaderReady(header)
+        ? loadHeader(header)
+        : Promise.resolve();
+      prefetchRouteAssets(main);
+      await Promise.all([
+        headerPromise,
+        loadEventDetailPage(main),
+      ]);
     } else {
       await loadSection(main.querySelector('.section'), waitForFirstImage);
     }
@@ -384,6 +403,47 @@ function normalizePath(path) {
   return normalized === '/index' ? '/' : normalized;
 }
 
+function getEventIdFromLocation() {
+  const params = new URLSearchParams(window.location.search);
+  const idParam = params.get('id') || params.get('event');
+  if (idParam) return idParam;
+  const match = window.location.pathname.match(/\/events\/([^/]+)\/?$/);
+  return match ? decodeURIComponent(match[1]) : '';
+}
+
+function isEventDetailPage(main) {
+  return normalizePath(window.location.pathname) === '/event'
+    && Boolean(main?.querySelector('.page-hero, .event-hero, .event-list'));
+}
+
+function prepareEventDetailEarly() {
+  if (normalizePath(window.location.pathname) !== '/event') return;
+  document.documentElement.classList.add('event-detail-route');
+  document.body?.classList.add('event-detail-page');
+  document.querySelector('main')?.classList.add('event-detail-page');
+}
+
+function prefetchEventHeroEarly() {
+  const eventId = getEventIdFromLocation();
+  if (!eventId) return;
+  const heroSrc = resolveEventIdUrl(eventId);
+  preloadLcpImage(heroSrc);
+  prefetchAppData()?.then((data) => {
+    const ev = data?.events?.find((e) => e.id === eventId);
+    if (ev?.imagePath) {
+      import('../blocks/event-shared/event-page.js').then((mod) => {
+        mod.prefetchEventHeroImage(ev);
+      });
+    }
+  });
+}
+
+if (normalizePath(window.location.pathname) === '/event') {
+  prepareEventDetailEarly();
+  prefetchAppData();
+  prefetchEventHeroEarly();
+}
+
 /** Fast localStorage check — avoids loading auth-guard before guest index LCP. */
 function isSessionAuthenticated() {
   try {
@@ -398,12 +458,18 @@ function prefetchGuestHeroImage() {
   const base = window.hlx?.codeBasePath || '';
   const origin = window.location.origin;
   const path = `${origin}${base}/assets/images/index/home-hero-img.webp`;
-  preloadLcpImage(`${path}?width=750&format=webply&optimize=medium`, { media: '(max-width: 899px)' });
-  preloadLcpImage(`${path}?width=1200&format=webply&optimize=medium`, { media: '(min-width: 900px)' });
+  preloadLcpImage(path, { media: '(max-width: 899px)' });
+  preloadLcpImage(path, { media: '(min-width: 900px)' });
 }
 
 /** Promote authored hero img before block JS replaces the table (guest index LCP). */
+function prepareGuestIndexEarly() {
+  if (normalizePath(window.location.pathname) !== '/') return;
+  document.documentElement.classList.add('guest-index-route');
+}
+
 function prepareGuestIndexHero(main) {
+  prepareGuestIndexEarly();
   if (normalizePath(window.location.pathname) !== '/') return;
   const hero = main.querySelector('.landing-hero');
   if (!hero) return;
@@ -416,11 +482,13 @@ function prepareGuestIndexHero(main) {
   img.loading = 'eager';
   img.decoding = 'async';
   if ('fetchPriority' in img) img.fetchPriority = 'high';
-  preloadLcpImage(img.src);
+  prefetchGuestHeroImage();
 }
 
 if (normalizePath(window.location.pathname) === '/') {
+  prepareGuestIndexEarly();
   prefetchAppData();
+  prefetchGuestHeroImage();
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => {
       prepareGuestIndexHero(document.querySelector('main'));
@@ -476,8 +544,8 @@ function prefetchRouteAssets(main, path) {
     || (normalized !== '/' && main?.querySelector('.landing-hero'))) {
     const base = window.hlx?.codeBasePath || '';
     const origin = window.location.origin;
-    const heroPath = `${base}/assets/images/index/home-hero-img.webp`;
-    preloadLcpImage(`${origin}${heroPath}?width=1200&format=webply&optimize=medium`);
+    const heroPath = `${origin}${base}/assets/images/index/home-hero-img.webp`;
+    preloadLcpImage(heroPath);
   }
 }
 
@@ -492,17 +560,36 @@ function isHeaderReady(header) {
 
 async function loadGuestIndex(main) {
   document.body.classList.add('guest-index');
+  document.documentElement.classList.add('guest-index-route');
+  const sections = [...main.querySelectorAll(':scope > .section')];
+  if (!sections.length) return;
+  await loadSection(sections[0], waitForGuestHeroImage);
+}
+
+async function loadEventDetailPage(main) {
   const sections = [...main.querySelectorAll(':scope > .section')];
   if (!sections.length) return;
 
-  const belowFoldReady = sections.length > 1
-    ? Promise.all(sections.slice(1).map((section) => loadSection(section)))
-    : Promise.resolve();
+  const heroSection = sections.find((s) => s.querySelector('.page-hero, .event-hero')) || sections[0];
+  await loadSection(heroSection, waitForEventHeroImage);
+}
 
-  await Promise.all([
-    loadSection(sections[0], waitForGuestHeroImage),
-    belowFoldReady,
-  ]);
+/** Wait for event detail hero LCP image before painting below-fold sections. */
+async function waitForEventHeroImage(section) {
+  const img = section.querySelector(
+    '#event-hero-primary img, .event-hero-img--primary img, .event-hero-img img',
+  );
+  await new Promise((resolve) => {
+    if (img && !img.complete) {
+      img.setAttribute('loading', 'eager');
+      img.setAttribute('decoding', 'async');
+      if ('fetchPriority' in img) img.fetchPriority = 'high';
+      img.addEventListener('load', resolve, { once: true });
+      img.addEventListener('error', resolve, { once: true });
+    } else {
+      resolve();
+    }
+  });
 }
 
 /** Wait for hero LCP image when index hero media is shown. */
@@ -559,14 +646,37 @@ async function loadLazy(doc) {
   const authPage = isAuthPage(doc);
   const main = doc.querySelector('main');
   const guestIndex = isGuestIndexPage(main);
+  const eventDetail = isEventDetailPage(main);
 
   if (!authPage) {
-    if (!guestIndex) {
+    if (!guestIndex && !eventDetail) {
       const header = doc.querySelector('header');
       const headerPromise = header && !isHeaderReady(header) ? loadHeader(header) : null;
       await Promise.all([
         headerPromise || Promise.resolve(),
         loadSections(main),
+      ]);
+    } else if (guestIndex) {
+      const header = doc.querySelector('header');
+      const headerPromise = header && !isHeaderReady(header) ? loadHeader(header) : null;
+      const pending = [...main.querySelectorAll(':scope > .section')].filter((section) => {
+        const { sectionStatus: status } = section.dataset;
+        return !status || status === 'initialized';
+      });
+      await Promise.all([
+        headerPromise || Promise.resolve(),
+        ...pending.map((section) => loadSection(section)),
+      ]);
+    } else if (eventDetail) {
+      const header = doc.querySelector('header');
+      const headerPromise = header && !isHeaderReady(header) ? loadHeader(header) : null;
+      const pending = [...main.querySelectorAll(':scope > .section')].filter((section) => {
+        const { sectionStatus: status } = section.dataset;
+        return !status || status === 'initialized';
+      });
+      await Promise.all([
+        headerPromise || Promise.resolve(),
+        ...pending.map((section) => loadSection(section)),
       ]);
     }
   } else {

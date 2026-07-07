@@ -653,22 +653,17 @@ body.rs-modal-open {
   }
 }
 
-/* ── Featured article ── */
+/* ── Featured article (OG resources: 1fr image + 1.4fr copy, 16:10 visual) ── */
 .rs-featured {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr);
+  grid-template-columns: 1fr 1.4fr;
   gap: 0;
-  width: 100%;
-  max-width: 100%;
-  min-width: 0;
   border-radius: 8px;
   overflow: hidden;
   border: 1px solid var(--color-border-default);
   background: var(--background-color);
   cursor: pointer;
   transition: box-shadow 0.25s, border-color 0.25s;
-  box-shadow: var(--shadow-s);
-  box-sizing: border-box;
 }
 
 .rs-featured:hover {
@@ -677,8 +672,7 @@ body.rs-modal-open {
 }
 
 .rs-featured-visual {
-  aspect-ratio: 4 / 3;
-  min-width: 0;
+  aspect-ratio: 16 / 10;
   min-height: 0;
   position: relative;
   overflow: hidden;
@@ -726,13 +720,11 @@ body.rs-modal-open {
 }
 
 .rs-featured-body {
-  min-width: 0;
   padding: 32px 36px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   gap: 12px;
-  box-sizing: border-box;
 }
 
 .rs-featured-label {
@@ -750,6 +742,7 @@ body.rs-modal-open {
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--color-text-secondary);
+  margin-bottom: 4px;
 }
 
 .rs-featured-title {
@@ -922,12 +915,47 @@ body.rs-admin-open {
   gap: 12px;
 }
 
-.rs-admin-form label {
+.rs-admin-form label:not(.rs-admin-checkbox) {
   display: flex;
   flex-direction: column;
   gap: 6px;
   font-size: 13px;
   color: var(--color-text-secondary);
+}
+
+.rs-admin-checkbox {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  user-select: none;
+}
+
+.rs-admin-checkbox input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  padding: 0;
+  flex-shrink: 0;
+  accent-color: var(--color-accent);
+  cursor: pointer;
+}
+
+.rs-admin-form input:not([type="checkbox"]),
+.rs-admin-form textarea,
+.rs-admin-form select {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--color-border-default);
+  border-radius: 8px;
+  background: var(--background-color);
+  font-family: inherit;
+  font-size: 14px;
+  color: var(--text-color);
+  box-sizing: border-box;
 }
 
 .rs-admin-field-head {
@@ -951,26 +979,6 @@ body.rs-admin-open {
 
 .rs-admin-char-count.is-valid {
   color: var(--color-success, #2e7d32);
-}
-
-.rs-admin-form input,
-.rs-admin-form textarea,
-.rs-admin-form select {
-  width: 100%;
-  padding: 10px 12px;
-  border: 1px solid var(--color-border-default);
-  border-radius: 8px;
-  background: var(--background-color);
-  font-family: inherit;
-  font-size: 14px;
-  color: var(--text-color);
-  box-sizing: border-box;
-}
-
-.rs-admin-inline {
-  flex-direction: row !important;
-  align-items: center;
-  gap: 8px !important;
 }
 
 .rs-admin-submit {

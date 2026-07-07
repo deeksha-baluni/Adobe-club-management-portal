@@ -211,7 +211,7 @@
     }
 
     const wasJoined = auth.isClubJoined?.(club.id);
-    const joined = auth.toggleClubJoin(club.id);
+    const joined = auth.toggleClubJoin(club.id, { events: options.events || [] });
 
     if (joined && !wasJoined) {
       const context = buildModalContext(club, options.events || []);

@@ -19,10 +19,10 @@ export function preloadLcpImage(src, { media } = {}) {
   document.head.append(link);
 }
 
-/** Below-fold card images — lazy + low priority on guest index. */
+/** Below-fold card images — lazy load pre-compressed assets as-is. */
 export function setMarketingImage(img, src) {
   img.decoding = 'async';
   img.loading = 'lazy';
   if (isGuestIndexPath() && 'fetchPriority' in img) img.fetchPriority = 'low';
-  img.src = src;
+  img.src = src || '';
 }

@@ -26,38 +26,35 @@ window.AdobeEventModal = (function () {
     return modalStylesPromise;
   }
 
-  const IMAGE_BASE = '/assets/images/events/';
+  const IMAGE_BASE = '/assets/images/events/compressed-events/';
   const IMAGE_BASES = {
-    clubs: '/assets/images/clubs/',
-    events: '/assets/images/events/',
+    clubs: '/assets/images/clubs/compressed-clubs/',
+    events: '/assets/images/events/compressed-events/',
     index: '/assets/images/index/',
   };
-  const EVENT_IMAGE_OPTIONS = [
-    { value: 'events/evt-hero1.avif' },
-    { value: 'events/evt-hero2.avif' },
-    { value: 'events/evt-hero3.avif' },
-    { value: 'events/evt-hero4.avif' },
-    { value: 'events/evt-hero5.avif' },
-    { value: 'events/evt-hero6.avif' },
-    { value: 'events/evt-hero7.avif' },
-    { value: 'events/evt-hero8.avif' },
-    { value: 'events/evt-hero9.avif' },
-    { value: 'events/evt-hero11.avif' },
-    { value: 'clubs/adobe-lens.avif' },
-    { value: 'clubs/adobe-creatives.avif' },
-    { value: 'clubs/dev-guild.avif' },
-    { value: 'clubs/sportzone.avif' },
-    { value: 'clubs/readers.avif' },
-    { value: 'clubs/games.avif' },
-    { value: 'clubs/green-adobe.avif' },
-    { value: 'clubs/volunteer.avif' },
-    { value: 'clubs/wellbeing.avif' },
-    { value: 'clubs/food.avif' },
-  ];
-  const ASSET_FALLBACK_POOL = EVENT_IMAGE_OPTIONS.map(opt => {
-    const [baseKey, ...rest] = opt.value.split('/');
+  function getEventImageOptions() {
+    const events = window.AdobeEventImages?.EVENT_HERO_IMAGE_OPTIONS || [];
+    const clubs = window.AdobeClubImages?.CLUB_PICKER_OPTIONS || [];
+    return [...events, ...clubs];
+  }
+
+  function resolveAssetUrl(path) {
+    const str = String(path);
+    if (str.startsWith('clubs/') || str.includes('/clubs/')) {
+      if (window.AdobeClubImages?.resolveClubAssetUrl) {
+        return window.AdobeClubImages.resolveClubAssetUrl(str);
+      }
+    }
+    if (window.AdobeEventImages?.resolveEventAssetUrl) {
+      return window.AdobeEventImages.resolveEventAssetUrl(str);
+    }
+    const [baseKey, ...rest] = str.split('/');
     return `${IMAGE_BASES[baseKey] || IMAGE_BASE}${rest.join('/')}`;
-  });
+  }
+
+  function getAssetFallbackPool() {
+    return getEventImageOptions().map((opt) => resolveAssetUrl(opt.value));
+  }
   const MONTH_INDEX = { JAN: 0, FEB: 1, MAR: 2, APR: 3, MAY: 4, JUN: 5, JUL: 6, AUG: 7, SEP: 8, OCT: 9, NOV: 10, DEC: 11 };
 
   let allClubs = [];
@@ -214,16 +211,17 @@ window.AdobeEventModal = (function () {
   }
 
   function pickFallbackImage(seed = '') {
-    if (!ASSET_FALLBACK_POOL.length) return `${IMAGE_BASE}evt-hero1.avif`;
-    return ASSET_FALLBACK_POOL[assetHash(String(seed)) % ASSET_FALLBACK_POOL.length];
+    const pool = getAssetFallbackPool();
+    if (!pool.length) return resolveAssetUrl('events/evt-hero.avif');
+    return pool[assetHash(String(seed)) % pool.length];
   }
 
   function getEventImageSrc(ev) {
-    if (ev?.imagePath) {
-      const [baseKey, ...rest] = String(ev.imagePath).split('/');
-      const file = rest.join('/');
-      if (IMAGE_BASES[baseKey] && file) return `${IMAGE_BASES[baseKey]}${file}`;
+    if (window.AdobeEventImages?.getEventImageSrc) {
+      return window.AdobeEventImages.getEventImageSrc(ev);
     }
+    if (ev?.imagePath) return resolveAssetUrl(ev.imagePath);
+    if (ev?.image) return resolveAssetUrl(`events/${ev.image}`);
     if (ev?.id) return `${IMAGE_BASE}${ev.id}.avif`;
     return pickFallbackImage(ev?.id || ev?.title || 'event');
   }

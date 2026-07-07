@@ -204,9 +204,11 @@ function ensureNavBrand(nav) {
   const existingIcon = link.querySelector('.adobe-icon');
   if (existingIcon) {
     const img = existingIcon.querySelector('img');
-    if (img && !img.src.includes('Adobe-Logo-Transparent-PNG')) {
+    if (img) {
       img.src = logoSrc;
       img.classList.add('adobe-logo-img');
+      img.width = 28;
+      img.height = 26;
     }
     return;
   }
@@ -224,8 +226,8 @@ function ensureNavBrand(nav) {
   img.className = 'adobe-logo-img';
   img.src = logoSrc;
   img.alt = '';
-  img.width = 240;
-  img.height = 240;
+  img.width = 28;
+  img.height = 26;
   img.decoding = 'async';
   icon.append(img);
 

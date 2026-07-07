@@ -4,6 +4,11 @@
  */
 import { loadCSS, loadScript } from '../../scripts/aem.js';
 import { readPageConfig, cfg } from '../club-shared/block-config.js';
+import {
+  getEventImageSrc as resolveEventImageSrc,
+  COMPRESSED_EVENTS_BASE,
+  EVENT_STOCK_FALLBACK_POOL,
+} from '../club-shared/event-images.js';
 
 const DEFAULTS = {
   'events-data': '/data/data.json',
@@ -32,8 +37,7 @@ const DEFAULTS = {
   'rsvp-group-title': 'RSVP status',
 };
 
-const IMG_BASE = '/assets/images/events/';
-const IMG_FALLBACK = `${IMG_BASE}evt-hero1.avif`;
+const IMG_FALLBACK = `${COMPRESSED_EVENTS_BASE}evt-hero.avif`;
 
 let PAGE_CONFIG = { ...DEFAULTS };
 
@@ -231,11 +235,7 @@ function getEventImageSrc(ev) {
   if (window.AdobeEventModal?.getEventImageSrc) {
     return window.AdobeEventModal.getEventImageSrc(ev);
   }
-  if (ev?.imagePath) {
-    const [base, ...rest] = ev.imagePath.split('/');
-    return `/assets/images/${base}/${rest.join('/')}`;
-  }
-  return `${IMG_BASE}${ev?.id || 'evt-hero1'}.avif`;
+  return resolveEventImageSrc(ev);
 }
 
 function getSearchTokens(query) {
@@ -402,7 +402,10 @@ function wireImageFallback(img, ev) {
       img.onerror = null;
       return;
     }
-    img.src = attempts === 1 ? IMG_FALLBACK : `${IMG_BASE}evt-hero${(attempts % 9) + 1}.avif`;
+    const pool = EVENT_STOCK_FALLBACK_POOL.length
+      ? EVENT_STOCK_FALLBACK_POOL
+      : [IMG_FALLBACK];
+    img.src = pool[attempts % pool.length];
   });
 }
 

@@ -4,6 +4,7 @@
  */
 import { loadCSS, loadScript } from '../../scripts/aem.js';
 import { readPageConfig, cfg } from '../club-shared/block-config.js';
+import { getClubImageSrc } from '../club-shared/club-images.js';
 
 const DEFAULTS = {
   'clubs-data': '/data/data.json',
@@ -25,8 +26,6 @@ const DEFAULTS = {
   'membership-managed-label': 'Clubs I manage',
   'admin-badge-label': 'Managing',
 };
-
-const IMG_BASE = '/assets/images/clubs/';
 
 let PAGE_CONFIG = { ...DEFAULTS };
 let ALL_CLUBS = [];
@@ -136,7 +135,7 @@ function buildClubCard(club) {
   imgWrap.className = 'cl-card-img-wrap';
   const img = document.createElement('img');
   img.className = 'cl-card-img';
-  img.src = `${IMG_BASE}${club.image || `${club.id}.avif`}`;
+  img.src = getClubImageSrc(club);
   img.alt = club.name;
   img.loading = 'lazy';
   img.onerror = () => { imgWrap.style.background = club.iconBg || 'var(--color-surface)'; img.remove(); };
@@ -185,7 +184,7 @@ function buildClubCard(club) {
     }
     if (isAdmin) return;
     const nowJoined = window.AdobeJoinModal?.toggleClubJoinWithModal(club, { events: ALL_EVENTS })
-      ?? getAuth().toggleClubJoin(club.id);
+      ?? getAuth().toggleClubJoin(club.id, { events: ALL_EVENTS });
     if (nowJoined === null) return;
     joinBtn.classList.toggle('is-joined', nowJoined);
     joinBtn.textContent = nowJoined ? joinedLabel : joinLabel;

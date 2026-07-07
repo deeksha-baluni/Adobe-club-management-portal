@@ -4,6 +4,15 @@
   move-to-http-header="true"
 >
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
+<link rel="preload" as="image" type="image/webp" href="/assets/images/index/home-hero-img.webp" media="(max-width: 899px)" fetchpriority="high">
+<link rel="preload" as="image" type="image/webp" href="/assets/images/index/home-hero-img.webp" media="(min-width: 900px)" fetchpriority="high">
+<style>
+  html.guest-index-route .landing-hero.block:not(:has(.landing-hero-content)) {
+    min-height: clamp(320px, 45vw, 520px);
+    visibility: hidden;
+    pointer-events: none;
+  }
+</style>
 <script nonce="aem" src="/scripts/aem.js" type="module"></script>
 <script nonce="aem" src="/scripts/scripts.js" type="module"></script>
 <link rel="stylesheet" href="/styles/styles.css"/>

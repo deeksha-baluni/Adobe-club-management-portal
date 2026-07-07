@@ -18,6 +18,7 @@ main:has(.event-hero, .page-hero--event) > .section:not(.dark) {
 }
 
 /* Event detail shell — overrides default main/section layout */
+html.event-detail-route main:has(.page-hero--event, .event-hero, .event-list),
 body.event-detail-page main,
 main.event-detail-page,
 main:has(.event-hero, .page-hero--event) {
@@ -34,9 +35,24 @@ main:has(.event-hero, .page-hero--event) > .section:has(.event-list) > div {
   padding: 0;
 }
 
-/* Hide raw da.live config rows until event-list JS runs */
+/* Hide raw da.live config rows until event-list JS runs — reserve space to limit CLS */
 .event-list.block:not(:has(.event-list-body)) {
-  display: none;
+  min-height: clamp(280px, 38vw, 420px);
+  visibility: hidden;
+  pointer-events: none;
+}
+
+main > .section:has(.event-list.block:not(:has(.event-list-body))) {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 420px;
+}
+
+.event-list-rail--placeholder {
+  grid-area: rail;
+  min-height: 280px;
+  width: 100%;
+  visibility: hidden;
+  pointer-events: none;
 }
 
 /* Hero row: image + intro left, sticky RSVP right */

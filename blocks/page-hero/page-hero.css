@@ -246,6 +246,11 @@
 }
 
 /* ── Event detail hero section chrome ── */
+html.event-detail-route .page-hero--event:not(:has(.ev-inner)),
+html.event-detail-route .event-hero:not(:has(.ev-inner)) {
+  min-height: clamp(360px, 48vw, 520px);
+}
+
 main > .section:has(.event-hero, .page-hero--event) > div {
   max-width: unset;
   padding: 0;

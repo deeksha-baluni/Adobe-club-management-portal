@@ -28,6 +28,7 @@ import {
   wireImageFallback,
 } from '../event-shared/event-page.js';
 import { readPageConfig, cfg, fillTemplate } from '../club-shared/block-config.js';
+import { resolveCompressedStockUrl } from '../club-shared/event-images.js';
 
 const CLUB_DEFAULTS = {
   type: 'club',
@@ -190,6 +191,10 @@ async function decorateClubHero(block, config) {
 }
 
 async function decorateEventHero(block, config) {
+  document.documentElement.classList.add('event-detail-route');
+  document.body.classList.add('event-detail-page');
+  document.querySelector('main')?.classList.add('event-detail-page');
+
   let ctx;
   try {
     ctx = await getEventPageContext();
@@ -237,14 +242,12 @@ async function decorateEventHero(block, config) {
         </button>
       </div>
       <div class="event-hero-stack">
-        <div class="event-hero-img event-hero-img--primary" id="event-hero-primary">
-          <img src="${esc(heroSrc)}" alt="" width="1280" height="549" loading="eager" fetchpriority="high" decoding="async" />
-        </div>
+        <div class="event-hero-img event-hero-img--primary" id="event-hero-primary"></div>
       </div>
       <div class="event-page-container">
         <div class="event-page-intro">
           <div class="event-club-thumb-wrap">
-            <img class="event-club-thumb" src="${esc(clubSrc || heroSrc)}" alt="" width="56" height="56" loading="lazy" decoding="async">
+            <img class="event-club-thumb" src="" alt="" width="56" height="56" loading="lazy" decoding="async">
           </div>
           <div class="event-page-intro-text">
             <div class="event-status-row">
@@ -256,17 +259,35 @@ async function decorateEventHero(block, config) {
           </div>
         </div>
       </div>
+      <div class="event-list-rail event-list-rail--placeholder" aria-hidden="true"></div>
     </div>`;
+
+  const heroContainer = block.querySelector('#event-hero-primary');
+  if (heroContainer) {
+    const heroImg = document.createElement('img');
+    heroImg.src = heroSrc;
+    heroImg.alt = '';
+    heroImg.width = 1000;
+    heroImg.height = 429;
+    heroImg.loading = 'eager';
+    heroImg.decoding = 'async';
+    if ('fetchPriority' in heroImg) heroImg.fetchPriority = 'high';
+    heroContainer.append(heroImg);
+  }
 
   const heroImg = block.querySelector('#event-hero-primary img');
   if (heroImg) {
     heroImg.addEventListener('error', () => {
-      heroImg.src = '/assets/images/events/evt-hero1.avif';
+      heroImg.src = resolveCompressedStockUrl('evt-hero.avif');
     }, { once: true });
   }
 
   const clubThumb = block.querySelector('.event-club-thumb');
-  if (clubThumb) wireImageFallback(clubThumb, club?.id || ev.id);
+  if (clubThumb) {
+    const thumbSrc = clubSrc || heroSrc;
+    if (thumbSrc) clubThumb.src = thumbSrc;
+    wireImageFallback(clubThumb, club?.id || ev.id);
+  }
 
   wireShareButton(ev);
 

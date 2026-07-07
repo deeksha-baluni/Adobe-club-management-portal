@@ -2,6 +2,12 @@
  * Shared utilities for club detail page blocks.
  */
 
+import { resolveClubAssetUrl, getClubImageSrc } from './club-images.js';
+import { resolveEventAssetUrl } from './event-images.js';
+
+export { getEventImageSrc } from './event-images.js';
+export { getClubImageSrc, resolveClubAssetUrl, COMPRESSED_CLUBS_BASE } from './club-images.js';
+
 let dataCache = null;
 let dataPending = null;
 let clubPageInit = null;
@@ -179,7 +185,7 @@ export function wireClubJoinButton(btn, club) {
       return;
     }
     const joined = window.AdobeJoinModal?.toggleClubJoinWithModal?.(club, { events: window.__clubPageEvents })
-      ?? auth.toggleClubJoin(club.id);
+      ?? auth.toggleClubJoin(club.id, { events: window.__clubPageEvents });
     syncClubJoinUI(club, joined);
   });
 }
@@ -281,25 +287,10 @@ export function canPostRecapForClub(clubId) {
 }
 
 export const IMAGE_BASES = {
-  clubs: '/assets/images/clubs/',
-  events: '/assets/images/events/',
+  clubs: '/assets/images/clubs/compressed-clubs/',
+  events: '/assets/images/events/compressed-events/',
   index: '/assets/images/index/',
 };
-
-export function getClubImageSrc(club) {
-  const file = club?.image || `${club?.id || 'clubs-hero1'}.avif`;
-  return `${IMAGE_BASES.clubs}${file}`;
-}
-
-export function getEventImageSrc(ev) {
-  if (ev?.imagePath) {
-    const [baseKey, ...rest] = String(ev.imagePath).split('/');
-    const file = rest.join('/');
-    if (IMAGE_BASES[baseKey] && file) return `${IMAGE_BASES[baseKey]}${file}`;
-  }
-  if (ev?.id) return `${IMAGE_BASES.events}${ev.id}.avif`;
-  return '';
-}
 
 export function getClubHeroImageSrc(club) {
   if (club?.heroImage) return club.heroImage;
@@ -322,8 +313,11 @@ function clubMatchesGalleryItem(club, item) {
 export function getClubImagePool(club, gallery) {
   const pool = [getClubHeroImageSrc(club)];
   (gallery || []).filter((item) => clubMatchesGalleryItem(club, item)).forEach((item) => {
-    const base = IMAGE_BASES[item?.base] || IMAGE_BASES.clubs;
-    pool.push(`${base}${item.image}`);
+    if (item?.base === 'events') {
+      pool.push(resolveEventAssetUrl(`events/${item.image}`));
+    } else {
+      pool.push(resolveClubAssetUrl(`clubs/${item.image}`));
+    }
   });
   return [...new Set(pool.filter(Boolean))];
 }

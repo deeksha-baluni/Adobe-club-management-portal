@@ -359,6 +359,13 @@ body.adm-active .adm-wrap {
   background: rgba(var(--accent-rgb), 0.14);
   color: var(--accent);
 }
+.adm-stat--members {
+  border-left-color: #2e9e5b;
+}
+.adm-stat--members .adm-stat-ic {
+  background: rgba(46, 158, 91, 0.12);
+  color: #2e9e5b;
+}
 .adm-stat--danger {
   border-left-color: var(--red);
 }

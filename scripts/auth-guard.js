@@ -29,6 +29,7 @@
   const LEGACY_JOINED_KEY = 'adobeClubsJoinedClubs';
   const LEGACY_RSVP_KEY = 'adobeClubsRsvpedEvents';
   const LEGACY_AVATAR_KEY = 'adobeClubsAvatar';
+  const MEMBER_STATE_KEY = 'adobeClubsMemberState';
   const MEMBER_DELTAS_KEY = 'adobeClubsMemberDeltas';
   const EVENT_RECAPS_KEY = 'adobeClubsEventRecaps';
   const DELETED_EVENTS_KEY = 'adobeClubsDeletedEvents';
@@ -113,34 +114,115 @@
     localStorage.setItem(key, JSON.stringify(Array.isArray(value) ? value : []));
   }
 
-  function readMemberDeltas() {
+  function currentMonthKey() {
+    const d = new Date();
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+  }
+
+  function emptyMemberState() {
+    return { monthKey: currentMonthKey(), baseAdjust: {}, monthNet: {} };
+  }
+
+  function readMemberState() {
     try {
-      const parsed = JSON.parse(localStorage.getItem(MEMBER_DELTAS_KEY) || '{}');
-      return parsed && typeof parsed === 'object' ? parsed : {};
+      const parsed = JSON.parse(localStorage.getItem(MEMBER_STATE_KEY) || 'null');
+      if (parsed && typeof parsed === 'object' && parsed.monthKey) {
+        return {
+          monthKey: String(parsed.monthKey),
+          baseAdjust: parsed.baseAdjust && typeof parsed.baseAdjust === 'object' ? parsed.baseAdjust : {},
+          monthNet: parsed.monthNet && typeof parsed.monthNet === 'object' ? parsed.monthNet : {},
+        };
+      }
     } catch (err) {
-      return {};
+      // ignore
     }
+    return null;
+  }
+
+  function writeMemberState(state) {
+    localStorage.setItem(MEMBER_STATE_KEY, JSON.stringify(state));
+  }
+
+  function migrateLegacyMemberDeltas(state) {
+    try {
+      const legacy = JSON.parse(localStorage.getItem(MEMBER_DELTAS_KEY) || '{}');
+      if (!legacy || typeof legacy !== 'object') return state;
+      Object.entries(legacy).forEach(([clubId, value]) => {
+        const n = Number(value);
+        if (!clubId || !Number.isFinite(n) || n === 0) return;
+        state.monthNet[clubId] = (Number(state.monthNet[clubId]) || 0) + n;
+      });
+      localStorage.removeItem(MEMBER_DELTAS_KEY);
+    } catch (err) {
+      // ignore
+    }
+    return state;
+  }
+
+  /** Roll prior calendar month: fold monthNet into baseAdjust, reset +X for new month. */
+  function rollMemberMonthIfNeeded(state) {
+    const nowKey = currentMonthKey();
+    if (state.monthKey === nowKey) return state;
+
+    Object.entries(state.monthNet || {}).forEach(([clubId, value]) => {
+      const n = Number(value);
+      if (!clubId || !Number.isFinite(n) || n === 0) return;
+      const next = (Number(state.baseAdjust[clubId]) || 0) + n;
+      if (next === 0) delete state.baseAdjust[clubId];
+      else state.baseAdjust[clubId] = next;
+    });
+
+    state.monthNet = {};
+    state.monthKey = nowKey;
+    return state;
+  }
+
+  function ensureMemberState() {
+    let state = readMemberState();
+    if (!state) {
+      state = emptyMemberState();
+      state = migrateLegacyMemberDeltas(state);
+    }
+    state = rollMemberMonthIfNeeded(state);
+    writeMemberState(state);
+    return state;
+  }
+
+  function readMemberDeltas() {
+    return ensureMemberState().monthNet;
   }
 
   function writeMemberDeltas(deltas) {
-    localStorage.setItem(MEMBER_DELTAS_KEY, JSON.stringify(deltas || {}));
+    const state = ensureMemberState();
+    state.monthNet = deltas && typeof deltas === 'object' ? deltas : {};
+    writeMemberState(state);
   }
 
   function getClubMemberCount(clubId, baseMembers = 0) {
     if (!clubId) return Math.max(0, Number(baseMembers) || 0);
-    const deltas = readMemberDeltas();
-    const base = Number(baseMembers) || 0;
-    const delta = Number(deltas[clubId]) || 0;
-    return Math.max(0, base + delta);
+    const state = ensureMemberState();
+    const jsonBase = Number(baseMembers) || 0;
+    const rolled = Number(state.baseAdjust[clubId]) || 0;
+    const month = Number(state.monthNet[clubId]) || 0;
+    return Math.max(0, jsonBase + rolled + month);
+  }
+
+  function getMonthMemberNet(clubIds = null) {
+    const state = ensureMemberState();
+    return Object.entries(state.monthNet).reduce((sum, [clubId, value]) => {
+      if (clubIds && !clubIds.includes(clubId)) return sum;
+      const n = Number(value);
+      return sum + (Number.isFinite(n) ? n : 0);
+    }, 0);
   }
 
   function adjustClubMemberDelta(clubId, delta) {
     if (!clubId || !delta) return;
-    const deltas = readMemberDeltas();
-    const next = Math.max(0, (Number(deltas[clubId]) || 0) + delta);
-    if (next === 0) delete deltas[clubId];
-    else deltas[clubId] = next;
-    writeMemberDeltas(deltas);
+    const state = ensureMemberState();
+    const next = (Number(state.monthNet[clubId]) || 0) + delta;
+    if (next === 0) delete state.monthNet[clubId];
+    else state.monthNet[clubId] = next;
+    writeMemberState(state);
     window.dispatchEvent(new CustomEvent('adobe-club-members-changed', { detail: { clubId } }));
   }
 
@@ -473,7 +555,71 @@
     return getJoinedClubs().includes(clubId);
   }
 
-  function toggleClubJoin(clubId) {
+  function resolveKnownEvents(hintEvents) {
+    if (Array.isArray(hintEvents) && hintEvents.length) return hintEvents;
+    const fromTiming = window.__adobeClubEventsForTiming;
+    if (typeof fromTiming === 'function') {
+      try {
+        const list = fromTiming();
+        if (Array.isArray(list) && list.length) return list;
+      } catch {
+        // ignore
+      }
+    }
+    if (Array.isArray(fromTiming) && fromTiming.length) return fromTiming;
+    if (Array.isArray(window.__clubPageEvents) && window.__clubPageEvents.length) {
+      return window.__clubPageEvents;
+    }
+    return [];
+  }
+
+  function eventBelongsToClub(ev, clubId) {
+    if (!ev || !clubId) return false;
+    if (ev.clubId === clubId) return true;
+    const clubName = String(ev.club || '').toLowerCase().trim();
+    if (!clubName) return false;
+    const clubs = window.__adobeClubsClubIndex?.[clubId];
+    if (clubs?.name) {
+      const name = String(clubs.name).toLowerCase();
+      return clubName === name || clubName === `${name} club`;
+    }
+    return false;
+  }
+
+  function cancelMembersOnlyRsvpsForClub(clubId, hintEvents) {
+    const rsvpKey = scopedKey(RSVP_EVENTS_KEY);
+    if (!rsvpKey || !clubId) return;
+    const rsvped = readArray(rsvpKey);
+    if (!rsvped.length) return;
+
+    const events = resolveKnownEvents(hintEvents);
+    const exclusiveIds = new Set(
+      events
+        .filter((ev) => ev?.membersOnly && eventBelongsToClub(ev, clubId))
+        .map((ev) => ev.id)
+        .filter(Boolean),
+    );
+    if (!exclusiveIds.size) return;
+
+    const toRemove = rsvped.filter((id) => exclusiveIds.has(id));
+    if (!toRemove.length) return;
+
+    const next = rsvped.filter((id) => !exclusiveIds.has(id));
+    writeArray(rsvpKey, next);
+
+    toRemove.forEach((eventId) => {
+      window.AdobeEventSeats?.release?.(eventId);
+      window.dispatchEvent(new CustomEvent('adobe-rsvp-changed', { detail: { eventId } }));
+    });
+
+    const username = getActiveUsername();
+    if (username) {
+      const profile = getUserProfile(username) || { username };
+      saveUserProfile(username, { ...profile, rsvpedEvents: next, updatedAt: Date.now() });
+    }
+  }
+
+  function toggleClubJoin(clubId, options = {}) {
     const key = scopedKey(JOINED_CLUBS_KEY);
     if (!key) return false;
     const list = readArray(key);
@@ -490,6 +636,7 @@
       adjustClubMemberDelta(clubId, 1);
     } else if (wasJoined && !next.includes(clubId)) {
       adjustClubMemberDelta(clubId, -1);
+      cancelMembersOnlyRsvpsForClub(clubId, options.events);
     }
 
     const username = getActiveUsername();
@@ -753,6 +900,9 @@
     if (!isAnyAdmin() || !article?.id) return false;
     if (isClubAdmin() && !canManageClub(article.clubId || meta.clubId)) return false;
     const payload = { ...article, id: article.id };
+    if (isClubAdmin()) {
+      delete payload.featured;
+    }
     const custom = readAllCustomArticles();
     const idx = custom.findIndex(art => art.id === payload.id);
     if (idx >= 0) {
@@ -845,6 +995,9 @@
     const username = getActiveUsername();
     if (!username) return false;
     const payload = { ...article, createdBy: username };
+    if (isClubAdmin()) {
+      payload.featured = false;
+    }
     writeArray(CUSTOM_ARTICLES_KEY, [...readAllCustomArticles(), payload]);
     notifyPublishedContentChanged({ type: 'article', id: payload.id, action: 'create' });
     return true;
@@ -901,6 +1054,7 @@
     isClubJoined,
     toggleClubJoin,
     getClubMemberCount,
+    getMonthMemberNet,
     enrichClubMembers,
     enrichClubs,
     getRsvpedEvents,

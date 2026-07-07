@@ -12,11 +12,10 @@
  *   | description  | ...    |
  *   | image        | upload or path |
  */
-import { createOptimizedPicture, loadCSS, loadScript, toClassName } from '../../scripts/aem.js';
+import { loadCSS, loadScript, toClassName } from '../../scripts/aem.js';
 import { preloadLcpImage } from '../club-shared/image-priority.js';
+import { resolveCompressedStockUrl } from '../club-shared/event-images.js';
 import { readPageConfig, cfg } from '../club-shared/block-config.js';
-
-const HERO_WIDTHS = [{ media: '(min-width: 900px)', width: '1200' }, { width: '750' }];
 
 const CONFIG_KEYS = new Set([
   'preset', 'eyebrow', 'title', 'description', 'image', 'image-alt',
@@ -38,7 +37,7 @@ const PRESET_DEFAULTS = {
     eyebrow: "What's on",
     title: 'Discover club events',
     description: 'Browse upcoming sessions across Adobe Clubs — RSVP in seconds, track what you attend, and revisit past event recaps.',
-    image: '/assets/images/events/evt-hero3.avif',
+    image: resolveCompressedStockUrl('evt-hero3.avif'),
     'image-alt': 'Adobe colleagues at a club event',
     'guest-banner-eyebrow': 'Stay in the loop',
     'guest-banner-text': "You're browsing as a guest. Sign in to RSVP for events and track what you're attending.",
@@ -52,7 +51,7 @@ const PRESET_DEFAULTS = {
     eyebrow: 'Adobe Clubs',
     title: 'Find your community',
     description: 'Browse every club at Adobe, discover events that match your interests, and join the communities that fit you.',
-    image: '/assets/images/events/evt-hero2.avif',
+    image: resolveCompressedStockUrl('evt-hero1.avif'),
     'image-alt': 'Adobe colleagues at a club event',
     'guest-banner-eyebrow': 'Join the community',
     'guest-banner-text': "You're browsing as a guest. Sign in to join clubs and get personalised recommendations.",
@@ -141,16 +140,24 @@ function optimizeHeroImage(img, preset = 'index') {
   }
 }
 
-function mountHeroPicture(src, alt, preset = 'index') {
-  const picture = createOptimizedPicture(src, alt, true, HERO_WIDTHS);
-  optimizeHeroImage(picture.querySelector('img'), preset);
-  return picture;
+function mountHeroImage(src, alt, preset = 'index') {
+  const img = document.createElement('img');
+  img.src = src;
+  img.alt = alt;
+  optimizeHeroImage(img, preset);
+  return img;
 }
 
-function buildMedia(src, alt, preset = 'index') {
+function buildMedia(src, alt, preset = 'index', existingPicture = null) {
   const media = document.createElement('div');
   media.className = 'landing-hero-media';
-  if (src) media.append(mountHeroPicture(src, alt, preset));
+  if (existingPicture) {
+    const node = existingPicture.cloneNode(true);
+    optimizeHeroImage(node.querySelector('img') || node, preset);
+    media.append(node);
+    return media;
+  }
+  if (src) media.append(mountHeroImage(src, alt, preset));
   return media;
 }
 
@@ -317,9 +324,10 @@ function buildIndexFromTable(block, config, defaults) {
   const [mediaCell, contentCell] = [...row.children];
 
   const authoredImg = mediaCell?.querySelector('picture img, img');
+  const authoredPicture = mediaCell?.querySelector('picture') || authoredImg;
   const alt = authoredImg?.alt || cfg(config, 'hero-alt', defaults['hero-alt']);
   const src = authoredImg?.src || cfg(config, 'hero-fallback', defaults['hero-fallback']);
-  const media = buildMedia(src, alt);
+  const media = buildMedia(src, alt, 'index', authoredPicture);
 
   const content = document.createElement('div');
   content.className = 'landing-hero-content';

@@ -3,11 +3,11 @@
  */
 import { fetchAppData, getAuth, redirectToLogin } from '../club-shared/fetch-app-data.js';
 import { setMarketingImage } from '../club-shared/image-priority.js';
+import { getEventImageSrc, COMPRESSED_EVENTS_BASE } from '../club-shared/event-images.js';
 import { buildSectionHead } from '../club-shared/marketing-head.js';
 import { cfg } from '../club-shared/block-config.js';
 
-const EVENT_IMG_PATH = '/assets/images/events/';
-const EVENT_IMG_FALLBACK = `${EVENT_IMG_PATH}evt-hero1.avif`;
+const EVENT_IMG_FALLBACK = `${COMPRESSED_EVENTS_BASE}evt-hero.avif`;
 const MONTH_SHORT = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 const MONTH_MAP = {
   JAN: 0, FEB: 1, MAR: 2, APR: 3, MAY: 4, JUN: 5,
@@ -80,7 +80,7 @@ function buildEventCard(ev) {
   img.alt = '';
   img.width = 400;
   img.height = 225;
-  setMarketingImage(img, `${EVENT_IMG_PATH}${ev.id}.avif`);
+  setMarketingImage(img, getEventImageSrc(ev));
   img.onerror = () => { img.src = EVENT_IMG_FALLBACK; };
   thumb.append(img);
 
