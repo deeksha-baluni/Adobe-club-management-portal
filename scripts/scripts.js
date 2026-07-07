@@ -183,17 +183,92 @@ function migrateLegacyMarketingBlocks(main) {
 }
 
 /**
+ * Read preset | value from raw da.live table rows (before block JS runs).
+ * @param {Element} block
+ * @returns {'clubs'|'events'|''}
+ */
+function readRawBlockPreset(block) {
+  if (!block) return '';
+  for (const row of block.children) {
+    const cols = row.children;
+    if (cols.length < 2) continue;
+    const key = cols[0].textContent.trim().toLowerCase();
+    if (key !== 'preset') continue;
+    const val = cols[1].textContent.trim().toLowerCase();
+    if (val.startsWith('event')) return 'events';
+    if (val.startsWith('club')) return 'clubs';
+  }
+  return '';
+}
+
+function isEventsShowcaseBlock(block) {
+  if (!block) return false;
+  if (block.classList.contains('upcoming-events') || block.classList.contains('showcase-teaser--events')) {
+    return true;
+  }
+  return readRawBlockPreset(block) === 'events';
+}
+
+/**
+ * Tag showcase-teaser blocks with --clubs / --events before injection checks run.
+ * @param {Element} main
+ */
+function tagShowcaseTeaserPresets(main) {
+  main.querySelectorAll('.showcase-teaser').forEach((block) => {
+    if (block.classList.contains('showcase-teaser--clubs')
+      || block.classList.contains('showcase-teaser--events')) return;
+    const preset = readRawBlockPreset(block);
+    if (preset === 'clubs') block.classList.add('showcase-teaser--clubs');
+    if (preset === 'events') block.classList.add('showcase-teaser--events');
+  });
+
+  const untagged = [...main.querySelectorAll('.showcase-teaser')].filter(
+    (block) => !block.classList.contains('showcase-teaser--clubs')
+      && !block.classList.contains('showcase-teaser--events'),
+  );
+
+  if (untagged.length >= 2) {
+    untagged[0].classList.add('showcase-teaser--clubs');
+    untagged[1].classList.add('showcase-teaser--events');
+  } else if (untagged.length === 1) {
+    const preset = readRawBlockPreset(untagged[0]);
+    untagged[0].classList.add(preset === 'events' ? 'showcase-teaser--events' : 'showcase-teaser--clubs');
+  }
+}
+
+function hasGuestFeaturedClubsSection(main) {
+  if (main.querySelector('.featured-clubs, .showcase-teaser--clubs')) return true;
+
+  const showcases = [...main.querySelectorAll('.showcase-teaser, .featured-clubs')];
+  if (showcases.some((block) => readRawBlockPreset(block) === 'clubs')) return true;
+  // Index layout: first of two showcase blocks is featured clubs.
+  if (showcases.length >= 2) return true;
+  return false;
+}
+
+function findGuestEventsSection(main) {
+  const tagged = main.querySelector('.upcoming-events, .showcase-teaser--events');
+  if (tagged) return tagged.closest('.section');
+
+  for (const block of main.querySelectorAll('.showcase-teaser')) {
+    if (isEventsShowcaseBlock(block)) return block.closest('.section');
+  }
+
+  return null;
+}
+
+/**
  * Guest index is missing Featured Clubs in da.live — inject showcase-teaser (clubs)
- * before Upcoming Events when absent.
+ * after the hero and before Upcoming Events when absent.
  * @param {Element} main
  */
 function ensureGuestFeaturedClubs(main) {
   if (normalizePath(window.location.pathname) !== '/') return;
-  if (main.querySelector('.showcase-teaser--clubs, .featured-clubs')) return;
+  if (hasGuestFeaturedClubsSection(main)) return;
 
-  const anchor = main.querySelector('.showcase-teaser--events, .upcoming-events')?.closest('.section')
-    || main.querySelector('.landing-hero')?.closest('.section');
-  if (!anchor) return;
+  const heroSection = main.querySelector('.landing-hero')?.closest('.section');
+  const eventsSection = findGuestEventsSection(main);
+  if (!heroSection && !eventsSection) return;
 
   const section = document.createElement('div');
   section.classList.add('section');
@@ -204,7 +279,12 @@ function ensureGuestFeaturedClubs(main) {
   block.className = 'showcase-teaser showcase-teaser--clubs';
   wrapper.append(block);
   section.append(wrapper);
-  anchor.before(section);
+
+  if (eventsSection) {
+    eventsSection.before(section);
+  } else {
+    heroSection.after(section);
+  }
 }
 
 /**
@@ -219,6 +299,7 @@ export function decorateMain(main) {
   migrateLegacyHeroBlocks(main);
   migrateLegacyListBlocks(main);
   migrateLegacyShowcaseBlocks(main);
+  tagShowcaseTeaserPresets(main);
   migrateLegacyCloseBlocks(main);
   migrateLegacyMarketingBlocks(main);
   ensureGuestFeaturedClubs(main);
