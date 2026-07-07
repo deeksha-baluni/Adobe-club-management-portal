@@ -1,8 +1,10 @@
 @import url('../club-shared/marketing-head.css');
 
-/* Hide raw da.live config rows until showcase-teaser JS runs */
+/* Hide raw da.live config rows until showcase-teaser JS runs — reserve space */
 .showcase-teaser.block:not(:has(.showcase-grid)) {
-  display: none;
+  min-height: clamp(480px, 58vw, 720px);
+  visibility: hidden;
+  pointer-events: none;
 }
 
 /* ── Showcase Teaser — clubs + events presets ── */
@@ -132,7 +134,7 @@
 }
 
 .showcase-teaser--clubs .showcase-card-thumb {
-  height: 200px;
+  aspect-ratio: 16 / 10;
   display: flex;
   align-items: center;
   justify-content: center;

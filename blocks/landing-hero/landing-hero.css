@@ -213,6 +213,8 @@ main > .section:has(.landing-hero--clubs) > div {
   color: var(--text-color);
   letter-spacing: -0.02em;
   line-height: 1;
+  font-variant-numeric: tabular-nums;
+  min-width: 2.5ch;
 }
 
 .landing-hero--index .landing-hero-stat strong {

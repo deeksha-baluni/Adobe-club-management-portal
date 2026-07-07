@@ -19,6 +19,21 @@ function clubPageUrl(id) {
   return `/club?id=${encodeURIComponent(id)}`;
 }
 
+function buildSkeletonCard() {
+  const card = document.createElement('div');
+  card.className = 'showcase-card showcase-card--club showcase-card--skeleton';
+  card.setAttribute('aria-hidden', 'true');
+  card.innerHTML = `
+    <div class="showcase-card-thumb showcase-skeleton-block"></div>
+    <div class="showcase-card-body">
+      <div class="showcase-skeleton-line showcase-skeleton-line--sm"></div>
+      <div class="showcase-skeleton-line showcase-skeleton-line--md"></div>
+      <div class="showcase-skeleton-line showcase-skeleton-line--xs"></div>
+    </div>
+    <div class="showcase-card-actions"><div class="showcase-skeleton-btn"></div></div>`;
+  return card;
+}
+
 function buildClubCard(club) {
   const card = document.createElement('a');
   card.className = 'showcase-card showcase-card--club';
@@ -109,7 +124,13 @@ export default async function decorateClubs(block, config) {
 
   block.append(head, grid);
 
+  for (let i = 0; i < 3; i += 1) {
+    grid.append(buildSkeletonCard());
+  }
+
   const data = await fetchAppData();
+  grid.textContent = '';
+
   if (!data?.clubs?.length) {
     const msg = document.createElement('p');
     msg.className = 'showcase-empty';
