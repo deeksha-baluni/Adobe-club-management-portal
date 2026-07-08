@@ -9,7 +9,7 @@ import {
   formatEventDate,
   parseEventDate,
 } from '../club-page.js';
-import { cfg, fillTemplate } from '../block-config.js';
+import { cfg, fillTemplate } from '../../lib/block-config.js';
 
 function getLabels(pageConfig) {
   return {

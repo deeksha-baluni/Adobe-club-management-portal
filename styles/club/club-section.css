@@ -1,6 +1,6 @@
 /* Shared styles for club page body blocks */
 
-main:has(.page-hero--club, .club-hero) {
+main:has(.club-hero) {
   background: var(--light-color, #f8f8f8);
 }
 
@@ -8,24 +8,24 @@ main:has(.page-hero--club, .club-hero) {
  * Reset global EDS section chrome on club detail page:
  * - lazy-styles.css adds border-top + padding on non-first sections
  */
-main:has(.page-hero--club, .club-hero) > .section,
-main:has(.page-hero--club, .club-hero) > .section > div {
+main:has(.club-hero) > .section,
+main:has(.club-hero) > .section > div {
   margin: 0 !important;
   max-width: unset;
 }
 
-main:has(.page-hero--club, .club-hero) > .section:not(.dark) {
+main:has(.club-hero) > .section:not(.dark) {
   border-top: none !important;
   padding-top: 0 !important;
   padding-bottom: 0 !important;
 }
 
 /* Collapse empty breadcrumb / placeholder section above hero (da.live) */
-main:has(.page-hero--club, .club-hero) > .section:has(.page-breadcrumb),
-main:has(.page-hero--club, .club-hero) > .section:has(.breadcrumb),
-main:has(.page-hero--event, .event-hero) > .section:has(.page-breadcrumb),
-main:has(.page-hero--event, .event-hero) > .section:has(.breadcrumb),
-main:has(.page-hero--club, .club-hero) > .section:first-of-type:not(:has(.page-hero--club)):not(:has(.club-hero)):not(:has(.cta-banner)):not(:has(.club-list)) {
+main:has(.club-hero) > .section:has(.page-breadcrumb),
+main:has(.club-hero) > .section:has(.breadcrumb),
+main:has(.event-hero) > .section:has(.page-breadcrumb),
+main:has(.event-hero) > .section:has(.breadcrumb),
+main:has(.club-hero) > .section:first-of-type:not(:has(.club-hero)):not(:has(.cta-banner)):not(:has(.club-list)) {
   display: none !important;
 }
 
@@ -65,12 +65,12 @@ main:has(.page-hero--club, .club-hero) > .section:first-of-type:not(:has(.page-h
 }
 
 /* OG .club-hero + .club-block { margin-top: 40px } */
-main > .section:has(.page-hero--club) + .section:has(.club-list) .club-list-section--activities .club-section-inner,
+main > .section:has(.club-hero) + .section:has(.club-list) .club-list-section--activities .club-section-inner,
 main > .section:has(.club-hero) + .section .club-section-inner {
   padding-top: 40px;
 }
 
-main:has(.page-hero--club, .club-hero) > .section:has(.club-list) {
+main:has(.club-hero) > .section:has(.club-list) {
   content-visibility: auto;
   contain-intrinsic-size: auto 480px;
 }
@@ -80,7 +80,7 @@ main:has(.page-hero--club, .club-hero) > .section:has(.club-list) {
     padding-bottom: 56px;
   }
 
-  main > .section:has(.page-hero--club) + .section:has(.club-list) .club-list-section--activities .club-section-inner,
+  main > .section:has(.club-hero) + .section:has(.club-list) .club-list-section--activities .club-section-inner,
   main > .section:has(.club-hero) + .section .club-section-inner {
     padding-top: 32px;
   }
@@ -91,7 +91,7 @@ main:has(.page-hero--club, .club-hero) > .section:has(.club-list) {
     padding-bottom: 48px;
   }
 
-  main > .section:has(.page-hero--club) + .section:has(.club-list) .club-list-section--activities .club-section-inner,
+  main > .section:has(.club-hero) + .section:has(.club-list) .club-list-section--activities .club-section-inner,
   main > .section:has(.club-hero) + .section .club-section-inner {
     padding-top: 28px;
   }

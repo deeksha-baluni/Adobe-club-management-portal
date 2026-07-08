@@ -12,10 +12,10 @@ import {
   loadScript,
   buildBlock,
 } from './aem.js';
-import { preloadLcpImage, publishedImageSrc } from '../blocks/club-shared/image-priority.js';
-import { resolveEventIdUrl } from '../blocks/club-shared/event-images.js';
-import '../blocks/club-shared/club-images.js';
-import '../blocks/club-shared/event-images.js';
+import { preloadLcpImage, publishedImageSrc } from './lib/image-priority.js';
+import { resolveEventIdUrl } from './lib/event-images.js';
+import './lib/club-images.js';
+import './lib/event-images.js';
 
 /**
  * load fonts.css and set a session storage flag
@@ -133,6 +133,19 @@ function migrateLegacyHeroBlocks(main) {
   main.querySelectorAll('.clubs-hero, .events-hero').forEach((block) => {
     block.classList.remove('clubs-hero', 'events-hero');
     block.classList.add('landing-hero');
+  });
+}
+
+/**
+ * Legacy page-hero block → club-hero or event-hero until re-published in da.live.
+ * @param {Element} main
+ */
+function migrateDetailHeroBlocks(main) {
+  const path = normalizePath(window.location.pathname);
+  main.querySelectorAll('.page-hero').forEach((block) => {
+    const isEvent = path === '/event' || block.classList.contains('page-hero--event');
+    block.classList.remove('page-hero', 'page-hero--club', 'page-hero--event');
+    block.classList.add(isEvent ? 'event-hero' : 'club-hero');
   });
 }
 
@@ -302,6 +315,7 @@ export function decorateMain(main) {
   buildAutoBlocks(main);
   decorateSections(main);
   migrateLegacyHeroBlocks(main);
+  migrateDetailHeroBlocks(main);
   migrateLegacyListBlocks(main);
   migrateLegacyShowcaseBlocks(main);
   tagShowcaseTeaserPresets(main);
@@ -416,7 +430,7 @@ function getEventIdFromLocation() {
 
 function isEventDetailPage(main) {
   return normalizePath(window.location.pathname) === '/event'
-    && Boolean(main?.querySelector('.page-hero, .event-hero, .event-list'));
+    && Boolean(main?.querySelector('.club-hero, .event-hero, .event-list'));
 }
 
 function prepareEventDetailEarly() {
@@ -434,7 +448,7 @@ function prefetchEventHeroEarly() {
   prefetchAppData()?.then((data) => {
     const ev = data?.events?.find((e) => e.id === eventId);
     if (ev?.imagePath) {
-      import('../blocks/event-shared/event-page.js').then((mod) => {
+      import('./event/event-page.js').then((mod) => {
         mod.prefetchEventHeroImage(ev);
       });
     }
@@ -523,18 +537,18 @@ function prefetchRouteAssets(main, path) {
     || normalized === '/clubs'
     || normalized === '/resources'
     || normalized === '/club'
-    || main?.querySelector('.event-hero, .page-hero--event, .event-list, .home-dashboard, .showcase-teaser, .landing-hero');
+    || main?.querySelector('.event-hero, .event-list, .home-dashboard, .showcase-teaser, .landing-hero');
   if (needsData) prefetchAppData();
 
-  if (main?.querySelector('.event-hero, .page-hero--event, .event-list') || normalized === '/event') {
+  if (main?.querySelector('.event-hero, .event-list') || normalized === '/event') {
     const codeBase = window.hlx?.codeBasePath || '';
-    loadCSS(`${codeBase}/blocks/event-shared/event-section.css`);
+    loadCSS(`${codeBase}/styles/event/event-section.css`);
   }
 
-  if (main?.querySelector('.page-hero--club, .club-list, .club-hero') || normalized === '/club') {
+  if (main?.querySelector('.club-hero, .club-list') || normalized === '/club') {
     const codeBase = window.hlx?.codeBasePath || '';
-    loadCSS(`${codeBase}/blocks/club-shared/club-section.css`);
-    import('../blocks/club-shared/club-page.js').then((mod) => mod.prefetchClubData());
+    loadCSS(`${codeBase}/styles/club/club-section.css`);
+    import('./club/club-page.js').then((mod) => mod.prefetchClubData());
   }
 
   if (normalized === '/clubs' || normalized === '/events'
@@ -567,7 +581,7 @@ async function loadEventDetailPage(main) {
   const sections = [...main.querySelectorAll(':scope > .section')];
   if (!sections.length) return;
 
-  const heroSection = sections.find((s) => s.querySelector('.page-hero, .event-hero')) || sections[0];
+  const heroSection = sections.find((s) => s.querySelector('.event-hero')) || sections[0];
   await loadSection(heroSection, waitForEventHeroImage);
 }
 

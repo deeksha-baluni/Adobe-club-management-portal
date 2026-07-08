@@ -2,8 +2,8 @@
  * Showcase Teaser — featured clubs / upcoming events on index.
  * da.live: preset | clubs | events + key | value config rows.
  */
-import { readPageConfig } from '../club-shared/block-config.js';
-import { parseShowcasePreset } from '../club-shared/config-keys.js';
+import { readPageConfig } from '../../scripts/lib/block-config.js';
+import { parseShowcasePreset } from '../../scripts/lib/config-keys.js';
 
 function normalizePath(path) {
   const raw = (path || '/').replace(/\.html$/, '').replace(/\/$/, '') || '/';

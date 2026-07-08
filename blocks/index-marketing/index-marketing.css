@@ -1,4 +1,4 @@
-@import url('../club-shared/marketing-head.css');
+@import url('../../styles/marketing-head.css');
 
 /* Reserve space until index-marketing JS runs (avoid display:none collapse) */
 .index-marketing.block:not(:has(.index-marketing-section)):not(:has(.index-marketing-steps)):not(:has(.index-marketing-stories)) {

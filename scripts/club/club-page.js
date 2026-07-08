@@ -2,11 +2,11 @@
  * Shared utilities for club detail page blocks.
  */
 
-import { resolveClubAssetUrl, getClubImageSrc } from './club-images.js';
-import { resolveEventAssetUrl } from './event-images.js';
+import { resolveClubAssetUrl, getClubImageSrc } from '../lib/club-images.js';
+import { resolveEventAssetUrl } from '../lib/event-images.js';
 
-export { getEventImageSrc } from './event-images.js';
-export { getClubImageSrc, resolveClubAssetUrl, COMPRESSED_CLUBS_BASE } from './club-images.js';
+export { getEventImageSrc } from '../lib/event-images.js';
+export { getClubImageSrc, resolveClubAssetUrl, COMPRESSED_CLUBS_BASE } from '../lib/club-images.js';
 
 let dataCache = null;
 let dataPending = null;

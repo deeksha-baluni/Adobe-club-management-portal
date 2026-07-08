@@ -1,11 +1,11 @@
 /**
  * Showcase Teaser — events preset (next 3 upcoming from data.json).
  */
-import { fetchAppData, getAuth, redirectToLogin } from '../club-shared/fetch-app-data.js';
-import { setMarketingImage } from '../club-shared/image-priority.js';
-import { getEventImageSrc, getIndexEventImageSrc } from '../club-shared/event-images.js';
-import { buildSectionHead } from '../club-shared/marketing-head.js';
-import { cfg } from '../club-shared/block-config.js';
+import { fetchAppData, getAuth, redirectToLogin } from '../../scripts/lib/app-data.js';
+import { setMarketingImage } from '../../scripts/lib/image-priority.js';
+import { getEventImageSrc, getIndexEventImageSrc } from '../../scripts/lib/event-images.js';
+import { buildSectionHead } from '../../scripts/lib/marketing-head.js';
+import { cfg } from '../../scripts/lib/block-config.js';
 const MONTH_SHORT = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 const MONTH_MAP = {
   JAN: 0, FEB: 1, MAR: 2, APR: 3, MAY: 4, JUN: 5,

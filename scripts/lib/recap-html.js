@@ -2,7 +2,7 @@
  * Shared recap HTML helpers (club + event pages).
  */
 
-import { esc } from './club-page.js';
+import { esc } from '../club/club-page.js';
 
 export function getRecapBody(recap) {
   if (!recap) return '';

@@ -7,7 +7,7 @@
  *
  * Requires /scripts/auth-guard.js loaded before this block.
  */
-import { readPageConfig, cfg, fillTemplate } from '../club-shared/block-config.js';
+import { readPageConfig, cfg, fillTemplate } from '../../scripts/lib/block-config.js';
 
 export const LOGIN_FORM_DEFAULTS = {
   'slide-image-1': '/assets/images/login/adobeimg.webp, /assets/images/login/img1.avif',

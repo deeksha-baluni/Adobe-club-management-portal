@@ -8,7 +8,7 @@ import {
   ICON_PIN,
   ICON_GLOBE,
 } from '../event-page.js';
-import { cfg } from '../../club-shared/block-config.js';
+import { cfg } from '../../lib/block-config.js';
 
 export function mountRsvpSection(block, ctx) {
   const { event: ev, pageConfig = {} } = ctx;

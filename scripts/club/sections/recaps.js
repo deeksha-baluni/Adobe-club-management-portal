@@ -7,11 +7,11 @@ import {
   canPostRecapForClub,
   isEventPast,
 } from '../club-page.js';
-import { cfg } from '../block-config.js';
+import { cfg } from '../../lib/block-config.js';
 import {
   buildRecapHtml,
   getRecapBody,
-} from '../recap-html.js';
+} from '../../lib/recap-html.js';
 
 function getRecapForEvent(ev) {
   return window.AdobeUserFeatures?.getEventRecap?.(ev.id, ev)

@@ -36,6 +36,8 @@ function homeCrumb() {
   return { label: 'Home', href: getHomeHref() };
 }
 
+let customTrail = null;
+
 function defaultTrail() {
   const path = normalizePath(window.location.pathname);
 
@@ -101,6 +103,8 @@ export function render(items) {
   const nav = ensureMount();
   if (!nav) return;
 
+  if (items) customTrail = items;
+
   const visible = Boolean(items && items.length >= 2);
   document.body.classList.toggle('has-breadcrumbs', visible);
 
@@ -130,10 +134,11 @@ export function render(items) {
 }
 
 export function initBreadcrumbs() {
-  render(defaultTrail());
+  render(customTrail || defaultTrail());
 }
 
 export function reset() {
+  customTrail = null;
   initBreadcrumbs();
 }
 

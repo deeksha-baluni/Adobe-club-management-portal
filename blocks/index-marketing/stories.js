@@ -1,8 +1,8 @@
 /**
  * Mount member stories section inside index-marketing.
  */
-import { isGuestIndexPath, publishedImageSrc } from '../club-shared/image-priority.js';
-import { buildSectionHead } from '../club-shared/marketing-head.js';
+import { isGuestIndexPath, publishedImageSrc } from '../../scripts/lib/image-priority.js';
+import { buildSectionHead } from '../../scripts/lib/marketing-head.js';
 
 function mountStoryImage(wrap, src, alt = '') {
   wrap.className = 'story-card-image';

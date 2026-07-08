@@ -2,18 +2,18 @@
  * Shared utilities for event detail page blocks.
  */
 
-import { esc, getAuth, getClubData, loadScript, preloadHeroImage } from '../club-shared/club-page.js';
-import { getClubImageSrc } from '../club-shared/club-images.js';
+import { esc, getAuth, getClubData, loadScript, preloadHeroImage } from '../club/club-page.js';
+import { getClubImageSrc } from '../lib/club-images.js';
 import {
   getEventImageSrc,
   EVENT_STOCK_FALLBACK_POOL,
-} from '../club-shared/event-images.js';
-import { cfg } from '../club-shared/block-config.js';
+} from '../lib/event-images.js';
+import { cfg } from '../lib/block-config.js';
 import {
   getRecapBody,
   normalizeEventRecap,
   buildRecapHtml,
-} from '../club-shared/recap-html.js';
+} from '../lib/recap-html.js';
 
 export { esc, getRecapBody, normalizeEventRecap, buildRecapHtml };
 
@@ -87,8 +87,8 @@ export function getEventClub(ev, allClubs) {
   }) || null;
 }
 
-export { getClubImageSrc } from '../club-shared/club-images.js';
-export { getEventImageSrc } from '../club-shared/event-images.js';
+export { getClubImageSrc } from '../lib/club-images.js';
+export { getEventImageSrc } from '../lib/event-images.js';
 
 export function prefetchEventHeroImage(evOrId) {
   const ev = typeof evOrId === 'string' ? { id: evOrId } : evOrId;

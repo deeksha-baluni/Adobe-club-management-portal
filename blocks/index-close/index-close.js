@@ -5,7 +5,7 @@
 import { parseIndexCloseBlock } from './parse.js';
 import { mountFaqSection } from './faq.js';
 import { mountCtaSection } from './cta.js';
-import { hasAuthoredSectionIntro } from '../club-shared/section-intro.js';
+import { hasAuthoredSectionIntro } from '../../scripts/lib/section-intro.js';
 
 function parseDarkSectionCta(section) {
   const title = section.querySelector('h2')?.textContent?.trim();

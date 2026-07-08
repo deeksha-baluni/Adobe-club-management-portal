@@ -3,12 +3,12 @@
  * da.live: key | value config rows; records from data.json.
  */
 import { loadCSS, loadScript } from '../../scripts/aem.js';
-import { readPageConfig, cfg, fillTemplate } from '../club-shared/block-config.js';
+import { readPageConfig, cfg, fillTemplate } from '../../scripts/lib/block-config.js';
 import {
   getEventImageSrc,
   COMPRESSED_EVENTS_BASE,
-} from '../club-shared/event-images.js';
-import { getClubImageSrc } from '../club-shared/club-images.js';
+} from '../../scripts/lib/event-images.js';
+import { getClubImageSrc } from '../../scripts/lib/club-images.js';
 
 export const HOME_DASHBOARD_DEFAULTS = {
   'clubs-data': '/data/data.json',

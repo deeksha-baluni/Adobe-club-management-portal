@@ -1,9 +1,9 @@
-@import url('../club-shared/club-section.css');
-@import url('../club-shared/club-buttons.css');
-@import url('../club-shared/styles/activities.css');
-@import url('../club-shared/styles/events.css');
-@import url('../club-shared/styles/recaps.css');
-@import url('../club-shared/styles/team.css');
+@import url('../../styles/club/club-section.css');
+@import url('../../styles/club/club-buttons.css');
+@import url('../../styles/club/activities.css');
+@import url('../../styles/club/events.css');
+@import url('../../styles/club/recaps.css');
+@import url('../../styles/club/team.css');
 
 main > .section:has(.club-list) > div {
   max-width: unset;

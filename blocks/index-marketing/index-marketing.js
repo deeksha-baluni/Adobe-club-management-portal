@@ -6,7 +6,7 @@
 import { parseIndexMarketingBlock } from './parse.js';
 import { mountStepsSection } from './steps.js';
 import { mountStoriesSection } from './stories.js';
-import { hasAuthoredSectionIntro } from '../club-shared/section-intro.js';
+import { hasAuthoredSectionIntro } from '../../scripts/lib/section-intro.js';
 
 function decorateStepsOnly(block) {
   const parsed = parseIndexMarketingBlock(block);

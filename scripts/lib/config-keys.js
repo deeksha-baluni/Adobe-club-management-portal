@@ -1,4 +1,4 @@
-import { toClassName } from '../../scripts/aem.js';
+import { toClassName } from '../aem.js';
 
 /** Known da.live config keys (not free-form question text). */
 const CONFIG_KEY_RE = /^(preset|section|eyebrow|title|description|image|image-alt|hero-alt|hero-fallback|link-text|link-href|faq-eyebrow|faq-title|cta-title|cta-subtitle|cta-primary-text|cta-primary-href|cta-secondary-text|cta-secondary-href|steps-eyebrow|steps-title|stories-eyebrow|stories-title)$|^(faq-\d+-[qa]|step-\d+-(title|body)|story-\d+-(image|title|body))$/;

@@ -3,7 +3,7 @@ import {
   getJoinLabel,
   wireClubJoinButton,
 } from '../club-page.js';
-import { cfg, fillTemplate } from '../block-config.js';
+import { cfg, fillTemplate } from '../../lib/block-config.js';
 
 const TEAM_IMAGE_BASE = '/assets/images/club_details/team_images/';
 const TEAM_IMAGE_FILES = [

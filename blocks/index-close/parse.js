@@ -2,7 +2,7 @@
  * Parse index-close block rows (FAQ + CTA).
  */
 import { toClassName } from '../../scripts/aem.js';
-import { isConfigRow } from '../club-shared/config-keys.js';
+import { isConfigRow } from '../../scripts/lib/config-keys.js';
 
 function readCellValue(cell) {
   if (!cell) return '';

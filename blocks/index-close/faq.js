@@ -1,7 +1,7 @@
 /**
  * FAQ accordion section for index-close.
  */
-import { buildSectionHead } from '../club-shared/marketing-head.js';
+import { buildSectionHead } from '../../scripts/lib/marketing-head.js';
 
 function mountFaqItem(questionCell, answerCell) {
   const item = document.createElement('div');

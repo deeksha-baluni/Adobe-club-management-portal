@@ -1,7 +1,7 @@
 /**
  * Mount steps section inside index-marketing.
  */
-import { buildSectionHead } from '../club-shared/marketing-head.js';
+import { buildSectionHead } from '../../scripts/lib/marketing-head.js';
 
 function ensureStepHeading(step, title, index, fallbacks) {
   if (step.querySelector('h1, h2, h3, h4, h5, h6')) return;

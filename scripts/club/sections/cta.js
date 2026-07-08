@@ -4,7 +4,7 @@ import {
   getJoinLabel,
   wireClubJoinButton,
 } from '../club-page.js';
-import { cfg, fillTemplate } from '../block-config.js';
+import { cfg, fillTemplate } from '../../lib/block-config.js';
 
 const PERK_ICONS = ['pin', 'bolt', 'people', 'target'];
 

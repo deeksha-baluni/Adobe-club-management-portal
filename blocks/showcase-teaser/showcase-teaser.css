@@ -1,4 +1,4 @@
-@import url('../club-shared/marketing-head.css');
+@import url('../../styles/marketing-head.css');
 
 /* Hide raw da.live config rows until showcase-teaser JS runs — reserve space */
 .showcase-teaser.block:not(:has(.showcase-grid)) {

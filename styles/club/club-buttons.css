@@ -1,6 +1,5 @@
 /* Shared club page buttons — matches original global.css */
 
-.page-hero--club .btn-primary,
 .club-hero .btn-primary,
 .club-section-inner .btn-primary,
 .cta-inner .btn-primary {
@@ -22,7 +21,6 @@
   transition: background 0.18s, border-color 0.18s, color 0.18s;
 }
 
-.page-hero--club .btn-primary:hover:not(.is-joined):not(:disabled),
 .club-hero .btn-primary:hover:not(.is-joined):not(:disabled),
 .club-section-inner .btn-primary:hover:not(.is-joined):not(:disabled),
 .cta-inner .btn-primary:hover:not(.is-joined):not(:disabled) {
@@ -31,7 +29,6 @@
   color: #fff;
 }
 
-.page-hero--club .btn-primary.is-joined,
 .club-hero .btn-primary.is-joined,
 .club-section-inner .btn-primary.is-joined {
   background: rgba(0, 0, 0, 0.05);
@@ -39,7 +36,6 @@
   border-color: var(--color-border-default, rgba(0, 0, 0, 0.11));
 }
 
-.page-hero--club .btn-primary.is-joined:hover:not(:disabled),
 .club-hero .btn-primary.is-joined:hover:not(:disabled),
 .club-section-inner .btn-primary.is-joined:hover:not(:disabled) {
   background: rgba(0, 0, 0, 0.08);
@@ -47,7 +43,6 @@
   color: var(--text-color, #2c2c2c);
 }
 
-.page-hero--club .btn-primary:disabled,
 .club-hero .btn-primary:disabled,
 .club-section-inner .btn-primary:disabled {
   opacity: 0.55;

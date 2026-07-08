@@ -2,7 +2,7 @@
  * Catalog List — unified browse block for /events and /clubs.
  * da.live: preset | events | clubs + key | value config rows.
  */
-import { readPageConfig, cfg } from '../club-shared/block-config.js';
+import { readPageConfig, cfg } from '../../scripts/lib/block-config.js';
 
 function normalizePath(path) {
   const raw = (path || '/').replace(/\.html$/, '').replace(/\/$/, '') || '/';

@@ -3,9 +3,9 @@
  * da.live: key | value config rows; records from data.json + localStorage articles.
  */
 import { loadScript } from '../../scripts/aem.js';
-import { readPageConfig, cfg } from '../club-shared/block-config.js';
-import { resolveClubAssetUrl, CLUB_STOCK_FALLBACK_POOL, CLUB_PICKER_OPTIONS } from '../club-shared/club-images.js';
-import { EVENT_HERO_IMAGE_OPTIONS } from '../club-shared/event-images.js';
+import { readPageConfig, cfg } from '../../scripts/lib/block-config.js';
+import { resolveClubAssetUrl, CLUB_STOCK_FALLBACK_POOL, CLUB_PICKER_OPTIONS } from '../../scripts/lib/club-images.js';
+import { EVENT_HERO_IMAGE_OPTIONS } from '../../scripts/lib/event-images.js';
 
 export const RESOURCES_LIST_DEFAULTS = {
   'clubs-data': '/data/data.json',

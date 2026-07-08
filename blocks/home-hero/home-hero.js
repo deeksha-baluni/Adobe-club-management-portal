@@ -2,7 +2,7 @@
  * Home Hero — welcome greeting for logged-in member home.
  * da.live: key | value config rows.
  */
-import { readPageConfig, cfg, fillTemplate } from '../club-shared/block-config.js';
+import { readPageConfig, cfg, fillTemplate } from '../../scripts/lib/block-config.js';
 
 export const HOME_HERO_DEFAULTS = {
   'greeting-template': 'Welcome back, {name}',

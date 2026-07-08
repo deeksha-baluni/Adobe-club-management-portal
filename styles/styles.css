@@ -208,7 +208,7 @@ body.has-breadcrumbs {
 body.has-breadcrumbs main > .section:first-of-type:has(
   .landing-hero,
   .resources-hero,
-  .page-hero
+  .club-hero
 ) {
   margin-top: calc(var(--breadcrumb-height) * -1);
 }

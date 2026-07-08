@@ -1,4 +1,4 @@
-import { readBlockConfig } from '../../scripts/aem.js';
+import { readBlockConfig } from '../aem.js';
 
 /**
  * Read da.live key | value rows and merge with defaults.

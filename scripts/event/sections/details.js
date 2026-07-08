@@ -4,7 +4,7 @@ import {
   scrollToRecapIfNeeded,
   esc,
 } from '../event-page.js';
-import { cfg } from '../../club-shared/block-config.js';
+import { cfg } from '../../lib/block-config.js';
 
 export function mountDetailsSection(block, ctx) {
   const { event: ev, club, pageConfig = {} } = ctx;

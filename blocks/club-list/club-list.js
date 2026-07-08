@@ -6,13 +6,13 @@ import {
   initClubPage,
   bindClubJoinSync,
   loadScript,
-} from '../club-shared/club-page.js';
-import { readPageConfig } from '../club-shared/block-config.js';
-import { mountActivitiesSection } from '../club-shared/sections/activities-section.js';
-import { mountEventsSection } from '../club-shared/sections/events-section.js';
-import { mountRecapsSection, applyRecapsDeepLink } from '../club-shared/sections/recaps-section.js';
-import { mountTeamSection } from '../club-shared/sections/team-section.js';
-import { mountCtaSection } from '../club-shared/sections/cta-section.js';
+} from '../../scripts/club/club-page.js';
+import { readPageConfig } from '../../scripts/lib/block-config.js';
+import { mountActivitiesSection } from '../../scripts/club/sections/activities.js';
+import { mountEventsSection } from '../../scripts/club/sections/events.js';
+import { mountRecapsSection, applyRecapsDeepLink } from '../../scripts/club/sections/recaps.js';
+import { mountTeamSection } from '../../scripts/club/sections/team.js';
+import { mountCtaSection } from '../../scripts/club/sections/cta.js';
 
 export const CLUB_LIST_DEFAULTS = {
   'clubs-data': '/data/data.json',

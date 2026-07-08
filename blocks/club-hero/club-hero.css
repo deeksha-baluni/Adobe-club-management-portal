@@ -1,11 +1,6 @@
-@import url('../club-shared/club-buttons.css');
-@import url('../club-shared/club-section.css');
-@import url('../event-shared/event-section.css');
+@import url('../../styles/club/club-buttons.css');
+@import url('../../styles/club/club-section.css');
 
-/* ── Club detail hero ── */
-.section:has(.page-hero--club),
-.section:has(.page-hero--club) > div,
-.page-hero-wrapper:has(.page-hero--club),
 .section:has(.club-hero),
 .section:has(.club-hero) > div,
 .club-hero-wrapper {
@@ -15,18 +10,15 @@
   border-top: none !important;
 }
 
-.page-hero-wrapper:has(.page-hero--club),
 .club-hero-wrapper {
   background: var(--background-color, #fff);
 }
 
-.page-hero--club,
 .club-hero {
   position: relative;
   isolation: isolate;
 }
 
-.page-hero--club::before,
 .club-hero::before {
   content: '';
   position: absolute;
@@ -243,16 +235,4 @@
     justify-content: center;
     text-align: center;
   }
-}
-
-/* ── Event detail hero section chrome ── */
-html.event-detail-route .page-hero--event:not(:has(.ev-inner)),
-html.event-detail-route .event-hero:not(:has(.ev-inner)) {
-  min-height: clamp(360px, 48vw, 520px);
-}
-
-main > .section:has(.event-hero, .page-hero--event) > div {
-  max-width: unset;
-  padding: 0;
-  margin: 0;
 }

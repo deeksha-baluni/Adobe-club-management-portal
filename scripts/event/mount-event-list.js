@@ -1,5 +1,5 @@
 /**
- * Event List body mount — shared by event-list block and page-hero fallback.
+ * Event List body mount — shared by event-list block and event-hero grid.
  */
 import {
   getEventPageContext,
@@ -7,11 +7,11 @@ import {
   refreshRegisterButton,
   bindEventPageListeners,
 } from './event-page.js';
-import { readPageConfig } from '../club-shared/block-config.js';
-import { mountRsvpSection } from './sections/rsvp-section.js';
-import { mountAboutSection } from './sections/about-section.js';
-import { mountDetailsSection } from './sections/details-section.js';
-import { mountOrganizerSection } from './sections/organizer-section.js';
+import { readPageConfig } from '../lib/block-config.js';
+import { mountRsvpSection } from './sections/rsvp.js';
+import { mountAboutSection } from './sections/about.js';
+import { mountDetailsSection } from './sections/details.js';
+import { mountOrganizerSection } from './sections/organizer.js';
 
 function scheduleIdle(fn, timeout = 2000) {
   if (typeof requestIdleCallback === 'function') {
@@ -21,10 +21,10 @@ function scheduleIdle(fn, timeout = 2000) {
   }
 }
 
-/** Move RSVP rail into page-hero grid (hero + sticky rail share one row). */
+/** Move RSVP rail into event-hero grid (hero + sticky rail share one row). */
 function attachEventRailToHero(rail) {
   const attach = () => {
-    const evInner = document.querySelector('.event-hero .ev-inner, .page-hero--event .ev-inner');
+    const evInner = document.querySelector('.event-hero .ev-inner');
     if (!evInner) return false;
     evInner.querySelector('.event-list-rail--placeholder')?.remove();
     const existing = evInner.querySelector('.event-list-rail:not(.event-list-rail--placeholder)');

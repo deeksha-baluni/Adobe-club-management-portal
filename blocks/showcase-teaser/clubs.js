@@ -1,11 +1,11 @@
 /**
  * Showcase Teaser — clubs preset (top 3 from data.json).
  */
-import { fetchAppData, getAuth, redirectToLogin } from '../club-shared/fetch-app-data.js';
-import { setMarketingImage } from '../club-shared/image-priority.js';
-import { getIndexClubImageSrc, CLUB_STOCK_FALLBACK_POOL } from '../club-shared/club-images.js';
-import { buildSectionHead } from '../club-shared/marketing-head.js';
-import { cfg } from '../club-shared/block-config.js';
+import { fetchAppData, getAuth, redirectToLogin } from '../../scripts/lib/app-data.js';
+import { setMarketingImage } from '../../scripts/lib/image-priority.js';
+import { getIndexClubImageSrc, CLUB_STOCK_FALLBACK_POOL } from '../../scripts/lib/club-images.js';
+import { buildSectionHead } from '../../scripts/lib/marketing-head.js';
+import { cfg } from '../../scripts/lib/block-config.js';
 
 export const CLUBS_DEFAULTS = {
   preset: 'clubs',

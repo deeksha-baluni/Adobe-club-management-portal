@@ -1,4 +1,8 @@
-@import url('../event-shared/event-section.css');
+@import url('../../styles/event/event-section.css');
+
+html.event-detail-route .event-hero:not(:has(.ev-inner)) {
+  min-height: clamp(360px, 48vw, 520px);
+}
 
 main > .section:has(.event-hero) > div {
   max-width: unset;

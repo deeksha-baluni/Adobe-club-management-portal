@@ -2,7 +2,7 @@
  * Parse index-marketing block rows (config + content).
  */
 import { toClassName } from '../../scripts/aem.js';
-import { isConfigRow } from '../club-shared/config-keys.js';
+import { isConfigRow } from '../../scripts/lib/config-keys.js';
 
 const STEP_FALLBACKS = [
   'Discover clubs',

@@ -3,9 +3,9 @@
  * da.live: key | value config rows. Scoped to managed clubs; overall admin sees all.
  */
 import { loadCSS, loadScript } from '../../scripts/aem.js';
-import { readPageConfig, cfg, fillTemplate } from '../club-shared/block-config.js';
-import { getEventImageSrc } from '../club-shared/club-page.js';
-import { getClubImageSrc } from '../club-shared/club-images.js';
+import { readPageConfig, cfg, fillTemplate } from '../../scripts/lib/block-config.js';
+import { getEventImageSrc } from '../../scripts/club/club-page.js';
+import { getClubImageSrc } from '../../scripts/lib/club-images.js';
 
 export const ADMIN_DASHBOARD_DEFAULTS = {
   'clubs-data': '/data/data.json',

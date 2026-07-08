@@ -172,7 +172,7 @@ main .section.surface {
 }
 
 /* ── Club detail — OG .club-detail-inner rhythm (no EDS section separators) ── */
-main:has(.page-hero--club, .club-hero) > .section:not(:first-of-type):not(.dark) {
+main:has(.club-hero) > .section:not(:first-of-type):not(.dark) {
   margin: 0;
   border-top: none;
   padding-top: 0;

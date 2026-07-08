@@ -1,4 +1,4 @@
-@import url('../club-shared/marketing-head.css');
+@import url('../../styles/marketing-head.css');
 
 /* Hide raw da.live config rows until index-close JS runs */
 .index-close.block:not(:has(.index-close-section)):not(:has(.index-close-faq)) {

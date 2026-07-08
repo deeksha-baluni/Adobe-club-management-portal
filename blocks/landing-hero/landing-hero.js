@@ -13,9 +13,9 @@
  *   | image        | upload or path |
  */
 import { loadCSS, loadScript, toClassName } from '../../scripts/aem.js';
-import { preloadLcpImage, publishedImageSrc } from '../club-shared/image-priority.js';
-import { resolveCompressedStockUrl } from '../club-shared/event-images.js';
-import { readPageConfig, cfg } from '../club-shared/block-config.js';
+import { preloadLcpImage, publishedImageSrc } from '../../scripts/lib/image-priority.js';
+import { resolveCompressedStockUrl } from '../../scripts/lib/event-images.js';
+import { readPageConfig, cfg } from '../../scripts/lib/block-config.js';
 
 const CONFIG_KEYS = new Set([
   'preset', 'eyebrow', 'title', 'description', 'image', 'image-alt',

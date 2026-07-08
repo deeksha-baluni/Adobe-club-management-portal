@@ -2,7 +2,7 @@
  * Resources Hero — centered text hero for the Resource Hub.
  * da.live: key | value config rows.
  */
-import { readPageConfig, cfg } from '../club-shared/block-config.js';
+import { readPageConfig, cfg } from '../../scripts/lib/block-config.js';
 
 export const RESOURCES_HERO_DEFAULTS = {
   eyebrow: 'Resource Hub · Adobe Clubs',

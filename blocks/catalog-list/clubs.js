@@ -3,8 +3,8 @@
  * da.live: key | value config rows (see block header comment).
  */
 import { loadCSS, loadScript } from '../../scripts/aem.js';
-import { readPageConfig, cfg } from '../club-shared/block-config.js';
-import { getClubImageSrc } from '../club-shared/club-images.js';
+import { readPageConfig, cfg } from '../../scripts/lib/block-config.js';
+import { getClubImageSrc } from '../../scripts/lib/club-images.js';
 
 const DEFAULTS = {
   'clubs-data': '/data/data.json',

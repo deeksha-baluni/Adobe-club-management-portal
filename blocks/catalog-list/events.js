@@ -3,12 +3,12 @@
  * da.live: key | value config rows.
  */
 import { loadCSS, loadScript } from '../../scripts/aem.js';
-import { readPageConfig, cfg } from '../club-shared/block-config.js';
+import { readPageConfig, cfg } from '../../scripts/lib/block-config.js';
 import {
   getEventImageSrc as resolveEventImageSrc,
   COMPRESSED_EVENTS_BASE,
   EVENT_STOCK_FALLBACK_POOL,
-} from '../club-shared/event-images.js';
+} from '../../scripts/lib/event-images.js';
 
 const DEFAULTS = {
   'events-data': '/data/data.json',

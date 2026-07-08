@@ -1,6 +1,6 @@
 import { esc } from '../event-page.js';
-import { getAuth } from '../../club-shared/club-page.js';
-import { cfg } from '../../club-shared/block-config.js';
+import { getAuth } from '../../club/club-page.js';
+import { cfg } from '../../lib/block-config.js';
 
 export function mountOrganizerSection(block, ctx) {
   const { event: ev, club, pageConfig = {} } = ctx;
