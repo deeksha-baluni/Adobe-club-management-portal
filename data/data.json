@@ -83,9 +83,22 @@
   "stats": {
     "clubs": 10,
     "members": "540+",
-    "events": 11
+    "events": 12
   },
   "events": [
+    {
+      "id": "evt-13",
+      "clubId": "dev-guild",
+      "month": "JUL",
+      "day": "11",
+      "title": "Ship It Friday — Demo & Debug",
+      "club": "Dev Guild",
+      "time": "3:00 PM",
+      "type": "In-person",
+      "location": "Tower A · Huddle Room 2",
+      "spotsLeft": 25,
+      "desc": "An informal end-of-week session where anyone can demo a side project or bring a gnarly bug for the room to crack. Come to show something, help debug, or just watch — snacks provided."
+    },
     {
       "id": "evt-2",
       "clubId": "adobe-creatives",
