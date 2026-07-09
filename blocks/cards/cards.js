@@ -8,6 +8,7 @@ import {
   buildSectionHead,
   ensureSectionHeadBeforeCards,
   hasSiblingSectionHead,
+  findPairedSectionHead,
 } from '../../scripts/lib/section-head.js';
 import { buildClubCard } from '../../scripts/lib/cards/club-card.js';
 import { buildEventCard } from '../../scripts/lib/cards/event-card.js';
@@ -221,6 +222,8 @@ function mergedConfig(config, presetKey) {
     'quiz-prompt-strong': cfg(config, 'quiz-prompt-strong', 'Get picks made for you.'),
     'quiz-prompt-text': cfg(config, 'quiz-prompt-text', "Tell us what you're into and we'll match clubs to your interests."),
     'quiz-cta-text': cfg(config, 'quiz-cta-text', 'Take the 1-minute quiz'),
+    'recommended-title': cfg(config, 'recommended-title', 'Recommended for you'),
+    'popular-title': cfg(config, 'popular-title', 'Popular clubs'),
     'empty-cta': cfg(config, 'empty-cta', 'Explore clubs'),
     'empty-href': cfg(config, 'empty-href', '/clubs'),
   };
@@ -268,23 +271,20 @@ function appendStaticSectionHead(block, rawConfig, presetKey) {
   block.prepend(buildSectionHead({ eyebrow, title, classPrefix: 'section-head' }));
 }
 
-function appendQuizPrompt(container, config) {
-  const { completed, interests } = getQuizState();
-  if (completed) {
-    if (interests.length) {
-      const pills = document.createElement('div');
-      pills.className = 'cards-interest-pills';
-      pills.setAttribute('aria-label', 'Your selected interests');
-      interests.forEach((label) => {
-        const pill = document.createElement('span');
-        pill.className = 'cards-interest-pill';
-        pill.textContent = label;
-        pills.append(pill);
-      });
-      container.append(pills);
-    }
-    return;
-  }
+function buildInterestPills(interests) {
+  const pills = document.createElement('div');
+  pills.className = 'cards-interest-pills';
+  pills.setAttribute('aria-label', 'Your selected interests');
+  interests.forEach((label) => {
+    const pill = document.createElement('span');
+    pill.className = 'cards-interest-pill';
+    pill.textContent = label;
+    pills.append(pill);
+  });
+  return pills;
+}
+
+function buildQuizPrompt(config) {
   const prompt = document.createElement('div');
   prompt.className = 'cards-prompt';
   prompt.innerHTML = `<p><strong>${config['quiz-prompt-strong']}</strong> ${config['quiz-prompt-text']}</p>`;
@@ -296,7 +296,38 @@ function appendQuizPrompt(container, config) {
     window.AdobeInterestQuiz?.openInterestPicker?.();
   });
   prompt.append(btn);
-  container.append(prompt);
+  return prompt;
+}
+
+/**
+ * Reconcile the quiz section to the current quiz state: render either the
+ * interest pills (completed) or the quiz prompt (not completed) above the grid,
+ * and swap the paired section-head title (Popular clubs ↔ Recommended for you).
+ * Safe to call repeatedly — always rebuilds from the live quiz state.
+ */
+function syncQuizSection(block, section, config) {
+  const { completed, interests } = getQuizState();
+
+  // Prompt / pills always sit above the grid, never after it.
+  section.querySelector('.cards-prompt')?.remove();
+  section.querySelector('.cards-interest-pills')?.remove();
+  const grid = section.querySelector('.cards-grid');
+  let extra = null;
+  if (completed) {
+    if (interests.length) extra = buildInterestPills(interests);
+  } else {
+    extra = buildQuizPrompt(config);
+  }
+  if (extra) {
+    if (grid) section.insertBefore(extra, grid);
+    else section.append(extra);
+  }
+
+  // Swap the heading to match quiz state.
+  const heading = findPairedSectionHead(block)?.querySelector('.section-head-heading');
+  if (heading) {
+    heading.textContent = completed ? config['recommended-title'] : config['popular-title'];
+  }
 }
 
 function appendEmptyState(container, config, message) {
@@ -417,10 +448,6 @@ async function decorateDynamic(block, rawConfig, presetKey) {
   section.className = 'cards-section';
   block.append(section);
 
-  if (config.source === 'quiz' && config.layout === 'poster') {
-    appendQuizPrompt(section, config);
-  }
-
   const grid = document.createElement('div');
   grid.className = gridClassName(config.kind, config.layout);
   section.append(grid);
@@ -449,6 +476,7 @@ async function decorateDynamic(block, rawConfig, presetKey) {
 
   grid.textContent = '';
   const items = resolveCardItems(data, config);
+  const isQuizPoster = config.source === 'quiz' && config.layout === 'poster';
 
   if (config.source === 'joined' && !items.length) {
     appendEmptyState(section, config, EMPTY_COPY.club.joined);
@@ -463,31 +491,38 @@ async function decorateDynamic(block, rawConfig, presetKey) {
     msg.className = 'cards-empty';
     msg.textContent = EMPTY_COPY[config.kind]?.[config.source] || 'Nothing to show yet.';
     grid.append(msg);
-    return;
+  } else {
+    items.forEach((item) => grid.append(buildCard(item, config)));
+
+    if (config.action === 'join' || config.action === 'rsvp') {
+      wireCardActions(grid, {
+        join: cfg(rawConfig, 'join-label', 'Join'),
+        joined: cfg(rawConfig, 'joined-label', 'Joined'),
+      });
+    }
   }
 
-  items.forEach((item) => grid.append(buildCard(item, config)));
+  if (isQuizPoster) {
+    // Render prompt/pills + heading from the real quiz state, now that
+    // user-features has loaded (it is not available before the await above).
+    syncQuizSection(block, section, config);
 
-  if (config.action === 'join' || config.action === 'rsvp') {
-    wireCardActions(grid, {
-      join: cfg(rawConfig, 'join-label', 'Join'),
-      joined: cfg(rawConfig, 'joined-label', 'Joined'),
-    });
-  }
-
-  if (config.source === 'quiz' && config.layout === 'poster' && !block.dataset.quizRefreshBound) {
-    block.dataset.quizRefreshBound = '1';
-    const refresh = () => {
-      const fresh = resolveCardItems({ clubs: window.__adobeClubClubs, events: window.__adobeClubEvents }, config);
-      grid.textContent = '';
-      section.querySelector('.cards-prompt, .cards-interest-pills')?.remove();
-      appendQuizPrompt(section, config);
-      fresh.forEach((item) => grid.append(buildCard(item, config)));
-      wireCardActions(grid);
-    };
-    window.addEventListener('adobe-cards-data-changed', refresh);
-    window.addEventListener('adobe-interests-updated', refresh);
-    window.addEventListener('adobe-quiz-closed', refresh);
+    if (!block.dataset.quizRefreshBound) {
+      block.dataset.quizRefreshBound = '1';
+      const refresh = () => {
+        const fresh = resolveCardItems(
+          { clubs: window.__adobeClubClubs, events: window.__adobeClubEvents },
+          config,
+        );
+        grid.textContent = '';
+        fresh.forEach((item) => grid.append(buildCard(item, config)));
+        wireCardActions(grid);
+        syncQuizSection(block, section, config);
+      };
+      window.addEventListener('adobe-cards-data-changed', refresh);
+      window.addEventListener('adobe-interests-updated', refresh);
+      window.addEventListener('adobe-quiz-closed', refresh);
+    }
   }
 }
 

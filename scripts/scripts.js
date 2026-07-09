@@ -629,6 +629,8 @@ function splitLegacyMemberHomeDashboard(main) {
         }),
         createLegacyConfigBlock('cards cards--home-clubs', {
           preset: 'home-clubs',
+          'recommended-title': pick('section-recommended-title'),
+          'popular-title': pick('section-popular-title'),
           'quiz-prompt-strong': pick('quiz-prompt-strong'),
           'quiz-prompt-text': pick('quiz-prompt-text'),
           'quiz-cta-text': pick('quiz-cta-text'),

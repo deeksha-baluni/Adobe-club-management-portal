@@ -44,6 +44,13 @@
   color: rgba(255, 255, 255, 0.82);
 }
 
+/* cta-banner.css isn't loaded on /home, so restore the primary CTA's white
+   label — otherwise it falls back to the blue link color on the dark banner. */
+.cards--joined-empty .cards-empty-state .cta-banner-btn--primary,
+.cards--joined-empty .cards-empty-state a.cta-banner-btn--primary:any-link {
+  color: #fff;
+}
+
 .section.cards-container:has(.cards--steps),
 .section.cards-container:has(.cards--stories),
 .section.cards-container:has(.cards--combined-marketing) {
