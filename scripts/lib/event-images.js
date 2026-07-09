@@ -4,6 +4,8 @@
 
 export const COMPRESSED_EVENTS_BASE = '/assets/images/events/compressed-events/';
 export const INDEX_COMPRESSED_EVENTS_BASE = '/assets/images/events/index-compressed/';
+/** ~600×338 exports for /home poster cards (tools/resize-home-assets.mjs). */
+export const HOME_COMPRESSED_EVENTS_BASE = '/assets/images/events/home-compressed/';
 
 const DEFAULT_EVENT_FILE = 'evt-hero.avif';
 
@@ -138,6 +140,26 @@ export function getIndexEventImageSrc(ev) {
   return full;
 }
 
+/** Smallest event thumbs for /home poster grid (~600×338). */
+export function getPosterEventImageSrc(ev) {
+  const full = getEventImageSrc(ev);
+  const file = full.split('/').pop()?.split('?')[0];
+  if (!file) return `${HOME_COMPRESSED_EVENTS_BASE}${DEFAULT_EVENT_FILE}`;
+  return `${HOME_COMPRESSED_EVENTS_BASE}${file}`;
+}
+
+/** Progressive fallback when home-compressed event assets are missing locally. */
+export function getPosterEventImageFallbacks(ev) {
+  const full = getEventImageSrc(ev);
+  const file = full.split('/').pop()?.split('?')[0] || DEFAULT_EVENT_FILE;
+  const chain = [`${HOME_COMPRESSED_EVENTS_BASE}${file}`];
+  if (/^evt-\d+\.avif$/i.test(file) || /^evt-hero\d*\.avif$/i.test(file)) {
+    chain.push(`${INDEX_COMPRESSED_EVENTS_BASE}${file}`);
+  }
+  chain.push(full);
+  return chain;
+}
+
 if (typeof window !== 'undefined') {
   window.AdobeEventImages = {
     COMPRESSED_EVENTS_BASE,
@@ -151,5 +173,8 @@ if (typeof window !== 'undefined') {
     resolveEventIdUrl,
     getEventImageSrc,
     getIndexEventImageSrc,
+    getPosterEventImageSrc,
+    getPosterEventImageFallbacks,
+    HOME_COMPRESSED_EVENTS_BASE,
   };
 }

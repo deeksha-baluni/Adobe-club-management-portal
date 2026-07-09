@@ -414,7 +414,10 @@ a.event-organizer-signin:any-link:hover {
 .event-page-right-rail {
   flex: 0 0 320px;
   width: 100%;
+  max-width: 100%;
+  min-width: 0;
   position: static;
+  box-sizing: border-box;
 }
 
 .event-rail-card {

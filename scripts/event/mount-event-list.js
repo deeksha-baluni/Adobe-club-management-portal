@@ -1,5 +1,5 @@
 /**
- * Event List body mount — shared by event-list block and event-hero grid.
+ * Event List body mount — shared by event-list block and detail-hero grid.
  */
 import {
   getEventPageContext,
@@ -21,10 +21,10 @@ function scheduleIdle(fn, timeout = 2000) {
   }
 }
 
-/** Move RSVP rail into event-hero grid (hero + sticky rail share one row). */
+/** Move RSVP rail into detail-hero grid (hero + sticky rail share one row). */
 function attachEventRailToHero(rail) {
   const attach = () => {
-    const evInner = document.querySelector('.event-hero .ev-inner');
+    const evInner = document.querySelector('.detail-hero--event .ev-inner');
     if (!evInner) return false;
     evInner.querySelector('.event-list-rail--placeholder')?.remove();
     const existing = evInner.querySelector('.event-list-rail:not(.event-list-rail--placeholder)');
@@ -34,7 +34,7 @@ function attachEventRailToHero(rail) {
   };
 
   if (attach()) return;
-  document.addEventListener('event-hero-ready', () => { attach(); }, { once: true });
+  document.addEventListener('detail-hero-ready', () => { attach(); }, { once: true });
 }
 
 export const EVENT_LIST_DEFAULTS = {

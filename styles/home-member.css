@@ -1,0 +1,267 @@
+/* Member /home layout — section-head, cards, home-calendar */
+
+body.user-home {
+  overflow-x: clip;
+}
+
+body.user-home main {
+  max-width: none;
+  padding: 0;
+  margin: 0;
+  overflow-x: clip;
+}
+
+body.user-home main > div {
+  margin: 0;
+  max-width: none;
+  width: 100%;
+}
+
+body.user-home main > .section:has(.cards, .home-calendar, .section-head) > div {
+  max-width: unset;
+  padding: 0;
+  margin: 0;
+}
+
+body.user-home main > .section:has(.cards, .home-calendar) {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  width: 100%;
+  padding: clamp(36px, 5vw, 56px) var(--section-padding-x) 0;
+  box-sizing: border-box;
+  min-width: 0;
+}
+
+body.user-home main > .section:has(.default-content-wrapper h1) + .section:has(.cards, .home-calendar, .section-head) {
+  padding-top: 0;
+  border-top: none;
+}
+
+/* Match adobe-clubs home — slight inset on poster grids */
+body.user-home .cards--home-clubs .lp-clubs-grid,
+body.user-home .cards--home-events .lp-events-grid {
+  padding-inline: clamp(12px, 2vw, 24px);
+  box-sizing: border-box;
+}
+
+body.user-home main > .section:has(.cards):last-of-type {
+  padding-bottom: clamp(48px, 7vw, 80px);
+}
+
+/* Home calendar internal section */
+.hm-section {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  width: 100%;
+  box-sizing: border-box;
+  min-width: 0;
+}
+
+.hm-section-head {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 10px;
+  margin-bottom: 32px;
+}
+
+.hm-section-head h2 {
+  display: inline-block;
+  padding-bottom: 10px;
+  font-size: clamp(26px, 3vw, 36px);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--text-color);
+  line-height: 1.1;
+  margin: 0;
+}
+
+.hm-section-link {
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--color-accent);
+  text-decoration: underline;
+  text-decoration-color: var(--color-accent);
+  text-underline-offset: 3px;
+}
+
+.hm-section-link:hover {
+  color: var(--color-accent-hover);
+  text-decoration-color: var(--color-accent-hover);
+}
+
+.hm-rsvp-item,
+.hm-rsvp-item:hover,
+.hm-rsvp-item:focus-visible,
+.hm-rsvp-item:hover *,
+.hm-rsvp-item:focus-visible * {
+  text-decoration: none;
+  color: inherit;
+}
+
+.hm-cal-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 380px) minmax(0, 1fr);
+  gap: clamp(20px, 3vw, 32px);
+  align-items: start;
+  width: 100%;
+  min-width: 0;
+}
+
+.hm-cal-card {
+  padding: 20px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-l);
+  background: var(--background-color);
+  min-width: 0;
+  overflow: hidden;
+}
+
+body.user-home .uf-cal-grid {
+  min-width: 0;
+}
+
+.hm-cal-rsvps {
+  padding: 20px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-l);
+  background: var(--color-surface);
+  min-width: 0;
+}
+
+.hm-cal-rsvps-title {
+  margin: 0 0 14px;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-text-tertiary);
+}
+
+.hm-rsvp-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.hm-rsvp-item {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 12px 14px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-m);
+  background: var(--background-color);
+  text-decoration: none;
+  transition: border-color 0.18s, background 0.18s;
+}
+
+.hm-rsvp-item:hover {
+  border-color: var(--color-border-default);
+  background: var(--light-color);
+}
+
+.hm-rsvp-date {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-brand-red);
+}
+
+.hm-rsvp-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-color);
+  line-height: 1.3;
+}
+
+.hm-rsvp-meta {
+  font-size: 12.5px;
+  color: var(--color-text-tertiary);
+}
+
+.hm-rsvp-empty p {
+  margin: 0 0 8px;
+  font-size: 14px;
+  color: var(--color-text-secondary);
+}
+
+.hm-rsvp-more {
+  margin: 12px 0 0;
+  font-size: 13px;
+}
+
+@media (max-width: 768px) {
+  .hm-cal-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+body.user-home .cb-poster-join {
+  min-width: 120px;
+  padding: 10px 26px;
+  font-size: 14px;
+  font-weight: 600;
+  background: var(--color-accent);
+  border: 1px solid var(--color-accent);
+  border-radius: 100px;
+  color: #fff;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.18s, border-color 0.18s, color 0.18s;
+}
+
+body.user-home .cb-poster-join:hover:not(:disabled):not(.is-joined) {
+  background: var(--color-accent-hover);
+  border-color: var(--color-accent-hover);
+}
+
+body.user-home .cb-poster-join:disabled {
+  background: var(--light-color);
+  border-color: var(--color-border-default);
+  color: var(--color-text-tertiary);
+  cursor: not-allowed;
+  opacity: 0.72;
+}
+
+body.user-home .cb-poster-join.is-joined {
+  background: transparent;
+  border: 1px solid #000;
+  color: #000;
+}
+
+body.user-home .cb-poster-join[data-club-id].is-joined::before {
+  content: '✓';
+  font-size: 12px;
+  font-weight: 700;
+  margin-right: 4px;
+}
+
+[data-theme="dark"] body.user-home .cb-poster-join.is-joined {
+  border-color: rgba(255, 255, 255, 0.88);
+  color: #fff;
+}
+
+.lp-cta-actions {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 900px) {
+  body.user-home {
+    --section-padding-x: 24px;
+  }
+}
+
+@media (max-width: 560px) {
+  body.user-home {
+    --section-padding-x: 16px;
+  }
+}

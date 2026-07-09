@@ -159,12 +159,12 @@ export async function resolveClubContext() {
 }
 
 export function preloadHeroImage(src) {
-  if (!src || document.querySelector(`link[data-club-hero-preload="${src}"]`)) return;
+  if (!src || document.querySelector(`link[data-detail-hero-preload="${src}"]`)) return;
   const link = document.createElement('link');
   link.rel = 'preload';
   link.as = 'image';
   link.href = src;
-  link.dataset.clubHeroPreload = src;
+  link.dataset.detailHeroPreload = src;
   document.head.append(link);
 }
 
@@ -215,7 +215,54 @@ export function bindClubJoinSync(club) {
     if (typeof window.__clubEventsRefresh === 'function') {
       window.__clubEventsRefresh();
     }
+    document.querySelectorAll('[data-club-join]').forEach((btn) => {
+      if (btn.classList.contains('ch-join-btn')) return;
+      const suffix = btn.dataset.joinSuffix || '';
+      const joinedLabel = 'Joined';
+      const joinLabel = 'Join';
+      btn.classList.toggle('is-joined', e.detail.joined);
+      btn.textContent = suffix
+        ? `${e.detail.joined ? joinedLabel : joinLabel} ${suffix}`
+        : (e.detail.joined ? joinedLabel : joinLabel);
+    });
   });
+}
+
+/** Breadcrumbs, join sync, recap deep-link — once per club detail page. */
+export async function initClubPageChrome(doc = document) {
+  const main = doc.querySelector('main');
+  if (!main?.querySelector('.detail-hero--club, .cards--club-activities, .cards--club-events, .cards--club-recaps, .cards--club-team, .cta-banner--join')) {
+    return;
+  }
+  if (window.__clubPageChromeInit) return;
+  window.__clubPageChromeInit = true;
+
+  let ctx;
+  try {
+    ctx = await initClubPage();
+  } catch (err) {
+    // eslint-disable-next-line no-console
+    console.error('[club-page]', err);
+    return;
+  }
+  if (ctx.error) return;
+
+  const { club } = ctx;
+  bindClubJoinSync(club);
+
+  window.AdobeBreadcrumbs?.set([
+    { label: 'Home', href: window.AdobeBreadcrumbs?.getHomeHref?.() || '/' },
+    { label: 'Clubs', href: '/clubs' },
+    { label: club.name, current: true },
+  ]);
+
+  const { applyRecapsDeepLink } = await import('../lib/cards/club-recaps.js');
+  const recapsBlock = main.querySelector('.cards--club-recaps, #club-recaps');
+  if (recapsBlock) {
+    const target = recapsBlock.classList.contains('cards') ? recapsBlock : recapsBlock.closest('.cards') || recapsBlock;
+    applyRecapsDeepLink(target);
+    window.addEventListener('hashchange', () => applyRecapsDeepLink(target));
+  }
 }
 
 export function getMeta(clubId) {

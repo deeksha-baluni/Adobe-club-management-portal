@@ -1,8 +1,10 @@
 /* Shared club page buttons — matches original global.css */
 
-.club-hero .btn-primary,
+.detail-hero--club .btn-primary,
 .club-section-inner .btn-primary,
-.cta-inner .btn-primary {
+.club-cards-body .btn-primary,
+.cta-banner-inner .btn-primary,
+.cta-banner-btn--primary {
   background: var(--color-accent, #1473e6);
   color: #fff;
   border: 1px solid var(--color-accent, #1473e6);
@@ -21,30 +23,38 @@
   transition: background 0.18s, border-color 0.18s, color 0.18s;
 }
 
-.club-hero .btn-primary:hover:not(.is-joined):not(:disabled),
+.detail-hero--club .btn-primary:hover:not(.is-joined):not(:disabled),
 .club-section-inner .btn-primary:hover:not(.is-joined):not(:disabled),
-.cta-inner .btn-primary:hover:not(.is-joined):not(:disabled) {
+.club-cards-body .btn-primary:hover:not(.is-joined):not(:disabled),
+.cta-banner-inner .btn-primary:hover:not(.is-joined):not(:disabled),
+.cta-banner-btn--primary:hover:not(.is-joined):not(:disabled) {
   background: var(--color-accent-hover, #0d66d0);
   border-color: var(--color-accent-hover, #0d66d0);
   color: #fff;
 }
 
-.club-hero .btn-primary.is-joined,
-.club-section-inner .btn-primary.is-joined {
+.detail-hero--club .btn-primary.is-joined,
+.club-section-inner .btn-primary.is-joined,
+.club-cards-body .btn-primary.is-joined,
+.cta-banner-btn--primary.is-joined {
   background: rgba(0, 0, 0, 0.05);
   color: var(--text-color, #2c2c2c);
   border-color: var(--color-border-default, rgba(0, 0, 0, 0.11));
 }
 
-.club-hero .btn-primary.is-joined:hover:not(:disabled),
-.club-section-inner .btn-primary.is-joined:hover:not(:disabled) {
+.detail-hero--club .btn-primary.is-joined:hover:not(:disabled),
+.club-section-inner .btn-primary.is-joined:hover:not(:disabled),
+.club-cards-body .btn-primary.is-joined:hover:not(:disabled),
+.cta-banner-btn--primary.is-joined:hover:not(:disabled) {
   background: rgba(0, 0, 0, 0.08);
   border-color: var(--color-border-default, rgba(0, 0, 0, 0.11));
   color: var(--text-color, #2c2c2c);
 }
 
-.club-hero .btn-primary:disabled,
-.club-section-inner .btn-primary:disabled {
+.detail-hero--club .btn-primary:disabled,
+.club-section-inner .btn-primary:disabled,
+.club-cards-body .btn-primary:disabled,
+.cta-banner-btn--primary:disabled {
   opacity: 0.55;
   cursor: not-allowed;
 }

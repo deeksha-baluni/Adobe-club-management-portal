@@ -1,0 +1,7 @@
+@import url('../../styles/home-member.css');
+
+.home-calendar.block:not(:has(.hm-cal-layout)) {
+  min-height: 280px;
+  visibility: hidden;
+  pointer-events: none;
+}

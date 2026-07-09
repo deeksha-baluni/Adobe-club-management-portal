@@ -4,7 +4,7 @@ html.guest-index-route .landing-hero-wrapper:has(.landing-hero:not(:has(.landing
 }
 
 html.guest-index-route .landing-hero.block:not(:has(.landing-hero-content)),
-.landing-hero.block:not(:has(.landing-hero-content)) {
+.landing-hero.block:not(:has(.landing-hero-content)):not(:has(.landing-hero-resources)) {
   visibility: hidden;
   pointer-events: none;
 }
@@ -76,9 +76,10 @@ html.guest-index-route .landing-hero.block:not(:has(.landing-hero-content)) > di
   padding: 0;
 }
 
-/* Events + clubs list pages — align with main content left gutter */
+/* Events + clubs + resources list pages — align with main content left gutter */
 main > .section:has(.landing-hero--events) > div,
-main > .section:has(.landing-hero--clubs) > div {
+main > .section:has(.landing-hero--clubs) > div,
+main > .section:has(.landing-hero--resources) > div {
   max-width: 100%;
   padding: 0;
 }
@@ -620,5 +621,88 @@ button.landing-hero-banner-btn--outline:hover {
 
   .landing-hero-stat:first-child {
     padding-left: 0;
+  }
+}
+
+/* ── Resources preset — centered text hero (no media) ──────────────── */
+main > .section:has(.landing-hero--resources) {
+  padding: 0;
+  margin: 0;
+  border-top: none;
+  max-width: none;
+  width: 100%;
+  background-color: transparent;
+  overflow-x: clip;
+}
+
+.landing-hero--resources {
+  display: contents;
+}
+
+.landing-hero-resources {
+  position: relative;
+  width: 100%;
+  max-width: 100%;
+  background: var(--background-color);
+  border-bottom: 1px solid var(--color-border-default);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(40px, 6vw, 64px) var(--section-padding-x) clamp(28px, 4vw, 40px);
+  box-sizing: border-box;
+}
+
+.landing-hero-resources-content {
+  position: relative;
+  z-index: 1;
+  max-width: 720px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.landing-hero--resources .landing-hero-eyebrow {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  margin: 0;
+}
+
+.landing-hero--resources .landing-hero-title {
+  font-size: clamp(34px, 5vw, 52px);
+  letter-spacing: -0.02em;
+  line-height: 1.08;
+  margin: 0;
+}
+
+.landing-hero-title-accent {
+  font-style: normal;
+  font-weight: 700;
+  color: var(--text-color);
+  letter-spacing: -0.02em;
+}
+
+.landing-hero--resources .landing-hero-subtitle {
+  font-size: 17px;
+  line-height: 1.65;
+  max-width: 520px;
+  margin: 0;
+}
+
+.landing-hero--resources .landing-hero-subtitle strong {
+  font-weight: 700;
+  color: var(--text-color);
+}
+
+@media (width <= 640px) {
+  .landing-hero-resources {
+    padding: clamp(40px, 10vw, 48px) var(--section-padding-x) clamp(32px, 8vw, 40px);
+    min-height: auto;
+  }
+
+  .landing-hero--resources .landing-hero-subtitle {
+    font-size: 15px;
   }
 }

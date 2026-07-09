@@ -29,19 +29,19 @@ body.resources-page main > .section:not(.dark) {
   background-color: transparent;
 }
 
-body.resources-page main > .section:has(.resources-hero) + .section:has(.resources-list) {
+body.resources-page main > .section:has(.landing-hero--resources) + .section:has(.resources-list) {
   border-top: 1px solid var(--color-border-default);
 }
 
 /* Reset EDS main wrappers (styles.css sets main > div { margin: 40px 16px }) */
 main:has(.resources-list),
-main:has(.resources-hero) {
+main:has(.landing-hero--resources) {
   overflow-x: clip;
   max-width: 100%;
 }
 
 main:has(.resources-list) > div,
-main:has(.resources-hero) > div {
+main:has(.landing-hero--resources) > div {
   margin: 0;
   padding: 0;
   max-width: none;

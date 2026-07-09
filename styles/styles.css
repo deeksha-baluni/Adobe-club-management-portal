@@ -124,12 +124,18 @@ body.guest-index main > .section:not(:first-of-type):not(.dark) {
   padding: clamp(32px, 4.5vw, 56px) 0;
 }
 
-body.guest-index main > .section > .default-content-wrapper:has(+ .index-marketing-wrapper) {
+body.guest-index main > .section > .default-content-wrapper:has(+ .section-head-wrapper),
+body.guest-index main > .section > .default-content-wrapper:has(+ .cards-wrapper) {
   text-align: center;
   margin-bottom: 32px;
 }
 
-body.guest-index main > .section > .default-content-wrapper:has(+ .index-marketing-wrapper) h2 {
+body.guest-index main > .section:has(.section-head.block):has(.cards--steps, .cards--stories) {
+  text-align: center;
+}
+
+body.guest-index main > .section > .default-content-wrapper:has(+ .section-head-wrapper) h2,
+body.guest-index main > .section > .default-content-wrapper:has(+ .cards-wrapper) h2 {
   font-size: clamp(26px, 3vw, 36px);
   font-weight: 700;
   letter-spacing: -0.02em;
@@ -207,8 +213,8 @@ body.has-breadcrumbs {
 /* Pull first hero up by breadcrumb height so layout matches index */
 body.has-breadcrumbs main > .section:first-of-type:has(
   .landing-hero,
-  .resources-hero,
-  .club-hero
+  .landing-hero--resources,
+  .detail-hero
 ) {
   margin-top: calc(var(--breadcrumb-height) * -1);
 }
@@ -445,7 +451,7 @@ main > .section:first-of-type {
 }
 
 /* List pages — align first-section spacing with guest index */
-main > .section:first-of-type:has(.landing-hero--clubs, .landing-hero--events, .resources-hero) > div {
+main > .section:first-of-type:has(.landing-hero--clubs, .landing-hero--events, .landing-hero--resources) > div {
   padding-top: 0;
   padding-bottom: 0;
 }

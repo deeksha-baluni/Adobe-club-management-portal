@@ -6,6 +6,8 @@ import { resolveEventAssetUrl } from './event-images.js';
 
 export const COMPRESSED_CLUBS_BASE = '/assets/images/clubs/compressed-clubs/';
 export const INDEX_COMPRESSED_CLUBS_BASE = '/assets/images/clubs/index-compressed/';
+/** ~600×400 exports for /home poster cards (tools/resize-home-assets.mjs). */
+export const HOME_COMPRESSED_CLUBS_BASE = '/assets/images/clubs/home-compressed/';
 export const CLUBS_BASE = '/assets/images/clubs/';
 
 /** Index showcase cards — 600×400 exports in index-compressed/. */
@@ -89,6 +91,27 @@ export function getIndexClubImageSrc(club) {
   return getClubImageSrc(club);
 }
 
+function posterClubFilename(club) {
+  return resolveClubFilename(club?.image || `${club?.id || ''}.avif`) || DEFAULT_CLUB_FILE;
+}
+
+/** Smallest club thumbs for /home poster grid (~600×400). */
+export function getPosterClubImageSrc(club) {
+  const file = posterClubFilename(club);
+  return `${HOME_COMPRESSED_CLUBS_BASE}${file}`;
+}
+
+/** Progressive fallback when home-compressed assets are missing locally. */
+export function getPosterClubImageFallbacks(club) {
+  const file = posterClubFilename(club);
+  const chain = [`${HOME_COMPRESSED_CLUBS_BASE}${file}`];
+  if (INDEX_COMPRESSED_FILES.has(file)) {
+    chain.push(`${INDEX_COMPRESSED_CLUBS_BASE}${file}`);
+  }
+  chain.push(`${COMPRESSED_CLUBS_BASE}${file}`);
+  return chain;
+}
+
 if (typeof window !== 'undefined') {
   window.AdobeClubImages = {
     COMPRESSED_CLUBS_BASE,
@@ -100,5 +123,8 @@ if (typeof window !== 'undefined') {
     resolveClubAssetUrl,
     getClubImageSrc,
     getIndexClubImageSrc,
+    getPosterClubImageSrc,
+    getPosterClubImageFallbacks,
+    HOME_COMPRESSED_CLUBS_BASE,
   };
 }

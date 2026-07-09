@@ -2,6 +2,7 @@
  * user-chrome.js — Shared logged-in nav tools + footer account links
  */
 import { loadCSS, loadScript } from './aem.js';
+import { applyAvatarImage } from './lib/image-priority.js';
 import { renderProfilePanel } from './profile-panel.js';
 
 const GUEST_ACCOUNT_LINKS = [
@@ -83,8 +84,7 @@ function setAvatarEl(el, initials, src) {
   if (src) {
     const img = document.createElement('img');
     img.className = 'profile-avatar-img';
-    img.alt = '';
-    img.src = src;
+    applyAvatarImage(img, src);
     img.addEventListener('error', () => { el.textContent = initials; }, { once: true });
     el.replaceChildren(img);
   } else {

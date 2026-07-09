@@ -3,14 +3,20 @@
    ============================================================ */
 
 /* Hide raw da.live config rows until JS runs */
-.admin-dashboard.block:not(:has(.adm-wrap)),
-.home-dashboard.block:not(:has(.hm-dashboard)):not(:has(.adm-wrap)) {
+.admin-dashboard.block:not(:has(.adm-wrap)) {
   display: none;
 }
 
 body.admin-home,
 body.adm-active {
   overflow-x: clip;
+}
+
+/* Hide member /home blocks when an admin is signed in */
+html.admin-home-route main > .section:has(.cards, .home-calendar, .section-head, .cta-banner):not(:has(.admin-dashboard)),
+body.admin-home main > .section:has(.cards, .home-calendar, .section-head, .cta-banner):not(:has(.admin-dashboard)),
+body.adm-active main > .section:has(.cards, .home-calendar, .section-head, .cta-banner):not(:has(.admin-dashboard)) {
+  display: none !important;
 }
 
 body.admin-home main,
@@ -47,11 +53,6 @@ main > .section:has(.adm-wrap) > div {
   width: 100%;
   overflow-x: clip;
   box-sizing: border-box;
-}
-
-body.admin-home .section:has(.home-hero),
-body.adm-active .section:has(.home-hero) {
-  display: none !important;
 }
 
 body.admin-home .adm-wrap,

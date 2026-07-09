@@ -5,6 +5,38 @@
 >
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
 <style>
+  /* Critical shell — keep in sync with styles/styles.css (body.appear / guest-index reveal) */
+  body {
+    display: none;
+    margin: 0;
+    overflow-x: clip;
+    max-width: 100%;
+    background-color: #fff;
+    color: #2c2c2c;
+    font-family: 'Adobe Clean', adobe-clean, 'Source Sans 3', source-sans-3-fallback, sans-serif;
+    font-size: 18px;
+    line-height: 1.6;
+  }
+
+  body.appear {
+    display: block;
+  }
+
+  body.guest-index {
+    display: block;
+    visibility: hidden;
+  }
+
+  body.guest-index.appear {
+    visibility: visible;
+  }
+
+  @font-face {
+    font-family: source-sans-3-fallback;
+    size-adjust: 104.5%;
+    src: local('Arial');
+  }
+
   /* Guest index CLS — reserve hero + marketing space before block JS (mirrored in block CSS) */
   html.guest-index-route .landing-hero-wrapper:has(.landing-hero:not(:has(.landing-hero-content))) {
     min-height: clamp(520px, 88vw, 680px);
@@ -36,18 +68,66 @@
     object-fit: cover;
   }
 
-  .index-marketing.block:not(:has(.index-marketing-section)):not(:has(.index-marketing-steps)):not(:has(.index-marketing-stories)) {
+  .cards.block:not(:has(.cards-grid)):not(:has(.steps-grid)):not(:has(.stories-grid)):not(:has(.lp-clubs-grid)):not(:has(.lp-events-grid)):not(:has(.club-cards-body)) {
     min-height: clamp(280px, 38vw, 400px);
     visibility: hidden;
     pointer-events: none;
   }
 
-  .index-marketing--steps-only.block:not(:has(.index-marketing-steps)) {
+  .cards--showcase.block:not(:has(.cards-grid)) {
+    min-height: clamp(480px, 58vw, 720px);
+  }
+
+  .cards--steps.block:not(:has(.step)) {
     min-height: clamp(220px, 32vw, 300px);
   }
 
-  .index-marketing--stories-only.block:not(:has(.index-marketing-stories)) {
+  .cards--stories.block:not(:has(.story-card)) {
     min-height: clamp(360px, 52vw, 480px);
+  }
+
+  /* /home greeting — reserve space before decorateMain (limits CLS) */
+  html.user-home-route .default-content-wrapper:has(p:first-child),
+  html.user-home-route .default-content-wrapper:has(#home-greeting),
+  html.user-home-route .default-content-wrapper:has([data-user-greeting]) {
+    min-height: clamp(88px, 12vw, 120px);
+  }
+
+  html.user-home-route #home-greeting:not(.greeting-ready),
+  html.user-home-route [data-user-greeting]:not(.greeting-ready) {
+    visibility: hidden;
+  }
+
+  html.user-home-route #home-greeting,
+  html.user-home-route [data-user-greeting] {
+    font-size: clamp(28px, 4vw, 42px);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+    margin: 0;
+    padding: clamp(40px, 6vw, 64px) var(--section-padding-x, 40px) 0;
+    border-bottom: 1px solid var(--color-border, #eaeaea);
+    box-sizing: border-box;
+  }
+
+  /* /home poster cards — reserve grid space before block JS (limits CLS) */
+  html.user-home-route .cards--poster.block:not(:has(.lp-clubs-grid, .lp-events-grid)) {
+    min-height: clamp(420px, 52vw, 560px);
+    visibility: hidden;
+    pointer-events: none;
+  }
+
+  html.user-home-route .cards--home-clubs.block:not(:has(.lp-clubs-grid)) {
+    min-height: clamp(520px, 62vw, 720px);
+  }
+
+  html.user-home-route .cards--home-events.block:not(:has(.lp-events-grid)) {
+    min-height: clamp(480px, 58vw, 640px);
+  }
+
+  /* Admin /home — hide member dashboard before block JS runs */
+  html.admin-home-route main > .section:has(.cards, .home-calendar, .section-head, .cta-banner):not(:has(.admin-dashboard)) {
+    display: none;
   }
 
   @media (min-width: 900px) {
@@ -71,7 +151,6 @@
     }
   }
 </style>
+<link rel="stylesheet" href="/styles/styles.css"/>
 <script nonce="aem" src="/scripts/aem.js" type="module"></script>
 <script nonce="aem" src="/scripts/scripts.js" type="module"></script>
-<link rel="stylesheet" href="/styles/styles.css"/>
-<link rel="stylesheet" href="/styles/fonts.css"/>

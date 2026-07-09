@@ -1,0 +1,262 @@
+@import url('../../styles/club/club-buttons.css');
+@import url('../../styles/club/club-section.css');
+@import url('../../styles/event/event-section.css');
+
+/* ── Detail Hero — shared shell ── */
+
+.section:has(.detail-hero),
+.section:has(.detail-hero) > div,
+.detail-hero-wrapper {
+  margin: 0 !important;
+  padding: 0 !important;
+  max-width: unset !important;
+  border-top: none !important;
+}
+
+.detail-hero-wrapper {
+  background: var(--background-color, #fff);
+}
+
+.detail-hero {
+  position: relative;
+  isolation: isolate;
+}
+
+.detail-hero--club::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100vw;
+  background: var(--background-color, #fff);
+}
+
+.dh-inner {
+  max-width: var(--max-width, 1280px);
+  margin: 0 auto;
+  padding: 0 var(--section-padding-x, 40px) 0;
+  box-sizing: border-box;
+}
+
+/* Event detail — main already has section gutters; avoid double padding overflow */
+.detail-hero--event .dh-inner,
+.detail-hero--event .ev-inner {
+  width: 100%;
+  max-width: 100%;
+  padding-inline: 0;
+}
+
+html.event-detail-route .detail-hero--event:not(:has(.ev-inner)) {
+  min-height: clamp(360px, 48vw, 520px);
+}
+
+main > .section:has(.detail-hero) > div {
+  max-width: unset;
+  padding: 0;
+  margin: 0;
+}
+
+/* ── Club preset ── */
+
+.ch-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin: 20px 0 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-accent, #1473e6);
+  text-decoration: none;
+}
+
+.ch-back:hover {
+  color: var(--color-accent-hover, #0d66d0);
+}
+
+.ch-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 0.88fr) minmax(0, 1.12fr);
+  gap: clamp(28px, 4vw, 48px);
+  align-items: center;
+  padding-bottom: clamp(20px, 3vw, 32px);
+}
+
+.ch-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  align-items: flex-start;
+  padding-left: clamp(20px, 3.5vw, 48px);
+  max-width: 520px;
+}
+
+.ch-eyebrow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  width: 100%;
+  margin: 0;
+}
+
+.ch-tag {
+  margin: 0;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-text-tertiary, rgba(0, 0, 0, 0.38));
+}
+
+.ch-members {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+  flex-shrink: 0;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-text-tertiary, rgba(0, 0, 0, 0.38));
+}
+
+.ch-members-dot {
+  opacity: 0.55;
+  font-weight: 600;
+}
+
+.ch-members-icon {
+  flex-shrink: 0;
+}
+
+.ch-title {
+  margin: 0;
+  font-size: clamp(34px, 4.8vw, 56px);
+  font-weight: 700;
+  letter-spacing: -0.035em;
+  line-height: 1.06;
+  color: var(--text-color, #2c2c2c);
+  max-width: 14ch;
+}
+
+.ch-desc {
+  margin: 0;
+  max-width: 46ch;
+  font-size: clamp(15px, 1.6vw, 17px);
+  line-height: 1.65;
+  color: var(--color-text-secondary, #505050);
+}
+
+.ch-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+
+.ch-photo {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 4 / 3;
+  min-height: 0;
+  padding: 8px;
+}
+
+.ch-photo img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center;
+}
+
+.ch-similar {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(8px);
+  border-radius: 10px;
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-width: 170px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.12);
+  z-index: 2;
+}
+
+.ch-similar-label {
+  margin: 0 0 2px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #505050;
+}
+
+.ch-similar-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+  color: #2c2c2c;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.ch-similar-item img {
+  width: 28px;
+  height: 28px;
+  border-radius: 4px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.ch-similar-item:hover {
+  color: var(--color-accent, #1473e6);
+}
+
+.ch-not-found {
+  padding: 40px 0;
+  font-size: 15px;
+  color: var(--color-text-secondary, #505050);
+}
+
+@media (max-width: 768px) {
+  .ch-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .ch-copy {
+    padding-left: 0;
+    max-width: none;
+  }
+
+  .ch-title {
+    max-width: none;
+  }
+
+  .ch-photo {
+    order: -1;
+  }
+
+  .ch-desc {
+    max-width: none;
+  }
+
+  .ch-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .ch-actions .btn-primary,
+  .ch-actions .slack-link {
+    justify-content: center;
+    text-align: center;
+  }
+}

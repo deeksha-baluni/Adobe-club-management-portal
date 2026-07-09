@@ -1,16 +1,16 @@
 /**
- * Landing Hero — unified split hero for index, events, and clubs list pages.
+ * Landing Hero — unified marketing hero for index, events, clubs, and resources.
  *
  * Table mode (index):
  *   | Landing Hero |              |
  *   | hero image   | content cell |
  *
- * Config mode (events / clubs):
- *   | preset       | events | clubs |
+ * Config mode (events / clubs / resources):
+ *   | preset       | events | clubs | resources |
  *   | eyebrow      | ...    |
- *   | title        | ...    |
+ *   | title        | ...    |  (resources: title-line-1, title-accent)
  *   | description  | ...    |
- *   | image        | upload or path |
+ *   | image        | upload or path |  (resources: no image)
  */
 import { loadCSS, loadScript, toClassName } from '../../scripts/aem.js';
 import { preloadLcpImage, publishedImageSrc } from '../../scripts/lib/image-priority.js';
@@ -20,6 +20,7 @@ import { readPageConfig, cfg } from '../../scripts/lib/block-config.js';
 const CONFIG_KEYS = new Set([
   'preset', 'eyebrow', 'title', 'description', 'image', 'image-alt',
   'hero-alt', 'hero-fallback',
+  'title-line-1', 'title-accent', 'description-emphasis',
   'guest-banner-eyebrow', 'guest-banner-text',
   'guest-sign-in-text', 'guest-sign-in-href',
   'guest-create-text', 'guest-create-href',
@@ -62,6 +63,14 @@ const PRESET_DEFAULTS = {
     'member-banner-eyebrow': 'Start something new',
     'member-banner-text': "Don't see your community? Request a new club and we'll review it.",
     'member-cta-text': 'Create a club',
+  },
+  resources: {
+    preset: 'resources',
+    eyebrow: 'Resource Hub · Adobe Clubs',
+    'title-line-1': 'Guides, articles',
+    'title-accent': '& how-tos',
+    description: 'Articles for club leads and members — policies, tips, and stories from across the community.',
+    'description-emphasis': 'club leads and members',
   },
 };
 
@@ -109,12 +118,65 @@ function readIndexExtras(block) {
 
 function resolvePreset(config, tableMode) {
   const explicit = cfg(config, 'preset', '').toLowerCase();
-  if (explicit === 'index' || explicit === 'events' || explicit === 'clubs') return explicit;
+  if (explicit === 'index' || explicit === 'events' || explicit === 'clubs' || explicit === 'resources') {
+    return explicit;
+  }
   if (tableMode) return 'index';
   const path = normalizePath(window.location.pathname);
   if (path === '/clubs') return 'clubs';
   if (path === '/events') return 'events';
+  if (path === '/resources') return 'resources';
   return 'events';
+}
+
+function esc(str) {
+  return String(str ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+function buildResourcesDescription(config, defaults) {
+  const text = cfg(config, 'description', defaults.description);
+  const emphasis = cfg(config, 'description-emphasis', defaults['description-emphasis']);
+  if (!emphasis || !text.includes(emphasis)) {
+    return esc(text);
+  }
+  const [before, after] = text.split(emphasis);
+  return `${esc(before)}<strong>${esc(emphasis)}</strong>${esc(after)}`;
+}
+
+function buildResourcesHero(block, config, defaults) {
+  document.body.classList.add('resources-page');
+
+  const hero = document.createElement('section');
+  hero.className = 'landing-hero-resources';
+  hero.setAttribute('aria-label', 'Resources hero');
+
+  const content = document.createElement('div');
+  content.className = 'landing-hero-resources-content';
+
+  const eyebrow = document.createElement('p');
+  eyebrow.className = 'landing-hero-eyebrow';
+  eyebrow.textContent = cfg(config, 'eyebrow', defaults.eyebrow);
+
+  const heading = document.createElement('h1');
+  heading.className = 'landing-hero-title';
+  heading.innerHTML = `${esc(cfg(config, 'title-line-1', defaults['title-line-1']))}<br><span class="landing-hero-title-accent">${esc(cfg(config, 'title-accent', defaults['title-accent']))}</span>`;
+
+  const sub = document.createElement('p');
+  sub.className = 'landing-hero-subtitle';
+  sub.innerHTML = buildResourcesDescription(config, defaults);
+
+  content.append(eyebrow, heading, sub);
+  hero.append(content);
+  block.replaceChildren(hero);
+
+  window.AdobeBreadcrumbs?.set([
+    { label: 'Home', href: window.AdobeBreadcrumbs?.getHomeHref?.() || '/' },
+    { label: 'Resources', current: true },
+  ]);
 }
 
 async function loadClubsDependencies() {
@@ -464,6 +526,13 @@ export default async function decorate(block) {
   const extras = tableMode ? readIndexExtras(block) : readPageConfig(block, {});
   const preset = resolvePreset(extras, tableMode);
   const defaults = PRESET_DEFAULTS[preset] || PRESET_DEFAULTS.index;
+
+  if (preset === 'resources') {
+    const config = readPageConfig(block, defaults);
+    block.classList.add('landing-hero', 'landing-hero--resources');
+    buildResourcesHero(block, config, defaults);
+    return;
+  }
 
   if (preset === 'index') {
     const row = block.firstElementChild;

@@ -1,16 +1,19 @@
 /**
  * Admin Dashboard — club-admin control center on /home.
+ *
+ * Greeting: shared default content in the first /home section.
+ *
  * da.live: key | value config rows. Scoped to managed clubs; overall admin sees all.
  */
 import { loadCSS, loadScript } from '../../scripts/aem.js';
 import { readPageConfig, cfg, fillTemplate } from '../../scripts/lib/block-config.js';
+import { applyUserGreeting } from '../../scripts/lib/user-greeting.js';
 import { getEventImageSrc } from '../../scripts/club/club-page.js';
 import { getClubImageSrc } from '../../scripts/lib/club-images.js';
 
 export const ADMIN_DASHBOARD_DEFAULTS = {
   'clubs-data': '/data/data.json',
   title: 'Dashboard',
-  'greeting-template': 'Hello {name}, welcome back!',
   'meta-club-admin': 'Club admin · Managing {clubs} · {date}',
   'meta-overall-admin': 'Overall admin · Adobe Clubs control center · {date}',
   'action-add-event': '+ Add event',
@@ -63,7 +66,10 @@ let stylesLoaded = false;
 async function loadAdminStyles() {
   if (stylesLoaded) return;
   const base = codeBase();
-  await loadCSS(`${base}/blocks/admin-dashboard/admin-dashboard.css`);
+  await Promise.all([
+    loadCSS(`${base}/styles/home-greeting.css`),
+    loadCSS(`${base}/blocks/admin-dashboard/admin-dashboard.css`),
+  ]);
   stylesLoaded = true;
 }
 
@@ -635,8 +641,6 @@ function buildDashboardHtml(data) {
   const allArticles = auth()?.mergePublishedArticles?.(data.articles || []) || data.articles || [];
   const articles = overall ? allArticles : allArticles.filter((art) => articleInScope(art, ids));
 
-  const user = auth()?.getCurrentUser?.();
-  const name = user?.displayName || user?.username || 'Admin';
   const dateLabel = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
   const managedNames = clubs.map((c) => c.name).join(', ');
   const metaTemplate = overall
@@ -730,7 +734,6 @@ function buildDashboardHtml(data) {
       <header class="adm-head">
         <div class="adm-head-text">
           <h1 class="adm-title">${esc(cfg(PAGE_CONFIG, 'title', ADMIN_DASHBOARD_DEFAULTS.title))}</h1>
-          <p class="adm-subtitle">${esc(fillTemplate(cfg(PAGE_CONFIG, 'greeting-template', ADMIN_DASHBOARD_DEFAULTS['greeting-template']), { name }))}</p>
           <p class="adm-meta">${esc(metaLine)}</p>
         </div>
         <div class="adm-actions">
@@ -844,12 +847,10 @@ function bindRefresh(block) {
 }
 
 function hideMemberHomeSections(block) {
-  document.querySelectorAll('.section:has(.home-hero)').forEach((section) => {
-    section.style.display = 'none';
-  });
-  document.querySelectorAll('.section:has(.home-dashboard)').forEach((section) => {
+  document.querySelectorAll('.section:has(.cards, .home-calendar, .section-head, .cta-banner)').forEach((section) => {
     if (section.contains(block)) return;
     section.style.display = 'none';
+    section.dataset.adminHidden = 'true';
   });
 }
 
@@ -869,11 +870,12 @@ export default async function decorate(block) {
 
   PAGE_CONFIG = readPageConfig(block, ADMIN_DASHBOARD_DEFAULTS);
   block.innerHTML = '';
-  block.classList.remove('home-dashboard');
   block.classList.add('admin-dashboard');
   document.body.classList.add('admin-home', 'adm-active');
   document.body.classList.remove('user-home');
+  document.documentElement.classList.add('admin-home-route');
 
+  applyUserGreeting();
   hideMemberHomeSections(block);
   showAdminSection(block);
 

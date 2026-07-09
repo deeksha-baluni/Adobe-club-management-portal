@@ -1,6 +1,6 @@
 /* Shared styles for club page body blocks */
 
-main:has(.club-hero) {
+main:has(.detail-hero--club) {
   background: var(--light-color, #f8f8f8);
 }
 
@@ -8,24 +8,24 @@ main:has(.club-hero) {
  * Reset global EDS section chrome on club detail page:
  * - lazy-styles.css adds border-top + padding on non-first sections
  */
-main:has(.club-hero) > .section,
-main:has(.club-hero) > .section > div {
+main:has(.detail-hero--club) > .section,
+main:has(.detail-hero--club) > .section > div {
   margin: 0 !important;
   max-width: unset;
 }
 
-main:has(.club-hero) > .section:not(.dark) {
+main:has(.detail-hero--club) > .section:not(.dark) {
   border-top: none !important;
   padding-top: 0 !important;
   padding-bottom: 0 !important;
 }
 
 /* Collapse empty breadcrumb / placeholder section above hero (da.live) */
-main:has(.club-hero) > .section:has(.page-breadcrumb),
-main:has(.club-hero) > .section:has(.breadcrumb),
-main:has(.event-hero) > .section:has(.page-breadcrumb),
-main:has(.event-hero) > .section:has(.breadcrumb),
-main:has(.club-hero) > .section:first-of-type:not(:has(.club-hero)):not(:has(.cta-banner)):not(:has(.club-list)) {
+main:has(.detail-hero--club) > .section:has(.page-breadcrumb),
+main:has(.detail-hero--club) > .section:has(.breadcrumb),
+main:has(.detail-hero--event) > .section:has(.page-breadcrumb),
+main:has(.detail-hero--event) > .section:has(.breadcrumb),
+main:has(.detail-hero--club) > .section:first-of-type:not(:has(.detail-hero)):not(:has(.cta-banner)):not(:has(.cards--club-activities)) {
   display: none !important;
 }
 
@@ -49,50 +49,49 @@ main:has(.club-hero) > .section:first-of-type:not(:has(.club-hero)):not(:has(.ct
   border-radius: 999px;
 }
 
-/*
- * OG .club-detail-inner { gap: 72px }
- * Split blocks (legacy): bottom padding per section.
- * Consolidated club-list: flex gap on .club-list-inner.
- */
-.club-section-inner {
+.club-cards-body {
   max-width: var(--max-width, 1280px);
   margin: 0 auto;
   padding: 0 var(--section-padding-x, 40px) 72px;
 }
 
-.club-list-inner .club-section-inner {
-  padding-bottom: 0;
-}
-
-/* OG .club-hero + .club-block { margin-top: 40px } */
-main > .section:has(.club-hero) + .section:has(.club-list) .club-list-section--activities .club-section-inner,
-main > .section:has(.club-hero) + .section .club-section-inner {
+main > .section:has(.detail-hero--club) + .section:has(.cards--club-activities) .club-cards-body,
+main > .section:has(.detail-hero--club) + .section .club-cards-body {
   padding-top: 40px;
 }
 
-main:has(.club-hero) > .section:has(.club-list) {
+main:has(.detail-hero--club) > .section:has(.cards--club-activities),
+main:has(.detail-hero--club) > .section:has(.cards--club-events),
+main:has(.detail-hero--club) > .section:has(.cards--club-recaps),
+main:has(.detail-hero--club) > .section:has(.cards--club-team) {
   content-visibility: auto;
   contain-intrinsic-size: auto 480px;
 }
 
+main > .section:has(.cards--club-activities, .cards--club-events, .cards--club-recaps, .cards--club-team) > div {
+  max-width: unset;
+  padding-left: 0;
+  padding-right: 0;
+}
+
 @media (max-width: 768px) {
-  .club-section-inner {
+  .club-cards-body {
     padding-bottom: 56px;
   }
 
-  main > .section:has(.club-hero) + .section:has(.club-list) .club-list-section--activities .club-section-inner,
-  main > .section:has(.club-hero) + .section .club-section-inner {
+  main > .section:has(.detail-hero--club) + .section:has(.cards--club-activities) .club-cards-body,
+  main > .section:has(.detail-hero--club) + .section .club-cards-body {
     padding-top: 32px;
   }
 }
 
 @media (max-width: 560px) {
-  .club-section-inner {
+  .club-cards-body {
     padding-bottom: 48px;
   }
 
-  main > .section:has(.club-hero) + .section:has(.club-list) .club-list-section--activities .club-section-inner,
-  main > .section:has(.club-hero) + .section .club-section-inner {
+  main > .section:has(.detail-hero--club) + .section:has(.cards--club-activities) .club-cards-body,
+  main > .section:has(.detail-hero--club) + .section .club-cards-body {
     padding-top: 28px;
   }
 }

@@ -1,0 +1,54 @@
+/* Shared centered section head */
+.section-head-head,
+.marketing-head,
+.showcase-head,
+.accordion-head {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 8px;
+  margin-bottom: 32px;
+}
+
+.section-head-eyebrow,
+.marketing-eyebrow,
+.showcase-eyebrow,
+.accordion-eyebrow {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-brand-red);
+  margin: 0;
+}
+
+.section-head-heading,
+.marketing-heading,
+.showcase-heading,
+.accordion-heading {
+  font-size: clamp(26px, 3vw, 36px);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--text-color);
+  margin: 0;
+  line-height: 1.1;
+}
+
+.section-head-link,
+.marketing-link,
+.showcase-link {
+  font-size: 14px;
+  color: var(--color-accent);
+  text-decoration: underline;
+  text-decoration-color: var(--color-accent);
+  text-underline-offset: 3px;
+  margin-top: 4px;
+}
+
+.section-head-link:hover,
+.marketing-link:hover,
+.showcase-link:hover {
+  color: var(--color-accent-hover);
+  text-decoration-color: var(--color-accent-hover);
+}

@@ -3,6 +3,7 @@
  */
 
 import { loadScript } from './aem.js';
+import { applyAvatarImage, publishedImageSrc } from './lib/image-priority.js';
 
 const AVATAR_BASE = '/assets/images/avatar/';
 const AVAILABLE_AVATARS = [
@@ -87,13 +88,25 @@ function setAvatarEl(el, initials, src) {
   if (src) {
     const img = document.createElement('img');
     img.className = 'profile-avatar-img';
-    img.alt = '';
-    img.src = src;
-    img.addEventListener('error', () => { el.textContent = initials; }, { once: true });
+    applyAvatarImage(img, src);
+    img.addEventListener('error', () => {
+      el.classList.remove('has-avatar-img');
+      el.textContent = initials;
+    }, { once: true });
+    el.classList.add('has-avatar-img');
     el.replaceChildren(img);
   } else {
+    el.classList.remove('has-avatar-img');
     el.textContent = initials;
   }
+}
+
+function wireAvatarOptionImages(root) {
+  root.querySelectorAll('.profile-avatar-option img').forEach((img) => {
+    const full = publishedImageSrc(img.getAttribute('data-full-src') || img.src);
+    if (full) img.src = full;
+    applyAvatarImage(img, full);
+  });
 }
 
 function getProfileIdentity() {
@@ -319,7 +332,7 @@ export async function renderProfilePanel({ trigger } = {}) {
         <div class="profile-avatar-grid">
           ${AVAILABLE_AVATARS.map((src) => `
             <button type="button" class="profile-avatar-option ${src === selectedAvatar ? 'is-active' : ''}" data-avatar-src="${esc(src)}" aria-label="Choose avatar">
-              <img src="${esc(src)}" alt="" loading="lazy" decoding="async" />
+              <img src="${esc(publishedImageSrc(src))}" data-full-src="${esc(publishedImageSrc(src))}" alt="" width="96" height="96" loading="lazy" decoding="async" />
             </button>
           `).join('')}
         </div>
@@ -344,6 +357,7 @@ export async function renderProfilePanel({ trigger } = {}) {
   `;
 
   setAvatarEl(document.getElementById('profile-avatar-main'), initials, selectedAvatar);
+  wireAvatarOptionImages(content);
 
   document.getElementById('profile-signout-btn')?.addEventListener('click', () => {
     auth.clearSession?.();

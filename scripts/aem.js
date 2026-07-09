@@ -598,14 +598,23 @@ async function waitForFirstImage(section) {
 
 async function loadSection(section, loadCallback) {
   const status = section.dataset.sectionStatus;
-  if (!status || status === 'initialized') {
-    section.dataset.sectionStatus = 'loading';
+  if (status === 'loaded' || status === 'loading') return;
+  if (status && status !== 'initialized') return;
+
+  section.dataset.sectionStatus = 'loading';
+  try {
     const blocks = [...section.querySelectorAll('div.block')];
+    blocks.sort((a, b) => {
+      const rank = (el) => (el.classList.contains('section-head') ? 0 : 1);
+      if (rank(a) !== rank(b)) return rank(a) - rank(b);
+      return 0;
+    });
     for (let i = 0; i < blocks.length; i += 1) {
       // eslint-disable-next-line no-await-in-loop
       await loadBlock(blocks[i]);
     }
     if (loadCallback) await loadCallback(section);
+  } finally {
     section.dataset.sectionStatus = 'loaded';
     section.style.display = null;
   }

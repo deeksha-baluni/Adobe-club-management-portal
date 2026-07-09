@@ -376,6 +376,14 @@ body.profile-drawer-open {
   object-fit: cover;
 }
 
+.profile-avatar-img--missing {
+  display: none;
+}
+
+.profile-avatar-option img.profile-avatar-img--missing {
+  opacity: 0;
+}
+
 .profile-identity h2 {
   margin: 0;
   font-size: clamp(28px, 4vw, 38px);

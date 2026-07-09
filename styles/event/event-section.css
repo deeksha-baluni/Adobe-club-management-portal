@@ -1,35 +1,35 @@
 @import url('./event-detail.css');
 
 /* Event detail page — reset EDS section chrome */
-main:has(.event-hero) {
+main:has(.detail-hero--event) {
   background: var(--light-color, #f8f8f8);
 }
 
-main:has(.event-hero) > .section,
-main:has(.event-hero) > .section > div {
+main:has(.detail-hero--event) > .section,
+main:has(.detail-hero--event) > .section > div {
   margin: 0 !important;
   max-width: unset;
 }
 
-main:has(.event-hero) > .section:not(.dark) {
+main:has(.detail-hero--event) > .section:not(.dark) {
   border-top: none !important;
   padding-top: 0 !important;
   padding-bottom: 0 !important;
 }
 
 /* Event detail shell — overrides default main/section layout */
-html.event-detail-route main:has(.event-hero, .event-list),
+html.event-detail-route main:has(.detail-hero--event, .event-list),
 body.event-detail-page main,
 main.event-detail-page,
-main:has(.event-hero) {
+main:has(.detail-hero--event) {
   display: block;
   max-width: var(--max-width, 1280px);
   margin: 0 auto;
   padding: 0 var(--section-padding-x, 40px) clamp(48px, 8vw, 72px);
 }
 
-main:has(.event-hero) > .section:has(.event-hero) > div,
-main:has(.event-hero) > .section:has(.event-list) > div {
+main:has(.detail-hero--event) > .section:has(.detail-hero--event) > div,
+main:has(.detail-hero--event) > .section:has(.event-list) > div {
   width: 100%;
   max-width: 100%;
   padding: 0;
@@ -56,9 +56,9 @@ main > .section:has(.event-list.block:not(:has(.event-list-body))) {
 }
 
 /* Hero row: image + intro left, sticky RSVP right */
-.event-hero .ev-inner {
+.detail-hero--event .ev-inner {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 320px;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 320px);
   grid-template-areas:
     "back back"
     "topbar topbar"
@@ -69,36 +69,47 @@ main > .section:has(.event-list.block:not(:has(.event-list-body))) {
   align-items: start;
   width: 100%;
   max-width: 100%;
+  box-sizing: border-box;
+  min-width: 0;
 }
 
-.event-hero .ev-back {
+.detail-hero--event .ev-back {
   grid-area: back;
 }
 
-.event-hero .event-page-topbar {
+.detail-hero--event .event-page-topbar {
   grid-area: topbar;
 }
 
-.event-hero .event-hero-stack {
+.detail-hero--event .event-hero-stack {
   grid-area: hero;
   width: 100%;
   max-width: 100%;
   box-sizing: border-box;
 }
 
-.event-hero .event-page-container {
+.detail-hero--event .event-page-container {
   grid-area: intro;
   width: 100%;
   max-width: 100%;
   box-sizing: border-box;
 }
 
-.event-hero .event-list-rail {
+.detail-hero--event .event-list-rail {
   grid-area: rail;
   position: sticky;
   top: calc(var(--nav-height, 55px) + 16px);
   align-self: start;
   width: 100%;
+  max-width: 320px;
+  min-width: 0;
+  justify-self: end;
+}
+
+.detail-hero--event .event-list-rail .event-page-right-rail {
+  width: 100%;
+  max-width: 100%;
+  flex: none;
   min-width: 0;
 }
 
@@ -297,22 +308,17 @@ main > .section:has(.event-list.block:not(:has(.event-list-body))) {
   margin-bottom: 0;
 }
 
-.event-hero .event-hero-img {
+.detail-hero--event .event-hero-img {
   border: 1px solid #edebe9;
   border-bottom: none;
 }
 
-.event-hero .event-page-container {
+.detail-hero--event .event-page-container {
   padding-bottom: 24px;
   background: #fff;
   border: 1px solid #edebe9;
   border-top: none;
   border-radius: 0 0 8px 8px;
-}
-
-.event-hero .event-list-rail .event-page-right-rail {
-  width: 100%;
-  flex: none;
 }
 
 /* Legacy ev-card-part (intro only lives in hero now) */
@@ -349,13 +355,12 @@ main > .section:has(.event-list.block:not(:has(.event-list-body))) {
 @media (max-width: 960px) {
   body.event-detail-page main,
   main.event-detail-page,
-  main:has(.event-hero) {
+  main:has(.detail-hero--event) {
     padding-left: var(--section-padding-x, 24px);
     padding-right: var(--section-padding-x, 24px);
   }
 
-  .event-hero .ev-inner,
-  .event-hero .ev-inner {
+  .detail-hero--event .ev-inner {
     grid-template-columns: 1fr;
     grid-template-areas:
       "back"
@@ -365,8 +370,7 @@ main > .section:has(.event-list.block:not(:has(.event-list-body))) {
       "intro";
   }
 
-  .event-hero .event-list-rail,
-  .event-hero .event-list-rail {
+  .detail-hero--event .event-list-rail {
     position: static;
     margin-bottom: 16px;
   }

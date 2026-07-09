@@ -1,0 +1,122 @@
+/* Shared /home greeting — da.live default content, first section on the page */
+
+main > .section:has(#home-greeting) > div,
+main > .section:has(#hm-greeting) > div,
+main > .section:has(#adm-greeting) > div,
+main > .section:has([data-user-greeting]) > div {
+  max-width: unset;
+  padding: 0;
+  margin: 0;
+}
+
+body.user-home main > .section:has(#home-greeting),
+body.user-home main > .section:has(#hm-greeting),
+body.user-home main > .section:has([data-user-greeting]),
+body.admin-home main > .section:has(#home-greeting),
+body.admin-home main > .section:has(#hm-greeting),
+body.admin-home main > .section:has([data-user-greeting]),
+body.adm-active main > .section:has(#home-greeting),
+body.adm-active main > .section:has(#hm-greeting),
+body.adm-active main > .section:has([data-user-greeting]) {
+  border-top: none;
+}
+
+body.user-home .section:has(#home-greeting) .default-content-wrapper,
+body.user-home .section:has(#hm-greeting) .default-content-wrapper,
+body.user-home .section:has([data-user-greeting]) .default-content-wrapper,
+body.admin-home .section:has(#home-greeting) .default-content-wrapper,
+body.admin-home .section:has(#hm-greeting) .default-content-wrapper,
+body.admin-home .section:has([data-user-greeting]) .default-content-wrapper,
+body.adm-active .section:has(#home-greeting) .default-content-wrapper,
+body.adm-active .section:has(#hm-greeting) .default-content-wrapper,
+body.adm-active .section:has([data-user-greeting]) .default-content-wrapper {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  width: 100%;
+  padding: 0;
+  box-sizing: border-box;
+  min-width: 0;
+  border-bottom: none;
+}
+
+#home-greeting,
+#hm-greeting,
+#adm-greeting,
+[data-user-greeting],
+.hm-title#home-greeting,
+h1.hm-title[data-user-greeting] {
+  font-size: clamp(28px, 4vw, 42px);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--text-color);
+  line-height: 1.1;
+  margin: 0;
+  padding: clamp(40px, 6vw, 64px) var(--section-padding-x) 0;
+  border-bottom: 1px solid var(--color-border);
+  box-sizing: border-box;
+  max-width: var(--max-width);
+  width: 100%;
+  margin-inline: auto;
+}
+
+/*
+ * lazy-styles.css applies padding to main > .section:not(:first-of-type) — the
+ * dashboard block is the 2nd section, which caused the gap below the greeting.
+ * Skip member card/calendar sections — they use home-member.css layout.
+ */
+body.user-home main > .section:has(#home-greeting, #hm-greeting, [data-user-greeting]) + .section:not(.dark):not(:has(.cards, .home-calendar, .section-head)),
+body.admin-home main > .section:has(#home-greeting, #hm-greeting, [data-user-greeting]) + .section:not(.dark):not(:has(.cards, .home-calendar, .section-head)),
+body.adm-active main > .section:has(#home-greeting, #hm-greeting, [data-user-greeting]) + .section:not(.dark):not(:has(.cards, .home-calendar, .section-head)) {
+  margin: 0;
+  padding: 0;
+  border-top: none;
+}
+
+/* Collapse EDS section gap between greeting and dashboard */
+body.user-home main > .section:has(#home-greeting, #hm-greeting, [data-user-greeting]) + .section,
+body.user-home main > .section:has(.default-content-wrapper h1) + .section:has(.cards, .home-calendar, .section-head) {
+  margin-top: 0;
+}
+
+body.user-home main > .section:has(#home-greeting, #hm-greeting, [data-user-greeting]) + .section > div,
+body.user-home main > .section:has(.default-content-wrapper h1) + .section:has(.cards, .home-calendar, .section-head) > div {
+  margin-top: 0;
+  padding-top: 0;
+}
+
+@media (width <= 900px) {
+  body.user-home:has(#home-greeting),
+  body.user-home:has(#hm-greeting),
+  body.user-home:has([data-user-greeting]),
+  body.admin-home:has(#home-greeting),
+  body.admin-home:has(#hm-greeting),
+  body.admin-home:has([data-user-greeting]),
+  body.adm-active:has(#home-greeting),
+  body.adm-active:has(#hm-greeting),
+  body.adm-active:has([data-user-greeting]) {
+    --section-padding-x: 24px;
+  }
+}
+
+@media (width <= 560px) {
+  body.user-home:has(#home-greeting),
+  body.user-home:has(#hm-greeting),
+  body.user-home:has([data-user-greeting]),
+  body.admin-home:has(#home-greeting),
+  body.admin-home:has(#hm-greeting),
+  body.admin-home:has([data-user-greeting]),
+  body.adm-active:has(#home-greeting),
+  body.adm-active:has(#hm-greeting),
+  body.adm-active:has([data-user-greeting]) {
+    --section-padding-x: 16px;
+  }
+}
+
+body.admin-home:has(#home-greeting) .adm-wrap,
+body.admin-home:has(#hm-greeting) .adm-wrap,
+body.admin-home:has([data-user-greeting]) .adm-wrap,
+body.adm-active:has(#home-greeting) .adm-wrap,
+body.adm-active:has(#hm-greeting) .adm-wrap,
+body.adm-active:has([data-user-greeting]) .adm-wrap {
+  padding-top: clamp(12px, 1.5vw, 18px);
+}

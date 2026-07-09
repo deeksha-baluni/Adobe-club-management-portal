@@ -1,0 +1,12 @@
+@import url('../../styles/section-head.css');
+
+.section-head.block:not(:has(.section-head-head)) {
+  min-height: 80px;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.section-head.block:has(.section-head-head) {
+  visibility: visible;
+  pointer-events: auto;
+}
