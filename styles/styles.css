@@ -296,6 +296,28 @@ a:hover {
   text-decoration: underline;
 }
 
+/* CTA banner buttons are links — keep white on dark bands (incl. /home embedded CTA) */
+a.cta-banner-btn--primary:any-link,
+a.cta-banner-btn--primary:any-link:visited,
+a.cta-banner-btn--primary:any-link:hover,
+a.cta-banner-btn--primary:any-link:focus-visible {
+  color: #fff;
+  text-decoration: none;
+}
+
+a.cta-banner-btn--secondary:any-link,
+a.cta-banner-btn--secondary:any-link:visited,
+a.cta-banner-btn--secondary:any-link:hover,
+a.cta-banner-btn--secondary:any-link:focus-visible {
+  color: #fff;
+  text-decoration: none;
+}
+
+.cta-banner-inner a.cta-banner-btn:any-link:hover,
+.cta-banner-inner a.cta-banner-btn:any-link:focus-visible {
+  text-decoration: none;
+}
+
 /* buttons */
 p.button-wrapper {
   margin: 12px 0;

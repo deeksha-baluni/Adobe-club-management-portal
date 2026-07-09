@@ -44,11 +44,22 @@
   color: rgba(255, 255, 255, 0.82);
 }
 
-/* cta-banner.css isn't loaded on /home, so restore the primary CTA's white
-   label — otherwise it falls back to the blue link color on the dark banner. */
-.cards--joined-empty .cards-empty-state .cta-banner-btn--primary,
-.cards--joined-empty .cards-empty-state a.cta-banner-btn--primary:any-link {
+/* Embedded home CTA (mountStaticCta) — cta-banner.css is not loaded on /home */
+.cards--joined-empty .cards-empty-state a.cta-banner-btn--primary:any-link,
+.cards--joined-empty .cards-empty-state a.cta-banner-btn--primary:any-link:visited,
+.cards--joined-empty .cards-empty-state a.cta-banner-btn--primary:any-link:hover,
+.cards--joined-empty .cards-empty-state a.cta-banner-btn--primary:any-link:focus-visible,
+.cards--joined-empty .cards-empty-state .cta-banner-btn--primary {
   color: #fff;
+  text-decoration: none;
+}
+
+.cards--joined-empty .cards-empty-state a.cta-banner-btn--secondary:any-link,
+.cards--joined-empty .cards-empty-state a.cta-banner-btn--secondary:any-link:visited,
+.cards--joined-empty .cards-empty-state a.cta-banner-btn--secondary:any-link:hover,
+.cards--joined-empty .cards-empty-state a.cta-banner-btn--secondary:any-link:focus-visible {
+  color: #fff;
+  text-decoration: none;
 }
 
 .section.cards-container:has(.cards--steps),
